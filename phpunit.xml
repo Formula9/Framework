@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         beStrictAboutOutputDuringTests="true"
+         bootstrap="tests/boot/boot.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="true"
+         syntaxCheck="true"
+        >
+    <testsuites>
+        <testsuite name="F9 Test Suite">
+            <directory>./tests/</directory>
+            <directory>./vendor/oddgreg/nine-support/tests/</directory>
+            <directory>./vendor/oddgreg/nine-views/tests/</directory>
+            <directory>./vendor/oddgreg/nine-containers/tests/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <!-- DO NOT SET TO "true" CODE COVERAGE WILL BREAK -->
+        <whitelist addUncoveredFilesFromWhitelist="false">
+            <exclude>
+                <directory suffix=".php">./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    <php>
+        <env name="APP_ENV" value="DEVELOPMENT"/>
+        <env name="DB_DRIVER" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
+    </php>
+</phpunit>

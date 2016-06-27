@@ -1,0 +1,50 @@
+{
+    "name"             : "formula9/framework",
+    "description"      : "Framework Packages for Formula9 (Nine).",
+    "type"             : "library",
+    "license"          : "MIT",
+    "authors"          : [
+        {
+            "name" : "Greg Truesdell",
+            "email": "odd.greg@gmail.com"
+        }
+    ],
+    "autoload"         : {
+        "classmap"             : [
+            "F9",
+            "Nine"
+        ],
+        "exclude-from-classmap": [
+        ]
+    },
+    "minimum-stability": "stable",
+    "require"          : {
+        "php"                  : "^7.0.4",
+
+        "silex/silex"          : "2.0.*",
+        "aura/sql"             : "^2.4",
+
+        "illuminate/database"  : "~5.2",
+        "illuminate/support"   : "~5.2",
+        "illuminate/events"    : "~5.2",
+        "illuminate/filesystem": "~5.2",
+        "illuminate/view"      : "~5.2",
+
+        "symfony/console"      : "~3.1",
+        "symfony/form"         : "~3.1",
+        "symfony/security"     : "~3.1",
+        "symfony/serializer"   : "~3.1",
+        "symfony/stopwatch"    : "~3.1",
+        "symfony/translation"  : "~3.1",
+        "symfony/twig-bridge"  : "~3.1",
+        "symfony/validator"    : "~3.1",
+        "symfony/var-dumper"   : "~3.1",
+        "symfony/yaml"         : "~3.1"
+    },
+    "require-dev"      : {
+        "vlucas/phpdotenv": "^2.1@dev",
+        "phpunit/phpunit" : "^5.1@dev",
+        "tracy/tracy"     : "^2.4@dev",
+        "psy/psysh"       : "@stable"
+    }
+}
