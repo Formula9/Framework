@@ -10,8 +10,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-include_once __DIR__ . '/helpers.php';
-
 final class Lib
 {
     const HELPERS = __DIR__ . '/helpers.php';
