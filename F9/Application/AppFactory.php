@@ -137,11 +137,11 @@ class AppFactory
     /**
      * **Make a new Application instance.**
      *
-     * @param string $context is the code that determines which Application type to make. (`'app'`,`'api'`,`'cli'`)
+     * @param array $paths
      *
      * @return Application
      */
-    public static function make($context = self::APP) : Application
+    public static function make(array $paths) : Application
     {
         // The Application is, in effect, a singleton...
         // so if the application already exists then simply return it.
@@ -150,13 +150,13 @@ class AppFactory
         }
 
         // cache AppFactory instance.
-        static::$instance ?: new static($context);
+        static::$instance ?: new static($paths);
 
         // block anything else from making a new Application.
         static::$booted = TRUE;
 
         // make the application
-        $application = static::$instance->make_application($context);
+        $application = static::$instance->make_application($paths);
         Forge::setApplication($application);
 
         return $application;
@@ -205,18 +205,18 @@ class AppFactory
     }
 
     /**
-     * @param $context
+     * @param array $paths
      *
      * @return Application
      */
-    private function make_application($context) : Application
+    private function make_application(array $paths) : Application
     {
         // this is the Illuminate Container
         $container = Forge::getInstance();
-        $container['app.context'] = $context;
+        $container['app.context'] = static::APP;
 
         // we'll start by loading the configuration into the Forge Container
-        $container->add([Paths::class, 'paths'], $paths = new Paths(include BOOT . 'paths.php'));
+        $container->add([Paths::class, 'paths'], new Paths($paths));
         $container->add([Config::class, 'config'], $config = Config::createFromFolder(\CONFIG));
         $container->add([Scope::class, 'context'], function () { return new Scope; });
         $container->add('global.scope', $global_scope = new Scope(static::$env));
@@ -224,7 +224,7 @@ class AppFactory
 
         // the reason we are here
         $app = new NineApplication($container, $config, Events::getInstance());
-        $app['app.context'] = $context;
+        $app['app.context'] = $container['app.context'];
 
         // register the new Application
         $container->add([NineApplication::class, 'app'], $app);

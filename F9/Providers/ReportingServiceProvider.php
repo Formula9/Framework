@@ -19,7 +19,6 @@ use Pimple\Container;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\VarDumper\VarDumper;
-use function Nine\is_not;
 
 /**
  * @package Nine
@@ -46,13 +45,13 @@ class ReportingServiceProvider extends ServiceProvider
 
         $app['debug'] = env('DEBUG');
 
-        is_not($app['debug']) ?: $app['dump'] = $app->protect(function ($var) { return (new VarDumper)->dump($var); });
+        ( ! $app['debug']) ?: $app['dump'] = $app->protect(function ($var) { return (new VarDumper)->{'dump'}($var); });
 
         /** Register the app error factory */
         $app->{'error'}(function (\Exception $e, $code) use ($app) {
 
             //if ($app['debug']) {
-                //return '';
+            //return '';
             //}
 
             // handle HTTP exceptions
