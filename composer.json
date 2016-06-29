@@ -12,7 +12,8 @@
     "autoload"         : {
         "classmap"             : [
             "F9",
-            "Nine"
+            "Nine",
+            "tests"
         ],
         "exclude-from-classmap": [
         ]
