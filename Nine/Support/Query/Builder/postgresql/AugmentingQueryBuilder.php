@@ -1,11 +1,12 @@
-<?php
+<?php namespace Nine\Sql\PostgreSQL;
+
 /**
  * Copyright (C) 2015 David Young
  *
  * Adds PostgreSQL-specific functionality for augmenting queries
  */
-namespace Opulence\QueryBuilders\PostgreSQL;
-use Opulence\QueryBuilders\AugmentingQueryBuilder as BaseAugmentingQueryBuilder;
+
+use Nine\Sql\AugmentingQueryBuilder as BaseAugmentingQueryBuilder;
 
 class AugmentingQueryBuilder extends BaseAugmentingQueryBuilder
 {
@@ -16,6 +17,7 @@ class AugmentingQueryBuilder extends BaseAugmentingQueryBuilder
      * Adds to a "RETURNING" clause
      *
      * @param string $expression,... A variable list of expressions to add to the "RETURNING" clause
+     *
      * @return $this
      */
     public function addReturning($expression)
@@ -32,12 +34,11 @@ class AugmentingQueryBuilder extends BaseAugmentingQueryBuilder
      */
     public function getReturningClauseSQL()
     {
-        if(count($this->returningExpressions) > 0)
-        {
-            return " RETURNING " . implode(", ", $this->returningExpressions);
+        if (count($this->returningExpressions) > 0) {
+            return ' RETURNING ' . implode(', ', $this->returningExpressions);
         }
 
-        return "";
+        return '';
     }
 
     /**
@@ -45,6 +46,7 @@ class AugmentingQueryBuilder extends BaseAugmentingQueryBuilder
      * Only call this method once per query because it will overwrite any previously-set "RETURNING" expressions
      *
      * @param string $expression,... A variable list of expressions to add to the "RETURNING" clause
+     *
      * @return $this
      */
     public function returning($expression)
@@ -53,4 +55,4 @@ class AugmentingQueryBuilder extends BaseAugmentingQueryBuilder
 
         return $this;
     }
-} 
+}

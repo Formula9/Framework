@@ -1,11 +1,12 @@
-<?php
+<?php namespace Nine\Sql\MySQL;
+
 /**
  * Copyright (C) 2015 David Young
  *
  * Builds a delete query
  */
-namespace Opulence\QueryBuilders\MySQL;
-use Opulence\QueryBuilders\DeleteQuery as BaseDeleteQuery;
+
+use Nine\Sql\DeleteQuery as BaseDeleteQuery;
 
 class DeleteQuery extends BaseDeleteQuery
 {
@@ -20,9 +21,8 @@ class DeleteQuery extends BaseDeleteQuery
         $sql = parent::getSQL();
 
         // Add a limit
-        if($this->limit !== -1)
-        {
-            $sql .= " LIMIT " . $this->limit;
+        if ($this->limit !== -1) {
+            $sql .= ' LIMIT ' . $this->limit;
         }
 
         return $sql;
@@ -32,7 +32,8 @@ class DeleteQuery extends BaseDeleteQuery
      * Limits the number of rows returned by the query
      *
      * @param int|string $numRows The number of rows to limit in the results
-     *      or the named placeholder value that will contain the number of rows
+     *                            or the named placeholder value that will contain the number of rows
+     *
      * @return $this
      */
     public function limit($numRows)
@@ -41,4 +42,4 @@ class DeleteQuery extends BaseDeleteQuery
 
         return $this;
     }
-} 
+}

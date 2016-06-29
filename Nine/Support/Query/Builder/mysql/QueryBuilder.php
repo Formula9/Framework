@@ -1,19 +1,20 @@
-<?php
+<?php namespace Nine\Sql\MySQL;
+
 /**
  * Copyright (C) 2015 David Young
  *
- * Programmatically builds up a PostgreSQL query
+ * Builds up a PostgreSQL query
  */
-namespace Opulence\QueryBuilders\MySQL;
+
+use Nine\Sql\QueryBuilder as BaseQueryBuilder;
 use ReflectionClass;
-use Opulence\QueryBuilders\QueryBuilder as BaseQueryBuilder;
 
 class QueryBuilder extends BaseQueryBuilder
 {
     /**
      * @inheritdoc
      */
-    public function delete($tableName, $alias = "")
+    public function delete($tableName, $alias = '')
     {
         return new DeleteQuery($tableName, $alias);
     }
@@ -45,4 +46,4 @@ class QueryBuilder extends BaseQueryBuilder
     {
         return new UpdateQuery($tableName, $alias, $columnNamesToValues);
     }
-} 
+}

@@ -1,11 +1,12 @@
-<?php
+<?php namespace Nine\Sql\MySQL;
+
 /**
  * Copyright (C) 2015 David Young
  *
  * Builds an insert query
  */
-namespace Opulence\QueryBuilders\MySQL;
-use Opulence\QueryBuilders\InsertQuery as BaseInsertQuery;
+
+use Nine\Sql\InsertQuery as BaseInsertQuery;
 
 class InsertQuery extends BaseInsertQuery
 {
@@ -16,7 +17,8 @@ class InsertQuery extends BaseInsertQuery
      * Adds columns to update in the case a row already exists in the table
      *
      * @param array $columnNamesToValues The mapping of column names to their respective values in the case of an
-     *      "ON DUPLICATE KEY UPDATE" clause
+     *                                   "ON DUPLICATE KEY UPDATE" clause
+     *
      * @return $this
      */
     public function addUpdateColumnValues(array $columnNamesToValues)
@@ -37,16 +39,14 @@ class InsertQuery extends BaseInsertQuery
         $sql = parent::getSQL();
 
         // Add a potential "UPDATE"
-        if(count($this->duplicateKeyUpdateColumnNamesToValues) > 0)
-        {
-            $sql .= " ON DUPLICATE KEY UPDATE";
+        if (count($this->duplicateKeyUpdateColumnNamesToValues) > 0) {
+            $sql .= ' ON DUPLICATE KEY UPDATE';
 
-            foreach($this->duplicateKeyUpdateColumnNamesToValues as $columnName => $value)
-            {
-                $sql .= " " . $columnName . " = ?,";
+            foreach ($this->duplicateKeyUpdateColumnNamesToValues as $columnName => $value) {
+                $sql .= ' ' . $columnName . ' = ?,';
             }
 
-            $sql = trim($sql, ",");
+            $sql = trim($sql, ',');
         }
 
         return $sql;
@@ -57,7 +57,8 @@ class InsertQuery extends BaseInsertQuery
      * Only call this method once per query because it will overwrite any previously-set "ON DUPLICATE KEY UPDATE" expressions
      *
      * @param array $columnNamesToValues The mapping of column names to their respective values in the case of an
-     *      "ON DUPLICATE KEY UPDATE" clause
+     *                                   "ON DUPLICATE KEY UPDATE" clause
+     *
      * @return $this
      */
     public function update(array $columnNamesToValues)
@@ -66,4 +67,4 @@ class InsertQuery extends BaseInsertQuery
 
         return $this;
     }
-} 
+}

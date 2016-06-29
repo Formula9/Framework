@@ -1,10 +1,10 @@
-<?php
+<?php namespace Nine\Sql;
+
 /**
  * Copyright (C) 2015 David Young
  *
  * Builds parts of a query that augment (INSERT/UPDATE)
  */
-namespace Opulence\QueryBuilders;
 
 class AugmentingQueryBuilder
 {
@@ -15,6 +15,7 @@ class AugmentingQueryBuilder
      * Adds column values to the query
      *
      * @param array $columnNamesToValues The mapping of column names to their respective values
+     *
      * @return $this
      */
     public function addColumnValues(array $columnNamesToValues)
@@ -31,4 +32,4 @@ class AugmentingQueryBuilder
     {
         return $this->columnNamesToValues;
     }
-} 
+}

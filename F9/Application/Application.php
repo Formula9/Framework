@@ -20,6 +20,7 @@
 
 use App\Events\ApplicationEvent;
 use F9\Events\NineEvents;
+use F9\Exceptions\ApplicationProviderNotFoundException;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Support\Contracts\ServiceProviderInterface;
 use F9\Support\Provider\ServiceProvider;
@@ -35,6 +36,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface as EventDispatche
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use function Nine\elapsed_time_since_request;
+use function Nine\throw_if_not;
 
 /**
  * The Application class is the pivotal object for configuring framework providers
@@ -417,7 +419,12 @@ class Application extends \Silex\Application implements Container
         foreach ((array) $this->settings['providers'] as $provider) {
             /** @var ServiceProviderInterface $new_provider */
             //$new_provider = new $provider($this);
-            $this->register(new $provider($this));
+
+            throw_if_not(class_exists($provider), ApplicationProviderNotFoundException::class, "Provider '$provider' not found.");
+
+            if (class_exists($provider)) {
+                $this->register(new $provider($this));
+            }
         }
 
         $this->boot();

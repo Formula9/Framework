@@ -1,11 +1,12 @@
-<?php
+<?php namespace Nine\Sql\PostgreSQL;
+
 /**
  * Copyright (C) 2015 David Young
  *
  * Builds a select query
  */
-namespace Opulence\QueryBuilders\PostgreSQL;
-use Opulence\QueryBuilders\SelectQuery as BaseSelectQuery;
+
+use Nine\Sql\SelectQuery as BaseSelectQuery;
 
 class SelectQuery extends BaseSelectQuery
 {
