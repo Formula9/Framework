@@ -345,7 +345,7 @@ class Application extends \Silex\Application implements Container
      * @param array  $server
      * @param null   $content
      */
-    public function subRequest($uri, $method = 'GET', $parameters = [], $cookies = [], $files = [], $server = [], $content = NULL)
+    public function subRequest($uri, $method = 'GET', array $parameters = [], array $cookies = [], array $files = [], array $server = [], $content = NULL)
     {
         $this->run(Request::create($uri, $method, $parameters, $cookies, $files, $server, $content), HttpKernelInterface::SUB_REQUEST);
     }
@@ -420,7 +420,9 @@ class Application extends \Silex\Application implements Container
             /** @var ServiceProviderInterface $new_provider */
             //$new_provider = new $provider($this);
 
-            throw_if_not(class_exists($provider), ApplicationProviderNotFoundException::class, "Provider '$provider' not found.");
+            if ( ! class_exists($provider)) {
+                throw new ApplicationProviderNotFoundException("Provider '$provider' not found.");
+            }
 
             if (class_exists($provider)) {
                 $this->register(new $provider($this));
