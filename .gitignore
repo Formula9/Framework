@@ -3,4 +3,5 @@
 /.phpstorm.meta.php
 /pimple.json
 /tests/*
+!/tests/.gitinclude
 /Nine/Support/Query.zip
