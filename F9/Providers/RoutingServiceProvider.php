@@ -23,7 +23,9 @@ class RoutingServiceProvider extends ServiceProvider
     public function boot(Container $app)
     {
         /** @var \Silex\Application $app */
-        $app->mount('', new ControllerRoutingProvider());
+        if (class_exists(ControllerRoutingProvider::class)) {
+            $app->mount('', new ControllerRoutingProvider());
+        }
     }
 
     /**

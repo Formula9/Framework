@@ -18,8 +18,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use App\Events\ApplicationEvent;
-use F9\Events\NineEvents;
 use F9\Exceptions\ApplicationProviderNotFoundException;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Support\Contracts\ServiceProviderInterface;
@@ -430,7 +428,5 @@ class Application extends \Silex\Application implements Container
         }
 
         $this->boot();
-
-        $this['dispatcher']->dispatch(NineEvents::APPLICATION_STARTUP, new ApplicationEvent($this, $this->settings['providers']));
     }
 }
