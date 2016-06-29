@@ -39,8 +39,7 @@
         "symfony/twig-bridge"   : "~3.1",
         "symfony/validator"     : "~3.1",
         "symfony/var-dumper"    : "~3.1",
-        "symfony/yaml"          : "~3.1",
-        "opulence/querybuilders": "^0.6.17"
+        "symfony/yaml"          : "~3.1"
     },
     "require-dev"      : {
         "vlucas/phpdotenv": "^2.1@dev",
