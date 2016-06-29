@@ -2,5 +2,5 @@
 /composer.lock
 /.phpstorm.meta.php
 /pimple.json
-/tests/
+/tests/*
 /Nine/Support/Query.zip
