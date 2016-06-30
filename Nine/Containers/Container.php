@@ -152,6 +152,16 @@ class Container implements ArrayAccess, ContainerContract
     }
 
     /**
+     * @param $key
+     *
+     * @return bool
+     */
+    public function __isset($key) : bool
+    {
+        return $this->bound($key);
+    }
+
+    /**
      * Add a contextual binding to the container.
      *
      * @param  string          $concrete
@@ -225,7 +235,7 @@ class Container implements ArrayAccess, ContainerContract
         // without being forced to state their classes in both of the parameter.
         $this->dropStaleInstances($abstract);
 
-        if (is_null($concrete)) {
+        if (NULL === $concrete) {
             $concrete = $abstract;
         }
 
@@ -319,7 +329,7 @@ class Container implements ArrayAccess, ContainerContract
         // If there are no constructors, that means there are no dependencies then
         // we can just resolve the instances of the objects right away, without
         // resolving any other types or dependencies out of these containers.
-        if (is_null($constructor)) {
+        if (NULL === $constructor) {
             array_pop($this->buildStack);
 
             return new $concrete;
@@ -643,6 +653,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function refresh($abstract, $target, $method)
     {
+        /** @noinspection PhpUnusedParameterInspection */
         return $this->rebinding($this->normalize($abstract), function ($app, $instance) use ($target, $method) {
             $target->{$method}($instance);
         });
@@ -699,7 +710,7 @@ class Container implements ArrayAccess, ContainerContract
             // and return it back to these consumers of the method as an instance.
             static $object;
 
-            if (is_null($object)) {
+            if (NULL === $object) {
                 $object = $closure($container);
             }
 
@@ -814,6 +825,10 @@ class Container implements ArrayAccess, ContainerContract
         static::$instance = $container;
     }
 
+    /****************************************
+     *  P R O T E C T E D    M E T H O D S  *
+     ****************************************/
+
     /**
      * Get the dependency for the given call parameter.
      *
@@ -878,7 +893,7 @@ class Container implements ArrayAccess, ContainerContract
         // to run multiple handler methods in a single class for convenience.
         $method = count($segments) === 2 ? $segments[1] : $defaultMethod;
 
-        if (is_null($method)) {
+        if (NULL === $method) {
             throw new InvalidArgumentException('Method not provided.');
         }
 
@@ -987,7 +1002,7 @@ class Container implements ArrayAccess, ContainerContract
      * Get all callbacks for a given type.
      *
      * @param  string $abstract
-     * @param  object $object
+     * @param         $object
      * @param  array  $callbacksPerType
      *
      * @return array
@@ -1032,7 +1047,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function getConcrete($abstract)
     {
-        if ( ! is_null($concrete = $this->getContextualConcrete($abstract))) {
+        if ( ! NULL === $concrete = $this->getContextualConcrete($abstract)) {
             return $concrete;
         }
 
@@ -1084,7 +1099,7 @@ class Container implements ArrayAccess, ContainerContract
             if (array_key_exists($parameter->name, $primitives)) {
                 $dependencies[] = $primitives[$parameter->name];
             }
-            elseif (is_null($dependency)) {
+            elseif (NULL === $dependency) {
                 $dependencies[] = $this->resolveNonClass($parameter);
             }
             else {
@@ -1286,7 +1301,7 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function resolveNonClass(ReflectionParameter $parameter)
     {
-        if ( ! is_null($concrete = $this->getContextualConcrete('$' . $parameter->name))) {
+        if ( ! NULL === $concrete = $this->getContextualConcrete('$' . $parameter->name)) {
             if ($concrete instanceof Closure) {
                 return $concrete ($this);
             }
