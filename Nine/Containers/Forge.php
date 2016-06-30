@@ -14,14 +14,15 @@
  *  licenses where obtainable.
  */
 
+namespace Nine\Containers;
+
+use ErrorException;
 use F9\Application\Application;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Exceptions\ContainerConflictError;
 use F9\Exceptions\DependencyInstanceNotFound;
 use F9\Support\Provider\PimpleDumpProvider;
 use Nine\Collections\Config;
-use Nine\Containers\Container;
-use Nine\Containers\ContainerInterface;
 use Nine\Library\Lib;
 
 /**

@@ -14,10 +14,10 @@
  *  licenses where obtainable.
  */
 
-use Forge;
 use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
+use Nine\Containers\Forge;
 use Nine\Exceptions\DBUnrecognizedMethodCall;
 
 /**

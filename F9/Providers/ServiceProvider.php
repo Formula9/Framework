@@ -19,8 +19,8 @@
  */
 
 use F9\Application\Application;
-use Forge;
 use Nine\Collections\Config;
+use Nine\Containers\Forge;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface as PimpleServiceProviderInterface;
 
@@ -32,7 +32,7 @@ abstract class ServiceProvider implements PimpleServiceProviderInterface
     /** @var Config */
     protected $config;
 
-    /** @var \Forge $container */
+    /** @var \Nine\Containers\Forge $container */
     protected $container;
 
     public function __construct(Application $application)

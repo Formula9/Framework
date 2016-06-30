@@ -21,10 +21,10 @@
 use F9\Application\Application as NineApplication;
 use F9\Exceptions\ConfigurationException;
 use F9\Exceptions\FeatureNotImplemented;
-use Forge;
 use Nine\Collections\Config;
 use Nine\Collections\Paths;
 use Nine\Collections\Scope;
+use Nine\Containers\Forge;
 use Nine\Events\Events;
 use Silex\Application as SilexApplication;
 use Silex\ExceptionHandler;

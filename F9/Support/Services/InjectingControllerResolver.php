@@ -18,8 +18,8 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Forge;
 use Nine\Containers\ContainerInterface;
+use Nine\Containers\Forge;
 use Nine\Reflector;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface as PimpleServiceProviderInterface;

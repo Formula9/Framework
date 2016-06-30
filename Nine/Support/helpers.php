@@ -279,7 +279,7 @@ if ( ! function_exists('scope')) {
     function scope() : Scope
     {
         static $gs;
-        $gs = $gs ?: \Forge::find('global.scope');
+        $gs = $gs ?: Containers\Forge::find('global.scope');
 
         return $gs;
     }
