@@ -1,4 +1,4 @@
-<?php
+<?php namespace Nine\Database;
 
 /**
  * F9 (Formula Nine) Personal PHP Framework
@@ -14,12 +14,12 @@
  *  licenses where obtainable.
  */
 
+use Forge;
+use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Query\Builder;
 use Nine\DatabaseInterface;
 use Nine\Exceptions\DBUnrecognizedMethodCall;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Query\Builder;
-use Nine\Database;
 
 /**
  * DB is a convenience class that encapsulates method access to the

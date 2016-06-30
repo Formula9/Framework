@@ -12,7 +12,7 @@ use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Exceptions\DependencyInstanceNotFound;
 use Forge;
 use Illuminate\Filesystem\ClassFinder;
-use Nine\Database;
+use Nine\Database\Database;
 use Pimple\Container;
 use Silex\Api\EventListenerProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

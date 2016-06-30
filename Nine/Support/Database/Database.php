@@ -1,4 +1,4 @@
-<?php namespace Nine;
+<?php namespace Nine\Database;
 
 /**
  * F9 (Formula 9) Personal PHP Framework
@@ -19,7 +19,11 @@
  */
 
 use Aura\Sql\ExtendedPdo;
+use Nine\bool;
 use Nine\Collections\Collection;
+use Nine\DatabaseInterface;
+use Nine\int;
+use Nine\string;
 use PDO;
 
 /**
