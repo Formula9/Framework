@@ -20,7 +20,6 @@
 
 use Aura\Sql\ExtendedPdo;
 use Nine\Collections\Collection;
-use Nine\DatabaseInterface;
 use PDO;
 
 /**

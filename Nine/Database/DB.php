@@ -18,7 +18,6 @@ use Forge;
 use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
-use Nine\DatabaseInterface;
 use Nine\Exceptions\DBUnrecognizedMethodCall;
 
 /**
