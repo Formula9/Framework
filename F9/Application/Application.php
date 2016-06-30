@@ -34,7 +34,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface as EventDispatche
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use function Nine\elapsed_time_since_request;
-use function Nine\throw_if_not;
 
 /**
  * The Application class is the pivotal object for configuring framework providers
