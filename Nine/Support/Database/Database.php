@@ -19,11 +19,8 @@
  */
 
 use Aura\Sql\ExtendedPdo;
-use Nine\bool;
 use Nine\Collections\Collection;
 use Nine\DatabaseInterface;
-use Nine\int;
-use Nine\string;
 use PDO;
 
 /**
