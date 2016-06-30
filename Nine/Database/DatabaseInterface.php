@@ -1,8 +1,6 @@
 <?php namespace Nine\Database;
 
-use Nine\bool;
 use Nine\Collections\Collection;
-use Nine\int;
 use PDO;
 
 /**
