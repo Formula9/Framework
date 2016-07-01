@@ -114,6 +114,7 @@ class DatabaseServiceProvider extends ServiceProvider implements EventListenerPr
             $app['nine.db'] = function () use ($config_database) { return new Database($config_database); };
             $app['database'] = function ($app) { return $app['nine.db']; };
 
+            /** @noinspection PhpUndefinedMethodInspection */
             $pdo = $app['database']->getPDO();
 
             $app['pdo'] = $pdo;
@@ -135,7 +136,7 @@ class DatabaseServiceProvider extends ServiceProvider implements EventListenerPr
         if ($this->config['database.eloquent_enabled']) {
             // register all of the model classes
             foreach ((new ClassFinder)->findClasses(path('database') . 'models') as $model) {
-                Forge::set($model, function ($app) use ($model) { return new $model; });
+                Forge::set($model, function () use ($model) { return new $model; });
             }
         }
     }

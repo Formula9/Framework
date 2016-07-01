@@ -45,10 +45,11 @@ class ReportingServiceProvider extends ServiceProvider
 
         $app['debug'] = env('DEBUG');
 
-        ( ! $app['debug']) ?: $app['dump'] = $app->protect(function ($var) { return (new VarDumper)->{'dump'}($var); });
+        ( ! $app['debug']) ?: $app['dump'] = $app->protect(function ($var) { return (new VarDumper)::dump($var); });
 
         /** Register the app error factory */
-        $app->{'error'}(function (\Exception $e, $code) use ($app) {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $app->error(function (\Exception $e) use ($app) {
 
             //if ($app['debug']) {
             //return '';
@@ -58,6 +59,7 @@ class ReportingServiceProvider extends ServiceProvider
             if (get_class($e) === NotFoundHttpException::class) {
 
                 /** @var NotFoundHttpException $e */
+                /** @noinspection DegradedSwitchInspection */
                 switch ($e->getStatusCode()) {
                     case 404: {
                         return response(view('404.html', ['error' => '404 - Page Not Found.']), 404);
