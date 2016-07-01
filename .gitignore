@@ -5,3 +5,4 @@
 /tests/*
 !/tests/.gitinclude
 /Nine/Support/Query.zip
+/Nine/Contracts/Container/
