@@ -20,28 +20,29 @@
     },
     "minimum-stability": "stable",
     "require"          : {
-        "php"                   : "^7.0.4",
+        "php"                  : "^7.0.4",
 
-        "silex/silex"           : "2.0.*",
-        "aura/sql"              : "^2.4",
+        "silex/silex"          : "2.0.*",
 
-        "illuminate/database"   : "~5.2",
-        "illuminate/support"    : "~5.2",
-        "illuminate/events"     : "~5.2",
-        "illuminate/filesystem" : "~5.2",
-        "illuminate/view"       : "~5.2",
+        "aura/sql"             : "^2.5",
+        "aura/sqlquery"        : "^2.6",
 
-        "symfony/console"       : "~3.1",
-        "symfony/form"          : "~3.1",
-        "symfony/security"      : "~3.1",
-        "symfony/serializer"    : "~3.1",
-        "symfony/stopwatch"     : "~3.1",
-        "symfony/translation"   : "~3.1",
-        "symfony/twig-bridge"   : "~3.1",
-        "symfony/validator"     : "~3.1",
-        "symfony/var-dumper"    : "~3.1",
-        "symfony/yaml"          : "~3.1",
-        "aura/sqlquery": "^2.6"
+        "illuminate/database"  : "~5.2",
+        "illuminate/support"   : "~5.2",
+        "illuminate/events"    : "~5.2",
+        "illuminate/filesystem": "~5.2",
+        "illuminate/view"      : "~5.2",
+
+        "symfony/console"      : "~3.1",
+        "symfony/form"         : "~3.1",
+        "symfony/security"     : "~3.1",
+        "symfony/serializer"   : "~3.1",
+        "symfony/stopwatch"    : "~3.1",
+        "symfony/translation"  : "~3.1",
+        "symfony/twig-bridge"  : "~3.1",
+        "symfony/validator"    : "~3.1",
+        "symfony/var-dumper"   : "~3.1",
+        "symfony/yaml"         : "~3.1"
     },
     "require-dev"      : {
         "vlucas/phpdotenv": "^2.1@dev",
