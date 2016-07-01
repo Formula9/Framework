@@ -22,6 +22,11 @@ use Silex\ServiceControllerResolver;
 use Symfony\Bridge\Twig\DataCollector\TwigDataCollector;
 use Symfony\Bridge\Twig\Extension\CodeExtension;
 use Symfony\Bridge\Twig\Extension\ProfilerExtension;
+use Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController;
+use Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController;
+use Symfony\Bundle\WebProfilerBundle\Controller\RouterController;
+use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener;
+use Symfony\Bundle\WebProfilerBundle\Twig\WebProfilerExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\DataCollector\FormDataCollector;
 use Symfony\Component\Form\Extension\DataCollector\FormDataExtractor;
@@ -121,14 +126,14 @@ class F9WebProfilerServiceProvider implements ServiceProviderInterface, Controll
 
         $app['data_collectors'] = function ($app) {
             return [
-                'config'    => function () { return new ConfigDataCollector('Formula Nine', NineApplication::VERSION); },
-                'request'   => function () { return new RequestDataCollector(); },
-                'exception' => function () { return new ExceptionDataCollector(); },
-                'events'    => function () use ($app) { return new EventDataCollector($app['dispatcher']); },
-                'logger'    => function () use ($app) { return new LoggerDataCollector($app['logger']); },
-                'time'      => function () use ($app) { return new TimeDataCollector(NULL, $app['stopwatch']); },
-                'router'    => function () { return new RouterDataCollector(); },
-                'memory'    => function () { return new MemoryDataCollector(); },
+                'config'    => function ($app) { return new ConfigDataCollector('Formula Nine', NineApplication::VERSION); },
+                'request'   => function ($app) { return new RequestDataCollector(); },
+                'exception' => function ($app) { return new ExceptionDataCollector(); },
+                'events'    => function ($app) { return new EventDataCollector($app['dispatcher']); },
+                'logger'    => function ($app) { return new LoggerDataCollector($app['logger']); },
+                'time'      => function ($app) { return new TimeDataCollector(NULL, $app['stopwatch']); },
+                'router'    => function ($app) { return new RouterDataCollector(); },
+                'memory'    => function ($app) { return new MemoryDataCollector(); },
             ];
         };
 
@@ -136,7 +141,7 @@ class F9WebProfilerServiceProvider implements ServiceProviderInterface, Controll
             $app['data_collectors.form.extractor'] = function () { return new FormDataExtractor(); };
 
             $app->extend('data_collectors', function ($collectors, $app) {
-                $collectors['form'] = function () use ($app) { return new FormDataCollector($app['data_collectors.form.extractor']); };
+                $collectors['form'] = function ($app) { return new FormDataCollector($app['data_collectors.form.extractor']); };
 
                 return $collectors;
             });

@@ -11,12 +11,12 @@
  */
 
 use F9\Events\NineEvents;
-use Illuminate\Contracts\Queue\EntityResolver;
 use Illuminate\Database\ConnectionResolver;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\QueueEntityResolver;
+use Nine\Events\Events;
 use Pimple\Container;
 
 class EloquentServiceProvider extends ServiceProvider
@@ -28,8 +28,8 @@ class EloquentServiceProvider extends ServiceProvider
      */
     public function boot(Container $app)
     {
-        $this->bootModels($this->buildConnection($this->config->get('database.connections.default')));
-        $this->container->get('nine.events')->dispatchEvent(NineEvents::ORM_BOOTED, [$app['db']]);
+        $this->bootModels($this->buildConnection($this->config['database.connections.default']));
+        $app['nine.events']->dispatchEvent(NineEvents::ORM_BOOTED, [$app['db']]);
     }
 
     /**
@@ -43,15 +43,15 @@ class EloquentServiceProvider extends ServiceProvider
 
         $this->registerFactories();
 
-        $app['db.factory'] = function () use ($forge) {
+        $app['db.factory'] = function ($app) use ($forge) {
             return $forge['db.factory'];
         };
 
-        $app['db'] = function () use ($forge) {
+        $app['db'] = function ($app) use ($forge) {
             return $forge['db'];
         };
 
-        $app['db.connection'] = $app->factory(function () use ($forge) {
+        $app['db.connection'] = $app->factory(function ($app) use ($forge) {
             return $forge['db.connection'];
         });
     }
@@ -77,7 +77,7 @@ class EloquentServiceProvider extends ServiceProvider
         Model::setEventDispatcher($this->app['illuminate.events']);
         Model::setConnectionResolver($resolver);
 
-        $this->container->get('nine.events')->dispatchEvent(NineEvents::MODELS_BOOTED);
+        $this->app['nine.events']->dispatchEvent(NineEvents::MODELS_BOOTED);
     }
 
     /**
@@ -142,7 +142,7 @@ class EloquentServiceProvider extends ServiceProvider
     protected function registerQueueableEntityResolver()
     {
         $this->container->singleton(
-            EntityResolver::class,
+            \Illuminate\Contracts\Queue\EntityResolver::class,
             function () {
                 return new QueueEntityResolver;
             });
