@@ -1,7 +1,9 @@
 <?php namespace Nine\Database;
 
 use Aura\Sql\ExtendedPdo;
+use Nine\Exceptions\DbCannotRemoveCachedConnection;
 use Nine\Exceptions\DBConnectionNotFound;
+use Nine\Exceptions\DBDuplicateConnection;
 use Nine\Library\Arrays;
 use PDO;
 
@@ -53,6 +55,16 @@ class Connections
     }
 
     /**
+     * @param string $name
+     */
+    public function closeConnection(string $name)
+    {
+        if ($this->isCached($name)) {
+            Arrays::array_forget($this->cache, $name);
+        }
+    }
+
+    /**
      * Get a configuration attribute or return $default value if not found.
      *
      * @param string     $key
@@ -63,6 +75,15 @@ class Connections
     public function getConfig(string $key, $default = NULL)
     {
         return Arrays::array_query($this->config, $key, $default);
+    }
+
+    /**
+     * @param array $config
+     */
+    public function setConfig(array $config)
+    {
+        $this->config = [];
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -91,20 +112,67 @@ class Connections
     /**
      * @param string $name
      *
+     * @return array
+     * @throws DBConnectionNotFound
+     */
+    public function getConnectionSettings(string $name) : array
+    {
+        if ( ! $this->hasConnection($name)) {
+            throw new DBConnectionNotFound("Connection `$name` does not exist.");
+        }
+
+        return $this->config['connections'][$name];
+    }
+
+    /**
+     * @param string $name
+     *
      * @return bool
      */
-    public function isCached(string $name) : bool
+    public function hasConnection(string $name) : bool
     {
         return isset($this->connections[$name]);
     }
 
     /**
-     * @param array $config
+     * @param string $name
+     *
+     * @return bool
      */
-    public function setConfig(array $config)
+    public function isCached(string $name) : bool
     {
-        $this->config = [];
-        $this->config = array_merge($this->config, $config);
+        return isset($this->cache[$name]);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @throws DbCannotRemoveCachedConnection
+     */
+    public function removeConnection(string $name)
+    {
+        if ($this->isCached($name)) {
+            throw new DbCannotRemoveCachedConnection("Connection `$name` is active and therefore cannot be removed.");
+        }
+
+        if ($this->hasConnection($name)) {
+            Arrays::array_forget($this->connections, $name);
+        }
+    }
+
+    /**
+     * @param string $name
+     * @param array  $settings
+     *
+     * @throws DBDuplicateConnection
+     */
+    public function setConnection(string $name, array $settings)
+    {
+        if ($this->hasConnection($name)) {
+            throw new DBDuplicateConnection("Connection already has `$name`. Duplicates are not allowed. Try removing first.");
+        }
+
+        $this->connections[$name] = $settings;
     }
 
     /**
