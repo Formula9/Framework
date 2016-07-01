@@ -124,16 +124,6 @@ class Config extends Collection implements ConfigInterface
     }
 
     /**
-     * @param $abstract
-     *
-     * @return mixed
-     */
-    public static function setting($abstract)
-    {
-        return parent::all()[$abstract];
-    }
-
-    /**
      * Register a configuration using the base name of the file.
      *
      * @param        $extension
