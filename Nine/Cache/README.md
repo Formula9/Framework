@@ -1,11 +1,12 @@
-Cache classes are either copies or modified versions of the Opulence/Cache repository.
+_Cache classes are either copies or modified versions of the Opulence/Cache repository._
 
-Originals are Copyright (C) 2015 David Young
+Originals are _Copyright (C) 2015 David Young_
+
 Additions and changes by Greg Truesdell
 
 License for code by David Young:
 
-The MIT License (MIT)
+##The MIT License (MIT)
 
 Copyright (C) 2016 David Young
 
