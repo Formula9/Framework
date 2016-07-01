@@ -9,8 +9,8 @@ use Illuminate\View\Factory as IlluminateViewFactory;
 use Illuminate\View\FileViewFinder;
 use Nine\Views\Blade;
 use Nine\Views\BladeConfigurationSet;
-use Nine\Views\BladeViewConfigurationInterface;
 use Nine\Views\BladeView;
+use Nine\Views\BladeViewConfigurationInterface;
 use Pimple\Container;
 
 /**
@@ -41,8 +41,9 @@ class BladeViewServiceProvider extends ServiceProvider
                 ]);
             };
 
-            $app['nine.container']
-                ->add([BladeConfigurationSet::class, BladeViewConfigurationInterface::class], function () use ($app) { return $app['blade.context']; });
+            $this->container
+                ->add([BladeConfigurationSet::class, BladeViewConfigurationInterface::class],
+                    function () use ($app) { return $app['blade.context']; });
 
             // for dependency injection. ie: DI::make(BladeView::class)
             $app[BladeViewConfigurationInterface::class] = function ($app) { return $app['blade.context']; };
