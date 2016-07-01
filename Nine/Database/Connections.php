@@ -65,12 +65,6 @@ class Connections
         return Arrays::array_query($this->config, $key, $default);
     }
 
-    public function getCache()
-    {
-        //return (new \ArrayObject($this->cache))->getArrayCopy(); # ::getArrayCopy($this->cache);
-        return $this->cache;
-    }
-
     /**
      * @param string $name
      *
@@ -104,6 +98,9 @@ class Connections
         return isset($this->connections[$name]);
     }
 
+    /**
+     * @param array $config
+     */
     public function setConfig(array $config)
     {
         $this->config = [];
