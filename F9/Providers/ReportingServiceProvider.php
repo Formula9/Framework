@@ -51,10 +51,6 @@ class ReportingServiceProvider extends ServiceProvider
         /** @noinspection PhpUndefinedMethodInspection */
         $app->error(function (\Exception $e) use ($app) {
 
-            //if ($app['debug']) {
-            //return '';
-            //}
-
             // handle HTTP exceptions
             if (get_class($e) === NotFoundHttpException::class) {
 

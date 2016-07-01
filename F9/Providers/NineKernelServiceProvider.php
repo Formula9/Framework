@@ -23,7 +23,7 @@ class NineKernelServiceProvider extends ServiceProvider implements EventListener
     public function register(Container $app)
     {
         $app['resolver'] = function ($app) {
-            return new ControllerResolver($app, $app['logger']);
+            return new ControllerResolver($app['app'], $app['logger']);
         };
 
         $app['kernel'] = function ($app) {
@@ -46,7 +46,7 @@ class NineKernelServiceProvider extends ServiceProvider implements EventListener
     public function subscribe(Container $app, EventDispatcherInterface $dispatcher)
     {
         $dispatcher->addSubscriber(new ResponseListener($app['charset']));
-        $dispatcher->addSubscriber(new MiddlewareListener($app));
+        $dispatcher->addSubscriber(new MiddlewareListener($app['app']));
         $dispatcher->addSubscriber(new ConverterListener($app['routes'], $app['callback_resolver']));
         $dispatcher->addSubscriber(new StringToResponseListener());
     }
