@@ -29,6 +29,21 @@ class Connections
     }
 
     /**
+     * @param string $name
+     * @param array  $settings
+     *
+     * @throws DBDuplicateConnection
+     */
+    public function addConnection(string $name, array $settings)
+    {
+        if ($this->hasConnection($name)) {
+            throw new DBDuplicateConnection("Connection already has `$name`. Duplicates are not allowed. Try removing first.");
+        }
+
+        $this->connections[$name] = $settings;
+    }
+
+    /**
      * Replaces or inserts alternate values.
      *
      * @param array $config
@@ -87,6 +102,12 @@ class Connections
     }
 
     /**
+     * Gets a connection from the cache or opens a new one using the name as the key.
+     *
+     * If, for whatever reason, the DSN is not included in the connection settings,
+     * then on a successful connection the DSN is copied and saved in the configuration.
+     * This should probably be avoided.
+     *
      * @param string $name
      *
      * @return PDO
@@ -104,9 +125,17 @@ class Connections
             return $this->cache[$name];
         }
 
+        // get the connection settings
         $connection = $this->connections[$name];
+        // retrieve and cache the connection if successful
+        $this->cache[$name] = $this->makeDriverConnection($connection['driver'], $connection);
 
-        return $this->cache[$name] = $this->makeDriverConnection($connection['driver'], $connection);
+        if ( ! array_key_exists('dsn', $this->connections[$name])) {
+            $this->connections[$name]['dsn'] = $connection['dsn'];
+            $this->config['connections'][$name]['dsn'] = $connection['dsn'];
+        }
+
+        return $this->cache[$name];
     }
 
     /**
@@ -161,44 +190,37 @@ class Connections
     }
 
     /**
-     * @param string $name
-     * @param array  $settings
-     *
-     * @throws DBDuplicateConnection
-     */
-    public function setConnection(string $name, array $settings)
-    {
-        if ($this->hasConnection($name)) {
-            throw new DBDuplicateConnection("Connection already has `$name`. Duplicates are not allowed. Try removing first.");
-        }
-
-        $this->connections[$name] = $settings;
-    }
-
-    /**
      * @param string $driver
      * @param array  $connection
      *
      * @return ExtendedPdo|PDO
      */
-    private function makeDriverConnection(string $driver, array $connection)
+    private function makeDriverConnection(string $driver, array &$connection)
     {
         if ($driver === 'sqlite') {
 
-            $dsn = "{$connection['driver']}:{$connection['database']}";
-            $PDO = new ExtendedPdo($dsn, [], [
+            $dsn = $connection['dsn'] ?? "{$connection['driver']}:{$connection['database']}";
+
+            $PDO = new PDO($dsn, [], [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]);
+
+            // register the dsn if not already registered
+            $connection['dsn'] = isset($connection['dsn']) ?? $dsn;
 
             return new ExtendedPdo($PDO);
         }
 
-        $dsn = "{$driver}:host={$connection['host']};dbname={$connection['database']}";
+        $dsn = $connection['dsn'] ?? "{$driver}:host={$connection['host']};dbname={$connection['database']}";
+
         $PDO = new PDO(
             $dsn,
             $connection['username'],
             $connection['password']
         );
+
+        // register the dsn if not already registered
+        $connection['dsn'] = isset($connection['dsn']) ?? $dsn;
 
         $PDO->setAttribute(PDO::ATTR_EMULATE_PREPARES, TRUE);
         $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
