@@ -61,12 +61,13 @@ class NineBase
     }
 
     /**
+     * @param int               $fetch
      * @param PDOStatement|NULL $statement If the statement is NULL then use the statement from the last query
      *
      * @return Collection
      * @throws DBInvalidStatement
      */
-    public function collect(PDOStatement $statement = NULL)
+    public function collect($fetch = PDO::FETCH_ASSOC, PDOStatement $statement = NULL)
     {
         $statement = $statement ?: $this->statement;
 
@@ -74,7 +75,7 @@ class NineBase
             throw new DBInvalidStatement('No valid statement was provided or found.');
         }
 
-        return new Collection($statement->fetchAll(PDO::FETCH_ASSOC));
+        return new Collection($statement->fetchAll($fetch));
 
     }
 
@@ -216,14 +217,26 @@ class NineBase
      *
      * This is useful for a lot of purposes - including using it with collect().
      *
+     * Examples:
+     *
+     *      $db->connect('default')->execute('select * from users')->collect();
+     *
+     *      $db->connect('default')->execute($db->build('select')->from('users')->cols(['*']))->collect();
+     *
+     *      $db->connect('default')->execute('select * from users');
+     *      $stmt = $db->getStatement();
+     *      $db->collect($stmt);
+     *
      * @param DBQueryInterface|string $sql
      * @param array                   $values
      *
-     * @return PDOStatement
+     * @return NineBase
      */
-    public function queryStatement($sql, array $values = [])
+    public function execute($sql, array $values = []) : NineBase
     {
-        return $this->query_sql($sql, $values);
+        $this->query_sql($sql, $values);
+
+        return $this;
     }
 
     /**
