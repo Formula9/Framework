@@ -184,8 +184,8 @@ class NineBase
     /**
      * Returns the results of the query as a Collection.
      *
-     * @param $sql
-     * @param $values
+     * @param DBQueryInterface|string $sql
+     * @param                         $values
      *
      * Example using the query builder:
      *
@@ -201,14 +201,29 @@ class NineBase
     }
 
     /**
-     * @param $sql
-     * @param $values
+     * @param DBQueryInterface|string $sql
+     * @param                         $values
      *
      * @return array
      */
     public function queryFirst($sql, $values)
     {
         return $this->query($sql, $values);
+    }
+
+    /**
+     * Executes a query and returns the resultant statement without fetching.
+     *
+     * This is useful for a lot of purposes - including using it with collect().
+     *
+     * @param DBQueryInterface|string $sql
+     * @param array                   $values
+     *
+     * @return PDOStatement
+     */
+    public function queryStatement($sql, array $values = [])
+    {
+        return $this->query_sql($sql, $values);
     }
 
     /**
