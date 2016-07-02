@@ -83,12 +83,12 @@ trait Support
                     return value($default);
                 }
 
-                $result = Arrays::array_extract($target, $key);
+                $result = Lib::array_extract($target, $key);
 
-                return in_array('*', $key, TRUE) ? Arrays::collapse($result) : $result;
+                return in_array('*', $key, TRUE) ? Lib::collapse($result) : $result;
             }
 
-            if (Arrays::array_accessible($target) && Arrays::key_exists($target, $segment)) {
+            if (Lib::array_accessible($target) && Lib::key_exists($target, $segment)) {
                 $target = $target[$segment];
             }
             elseif (is_object($target) && isset($target->{$segment})) {
@@ -119,7 +119,7 @@ trait Support
         if (($segment = array_shift($segments)) === '*') {
             /** @noinspection NotOptimalIfConditionsInspection */
             /** @noinspection ReferenceMismatchInspection */
-            if ( ! Arrays::array_accessible($target)) {
+            if ( ! Lib::array_accessible($target)) {
                 $target = [];
             }
 
@@ -136,17 +136,17 @@ trait Support
             }
         }
         /** @noinspection ReferenceMismatchInspection */
-        elseif (Arrays::array_accessible($target)) {
+        elseif (Lib::array_accessible($target)) {
             if ($segments) {
                 /** @noinspection ReferenceMismatchInspection */
-                if ( ! Arrays::key_exists($target, $segment)) {
+                if ( ! Lib::key_exists($target, $segment)) {
                     $target[$segment] = [];
                 }
 
                 static::data_set($target[$segment], $segments, $value, $overwrite);
             }
             /** @noinspection ReferenceMismatchInspection */
-            elseif ($overwrite || ! Arrays::key_exists($target, $segment)) {
+            elseif ($overwrite || ! Lib::key_exists($target, $segment)) {
                 $target[$segment] = $value;
             }
         }
@@ -256,7 +256,7 @@ trait Support
     {
         $list = [];
 
-        if (Arrays::is_assoc($array)) {
+        if (Lib::is_assoc($array)) {
             foreach ($array as $key => $value)
                 $list[] = $key . '=`' . $value . '`';
 
@@ -277,7 +277,7 @@ trait Support
      */
     public static function normalize_path($path)
     {
-        return Strings::strip_tail('/', realpath($path)) . '/';
+        return Lib::strip_tail('/', realpath($path)) . '/';
     }
 
     /**

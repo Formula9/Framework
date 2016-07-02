@@ -4,7 +4,7 @@ use Aura\Sql\ExtendedPdo;
 use Nine\Exceptions\DbCannotRemoveCachedConnection;
 use Nine\Exceptions\DBConnectionNotFound;
 use Nine\Exceptions\DBDuplicateConnection;
-use Nine\Library\Arrays;
+use Nine\Library\Lib;
 use PDO;
 
 /**
@@ -75,7 +75,7 @@ class Connections
     public function closeConnection(string $name)
     {
         if ($this->isCached($name)) {
-            Arrays::array_forget($this->cache, $name);
+            Lib::array_forget($this->cache, $name);
         }
     }
 
@@ -89,7 +89,7 @@ class Connections
      */
     public function getConfig(string $key, $default = NULL)
     {
-        return Arrays::array_query($this->config, $key, $default);
+        return Lib::array_query($this->config, $key, $default);
     }
 
     /**
@@ -185,7 +185,7 @@ class Connections
         }
 
         if ($this->hasConnection($name)) {
-            Arrays::array_forget($this->connections, $name);
+            Lib::array_forget($this->connections, $name);
         }
     }
 
