@@ -332,24 +332,6 @@ trait Support
      * Note that if the array already has an element `x.y.z`, then its value will be returned
      * instead of going through the sub-arrays.
      *
-     * Below are some usage examples,
-     *
-     * ~~~
-     * // working with array
-     * $username = Arr::getValue($_POST, 'username');
-     *
-     * // working with object
-     * $username = Arr::getValue($user, 'username');
-     *
-     * // working with anonymous function
-     * $fullName = Arr::getValue($user, function ($user, $defaultValue) {
-     *     return $user->firstName . ' ' . $user->lastName;
-     * });
-     *
-     * // using dot format to retrieve the property of embedded object
-     * $street = Arr::getValue($users, 'address.street');
-     * ~~~
-     *
      * @param array|mixed $array       array or object to extract value from
      * @param string      $key         key name of the array element, or property name of the object,
      *                                 or an anonymous function returning the value. The anonymous function signature
