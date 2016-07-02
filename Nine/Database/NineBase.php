@@ -126,6 +126,33 @@ class NineBase
     }
 
     /**
+     * Executes a query and returns the resultant statement without fetching.
+     *
+     * This is useful for a lot of purposes - including using it with collect().
+     *
+     * Examples:
+     *
+     *      $db->connect('default')->execute('select * from users')->collect();
+     *
+     *      $db->connect('default')->execute($db->build('select')->from('users')->cols(['*']))->collect();
+     *
+     *      $db->connect('default')->execute('select * from users');
+     *      $stmt = $db->getStatement();
+     *      $db->collect($stmt);
+     *
+     * @param DBQueryInterface|string $sql
+     * @param array                   $values
+     *
+     * @return NineBase
+     */
+    public function execute($sql, array $values = []) : NineBase
+    {
+        $this->query_sql($sql, $values);
+
+        return $this;
+    }
+
+    /**
      * @return PDO|ExtendedPdo|null
      */
     public function getConnection() : PDO
@@ -226,33 +253,6 @@ class NineBase
     }
 
     /**
-     * Executes a query and returns the resultant statement without fetching.
-     *
-     * This is useful for a lot of purposes - including using it with collect().
-     *
-     * Examples:
-     *
-     *      $db->connect('default')->execute('select * from users')->collect();
-     *
-     *      $db->connect('default')->execute($db->build('select')->from('users')->cols(['*']))->collect();
-     *
-     *      $db->connect('default')->execute('select * from users');
-     *      $stmt = $db->getStatement();
-     *      $db->collect($stmt);
-     *
-     * @param DBQueryInterface|string $sql
-     * @param array                   $values
-     *
-     * @return NineBase
-     */
-    public function execute($sql, array $values = []) : NineBase
-    {
-        $this->query_sql($sql, $values);
-
-        return $this;
-    }
-
-    /**
      * @param DBQueryInterface|string $sql
      * @param array                   $values
      *
@@ -271,17 +271,6 @@ class NineBase
         }
 
         return $this->statement;
-    }
-
-    public function getPage(int $page_num, $page_size = 15)
-    {
-        $page = 1;
-        $limit = 20;
-        $start = $page * $limit;
-
-        $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-        $sth = $conn->prepare("SELECT * FROM directory WHERE user_active LIMIT ?,?");
-        $sth->execute([$start, $limit]);
     }
 
 }
