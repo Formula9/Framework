@@ -124,6 +124,15 @@ class Forge extends Container implements ContainerInterface
     }
 
     /**
+     * @param array|string $abstract
+     * @param null         $concrete
+     */
+    public function singleton($abstract, $concrete = NULL)
+    {
+        $this->add($abstract, $concrete, static::SHARED);
+    }
+
+    /**
      * Call the given Closure / class@method and inject its dependencies.
      *
      * Note: Uses the illuminate/container `call()` method.
