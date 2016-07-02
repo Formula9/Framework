@@ -169,7 +169,7 @@ class NineBase
      *
      * @return Collection
      */
-    public function queryAll($sql, $values)
+    public function queryAll($sql, array $values = [])
     {
         return $this->query($sql, $values, TRUE);
     }
