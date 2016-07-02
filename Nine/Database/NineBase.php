@@ -6,6 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Aura\Sql\ExtendedPdo;
 use Aura\SqlQuery\QueryFactory;
 use Nine\Collections\Collection;
 use Nine\Exceptions\DBConnectionFailed;
@@ -69,14 +70,17 @@ class NineBase
      */
     public function collect($fetch = PDO::FETCH_ASSOC, PDOStatement $statement = NULL)
     {
+        // use last statement if none is passed
         $statement = $statement ?: $this->statement;
+        // use FETCH_ASSOC if null or other falsey is passed (an odd event indeed)
+        $fetch = $fetch ?: PDO::FETCH_ASSOC;
 
+        // validate the statement
         if (NULL === $statement or ! $statement instanceof PDOStatement) {
             throw new DBInvalidStatement('No valid statement was provided or found.');
         }
 
         return new Collection($statement->fetchAll($fetch));
-
     }
 
     /**
@@ -122,7 +126,7 @@ class NineBase
     }
 
     /**
-     * @return PDO|null
+     * @return PDO|ExtendedPdo|null
      */
     public function getConnection() : PDO
     {
@@ -162,6 +166,10 @@ class NineBase
     }
 
     /**
+     * Returns either all results as a Collection or only the first result.
+     *
+     * Use `getStatement()` immediately following the query to get the PDOStatement.
+     *
      * @param DBQueryInterface|string $sql
      * @param array                   $values
      * @param bool                    $all
@@ -209,6 +217,11 @@ class NineBase
      */
     public function queryFirst($sql, $values)
     {
+        if ($sql instanceof DBQueryInterface) {
+            $sql = $sql->getStatement();
+            $sql .= ' limit 1';
+        }
+
         return $this->query($sql, $values);
     }
 
@@ -258,6 +271,17 @@ class NineBase
         }
 
         return $this->statement;
+    }
+
+    public function getPage(int $page_num, $page_size = 15)
+    {
+        $page = 1;
+        $limit = 20;
+        $start = $page * $limit;
+
+        $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+        $sth = $conn->prepare("SELECT * FROM directory WHERE user_active LIMIT ?,?");
+        $sth->execute([$start, $limit]);
     }
 
 }
