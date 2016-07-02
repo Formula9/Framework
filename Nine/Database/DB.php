@@ -62,7 +62,7 @@ class DB
         // include only if the framework Database should be used.
         if (config('database.database_enabled')) {
             // get the current database object
-            static::$database = Forge::find('nine.db');
+            static::$database = Forge::find('Database');
         }
 
         // include only if eloquent should be used.
@@ -118,7 +118,6 @@ class DB
     public static function connection($connection_name) : ConnectionInterface
     {
         static::$instance = static::$instance ?: new static();
-
         $eloquent = Forge::find('db');
 
         return $eloquent->connection($connection_name);

@@ -6,8 +6,10 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Nine\Containers\Forge;
 use Nine\Views\TwigConfigurationSet;
 use Nine\Views\TwigView;
+use Nine\Views\TwigViewConfigurationInterface;
 use Pimple\Container;
 use Silex\Provider\TranslationServiceProvider;
 use Symfony\Bridge\Twig\AppVariable;
@@ -32,6 +34,9 @@ class TwigViewServiceProvider extends ServiceProvider
      */
     public function boot(Container $app)
     {
+        /** @var Forge $container */
+        list($config, $container) = [$this->config, $this->container];
+
         // only boot if twig templates are enabled by the framework
         if ($this->config['view.twig.enabled']) {
 
@@ -46,6 +51,9 @@ class TwigViewServiceProvider extends ServiceProvider
             };
 
             $app['twig.view'] = $app->factory(function ($app) { return new TwigView($app['twig.context']); });
+
+            $container->singleton([TwigConfigurationSet::class, TwigViewConfigurationInterface::class],
+                function () use ($app) { return $app['twig.context']; });
         }
     }
 

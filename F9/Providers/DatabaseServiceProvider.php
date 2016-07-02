@@ -69,15 +69,17 @@ class DatabaseServiceProvider extends ServiceProvider implements EventListenerPr
      */
     protected function registerServices()
     {
-        $app = $this->app;
-        $config = $this->config;
-        $container = $this->container;
+        // local copies
+        list($app, $config, $container) = [$this->app, $this->config, $this->container];
 
         // Nine Database and NineBase
         if ($config['database.database_enabled']) {
             // NineBase
             $this->container->add([NineBase::class, 'NineBase'],
-                function () use ($container) { return new NineBase($container->get('Connections')); });
+                function () use ($container) {
+                    /** @var Forge $container */
+                    return new NineBase($container->get('Connections')); }
+            );
 
             // Nine\Database
             $this->container->add([Database::class, 'Database'],
@@ -94,10 +96,10 @@ class DatabaseServiceProvider extends ServiceProvider implements EventListenerPr
      */
     private function register_configuration(Container $app)
     {
-        $config = $this->config;
-        $container = $this->container;
+        // local copies
+        list($config, $container) = [$this->config, $this->container];
 
-        // things to do if there is any database at all
+        // Common database configurations
         if ($this->config['database.eloquent_enabled'] or $this->config['database.database_enabled']) {
 
             // build the database connection collection
