@@ -22,6 +22,7 @@ use F9\Application\Application as NineApplication;
 use F9\Exceptions\ConfigurationException;
 use F9\Exceptions\FeatureNotImplemented;
 use Nine\Collections\Config;
+use Nine\Collections\GlobalScope;
 use Nine\Collections\Paths;
 use Nine\Collections\Scope;
 use Nine\Containers\Forge;
@@ -171,8 +172,6 @@ class AppFactory
     public static function makeAPI()
     {
         throw new FeatureNotImplemented();
-
-        //return static::$instance->make_application(self::API);
     }
 
     /**
@@ -190,7 +189,7 @@ class AppFactory
         ];
 
         // register this factory
-        Forge::set([static::class, 'app.factory'], $this);
+        Forge::set(['AppFactory', static::class], $this);
     }
 
     /**
@@ -216,18 +215,18 @@ class AppFactory
         $container['app.context'] = static::APP;
 
         // we'll start by loading the configuration into the Forge Container
-        $container->add([Paths::class, 'paths'], new Paths($paths));
-        $container->add([Config::class, 'config'], $config = Config::createFromFolder(\CONFIG));
         $container->add([Scope::class, 'context'], function () { return new Scope; });
-        $container->add('global.scope', $global_scope = new Scope(static::$env));
-        $container->add('environment', function () use ($container) { return $container['global.scope']; });
+        $container->add('environment', function () use ($container) { return $container['GlobalScope']; });
+        $container->singleton([GlobalScope::class, 'GlobalScope'], $global_scope = new GlobalScope($this));
+        $container->singleton([Paths::class, 'paths'], new Paths($paths));
+        $container->singleton([Config::class, 'config'], $config = Config::createFromFolder(\CONFIG));
 
         // the reason we are here
         $app = new NineApplication($container, $config, Events::getInstance());
         $app['app.context'] = $container['app.context'];
 
         // register the new Application
-        $container->add([NineApplication::class, 'app'], $app);
+        $container->singleton(['Application', NineApplication::class], $app);
 
         // synchronize the Application instance with the forge.
         Forge::setApplication(app());
