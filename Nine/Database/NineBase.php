@@ -61,6 +61,24 @@ class NineBase
     }
 
     /**
+     * @param PDOStatement|NULL $statement If the statement is NULL then use the statement from the last query
+     *
+     * @return Collection
+     * @throws DBInvalidStatement
+     */
+    public function collect(PDOStatement $statement = NULL)
+    {
+        $statement = $statement ?: $this->statement;
+
+        if (NULL === $statement or ! $statement instanceof PDOStatement) {
+            throw new DBInvalidStatement('No valid statement was provided or found.');
+        }
+
+        return new Collection($statement->fetchAll(PDO::FETCH_ASSOC));
+
+    }
+
+    /**
      * Connect to a named connection.
      *
      * All queries will operate on the last opened connection.
@@ -164,8 +182,16 @@ class NineBase
     }
 
     /**
+     * Returns the results of the query as a Collection.
+     *
      * @param $sql
      * @param $values
+     *
+     * Example using the query builder:
+     *
+     * `$result = $db->connect('default')->queryAll($db->build('select')->from('users')->cols(['name','email'])->where('id = 1'))`
+     *
+     * returns a Collection of one or more records.
      *
      * @return Collection
      */
@@ -183,19 +209,6 @@ class NineBase
     public function queryFirst($sql, $values)
     {
         return $this->query($sql, $values);
-    }
-
-    /**
-     * @param DBQueryInterface|string $sql
-     * @param array                   $values
-     * @param bool                    $all
-     */
-    public function select($sql, array $values, $all = FALSE)
-    {
-        $this->sql = $sql;
-        $statement = $this->query_sql($sql, $values);
-
-        $response = $this->statement->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
