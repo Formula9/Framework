@@ -1,7 +1,7 @@
 <?php namespace Nine\Database;
 
 use Aura\Sql\ExtendedPdo;
-use Nine\Exceptions\DbCannotRemoveCachedConnection;
+use Nine\Exceptions\DBCannotRemoveCachedConnection;
 use Nine\Exceptions\DBConnectionNotFound;
 use Nine\Exceptions\DBDuplicateConnection;
 use Nine\Library\Lib;
@@ -176,12 +176,12 @@ class Connections
     /**
      * @param string $name
      *
-     * @throws DbCannotRemoveCachedConnection
+     * @throws DBCannotRemoveCachedConnection
      */
     public function removeConnection(string $name)
     {
         if ($this->isCached($name)) {
-            throw new DbCannotRemoveCachedConnection("Connection `$name` is active and therefore cannot be removed.");
+            throw new DBCannotRemoveCachedConnection("Connection `$name` is active and therefore cannot be removed.");
         }
 
         if ($this->hasConnection($name)) {
@@ -199,14 +199,16 @@ class Connections
     {
         if ($driver === 'sqlite') {
 
-            $dsn = $connection['dsn'] ?? "{$connection['driver']}:{$connection['database']}";
+            $dsn = "{$connection['driver']}:{$connection['database']}";
 
             $PDO = new PDO($dsn, [], [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]);
 
             // register the dsn if not already registered
-            $connection['dsn'] = isset($connection['dsn']) ?? $dsn;
+            if ( ! isset($connection['dsn'])) {
+                $connection['dsn'] = $dsn;
+            }
 
             return new ExtendedPdo($PDO);
         }
@@ -220,7 +222,9 @@ class Connections
         );
 
         // register the dsn if not already registered
-        $connection['dsn'] = isset($connection['dsn']) ?? $dsn;
+        if ( ! isset($connection['dsn'])) {
+            $connection['dsn'] = $dsn;
+        }
 
         $PDO->setAttribute(PDO::ATTR_EMULATE_PREPARES, TRUE);
         $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

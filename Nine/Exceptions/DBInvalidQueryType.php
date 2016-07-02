@@ -6,6 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-class DBCannotRemoveCachedConnection extends \Exception
+class DBInvalidQueryType extends \Exception
 {
+
 }
