@@ -14,6 +14,7 @@ use Illuminate\Filesystem\ClassFinder;
 use Nine\Containers\Forge;
 use Nine\Database\Connections;
 use Nine\Database\Database;
+use Nine\Database\NineBase;
 use Pimple\Container;
 use Silex\Api\EventListenerProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -68,27 +69,44 @@ class DatabaseServiceProvider extends ServiceProvider implements EventListenerPr
      */
     protected function registerServices()
     {
-        if ($this->config['database.eloquent_enabled']) {
+        $app = $this->app;
+        $config = $this->config;
+        $container = $this->container;
+
+        // Nine Database and NineBase
+        if ($config['database.database_enabled']) {
+            // NineBase
+            $this->container->add([NineBase::class, 'NineBase'],
+                function () use ($container) { return new NineBase($container->get('Connections')); });
+
+            // Nine\Database
+            $this->container->add([Database::class, 'Database'],
+                function () use ($config) { return new Database($config['database']); });
+        }
+
+        if ($config['database.eloquent_enabled']) {
             $this->app->register(new EloquentServiceProvider($this->app));
         }
     }
 
     /**
      * @param Container $app
-     *
-     * @return Container
      */
     private function register_configuration(Container $app)
     {
         $config = $this->config;
+        $container = $this->container;
 
-        // required if either is used
+        // things to do if there is any database at all
         if ($this->config['database.eloquent_enabled'] or $this->config['database.database_enabled']) {
 
-            $app['database.connections'] = new Connections($config['database.connections']);
+            // build the database connection collection
+            $this->container->singleton([Connections::class, 'Connections'],
+                function () use ($config) { return new Connections($config['database']); });
 
-            $this->container->add([Connections::class, 'database.connections'],
-                function ($app) { return $app['database.connections']; });
+            //$this->container['database.connections'] = new Connections($config['database']);
+            $app['database.connections'] = function () use ($container) { return $container['Connections']; };
+
         }
 
         // Illuminate Database & Eloquent
