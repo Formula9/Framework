@@ -12,6 +12,7 @@ use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Exceptions\DependencyInstanceNotFound;
 use Illuminate\Filesystem\ClassFinder;
 use Nine\Containers\Forge;
+use Nine\Database\Connections;
 use Nine\Database\Database;
 use Pimple\Container;
 use Silex\Api\EventListenerProviderInterface;
@@ -83,9 +84,14 @@ class DatabaseServiceProvider extends ServiceProvider implements EventListenerPr
 
         // required if either is used
         if ($this->config['database.eloquent_enabled'] or $this->config['database.database_enabled']) {
-            $app['db.connections'] = $config['database.connections'];
+
+            $app['database.connections'] = new Connections($config['database.connections']);
+
+            $this->container->add([Connections::class, 'database.connections'],
+                function ($app) { return $app['database.connections']; });
         }
 
+        // Illuminate Database & Eloquent
         if ($this->config['database.eloquent_enabled']) {
             // configuration
             // inject illuminate components
