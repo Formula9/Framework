@@ -63,7 +63,7 @@ class Forge extends Container implements ContainerInterface
     protected function __construct()
     {
         if ( ! NULL === static::$instance) {
-            new ContainerConflictError('Cannot continue due to a container instantiation conflict [Forge].');
+            throw new ContainerConflictError('Cannot continue due to a container instantiation conflict [Forge].');
         }
 
         static::$app = NULL;
@@ -122,15 +122,6 @@ class Forge extends Container implements ContainerInterface
         }
 
         $this->bind($abstract, $concrete, $shared);
-    }
-
-    /**
-     * @param array|string $abstract
-     * @param null         $concrete
-     */
-    public function singleton($abstract, $concrete = NULL)
-    {
-        $this->add($abstract, $concrete, static::SHARED);
     }
 
     /**
@@ -196,6 +187,15 @@ class Forge extends Container implements ContainerInterface
     {
         // check app first
         return (static::$app and static::$app->offsetExists($abstract)) or $this->bound($abstract);
+    }
+
+    /**
+     * @param array|string $abstract
+     * @param null         $concrete
+     */
+    public function singleton($abstract, $concrete = NULL)
+    {
+        $this->add($abstract, $concrete, static::SHARED);
     }
 
     /**
@@ -317,34 +317,10 @@ class Forge extends Container implements ContainerInterface
 
         // Iterate through the key list to collect registrations.
         foreach ($keys as $key) {
-
             // assume nothing
-            $appKey = NULL;
-
-            // if the key exists as an object then parse the item.
-            if (static::key_object_exists($key)) {
-                $value = $self->parseItem($app, $key);
-            }
-
-            // evaluate and possibly collect key values.
-            else {
-                $appValue = $app[$key];
-
-                switch (gettype($appValue)) {
-                    case 'object':
-                        $appKey = get_class($appValue);
-                        break;
-                    case 'string':
-                        if (class_exists($appValue)) {
-                            $appKey = $appValue;
-                        }
-                        break;
-                    default :
-                        $appKey = NULL;
-                        break;
-                }
-
-            }
+            $appKey = static::key_object_exists($key)
+                ? $self->parseValue($app, $key)
+                : self::parseKey($app, $key);
 
             // ignoring 'app' replications, add the new .phpstorm.meta entry.
             if ($appKey and $appKey !== '' and $key !== 'app') {
@@ -352,8 +328,8 @@ class Forge extends Container implements ContainerInterface
             }
         }
 
+        // sort and build code segment
         sort($map);
-
         foreach ($map as $entry) {
             $code .= '            ' . $entry . PHP_EOL;
         }
@@ -443,7 +419,6 @@ TEMPLATE;
     {
         static::$instance = static::$instance ?: new static();
         static::$instance->add($abstract, $concrete, $singleton);
-
     }
 
     /**
@@ -459,7 +434,6 @@ TEMPLATE;
     {
         // fail if an attempt is made to overwrite
         // an existing Application reference.
-        //if (static::contains('app') and (NULL !== static::$app) and ($app !== static::$app)) {
         if (static::$app and ($app !== static::$app)) {
             new \RuntimeException(
                 'Overwriting an existing Application instance is forbidden.');
@@ -476,7 +450,7 @@ TEMPLATE;
      *
      * @return array|null
      */
-    protected function parseItem($container, $name)
+    protected function parseValue($container, $name)
     {
         try {
             $element = $container[$name];
@@ -528,6 +502,31 @@ TEMPLATE;
         }
 
         return $value;
+    }
+
+    /**
+     * @param $app
+     * @param $key
+     *
+     * @return Application|null|\Silex\Application|string
+     */
+    protected static function parseKey($app, $key)
+    {
+        $appValue = $app[$key];
+
+        switch (gettype($appValue)) {
+            case 'object':
+                $appKey = get_class($appValue);
+                break;
+            case 'string':
+                $appKey = class_exists($appValue) ? $appValue : NULL;
+                break;
+            default :
+                $appKey = NULL;
+                break;
+        }
+
+        return $appKey;
     }
 
     /**
