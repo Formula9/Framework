@@ -6,7 +6,6 @@ use Nine\Collections\Attributes;
 use Nine\Collections\Config;
 use Nine\Collections\GlobalScope;
 use Nine\Collections\Paths;
-use Nine\Containers\Forge;
 use Nine\Database\Connections;
 use Nine\Database\Database;
 use Nine\Database\DB;
@@ -18,10 +17,6 @@ use Nine\Views\TwigView;
 use Nine\Views\TwigViewConfigurationInterface;
 
 include __DIR__ . '/tests/boot/boot.php';
-
-class_alias(Forge::class, 'forge');
-class_alias(DB::class, 'db');
-
 
 //@formatter:off
 $application    = forge()->make(Application::class);

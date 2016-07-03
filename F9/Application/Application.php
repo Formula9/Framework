@@ -367,13 +367,15 @@ class Application extends \Silex\Application implements Container
         $this['config'] = function () use ($config) { return $config; };
 
         // settings
-        $this->boot_settings($this->settings);
+        $this->boot_settings();
 
         // events
         $this->boot_application_events();
 
         // configured providers (via config/app.php)
         $this->register_configured_providers();
+
+        $this->register_aliases();
     }
 
     /**
@@ -390,11 +392,9 @@ class Application extends \Silex\Application implements Container
     /**
      * Register settings and base objects
      *
-     * @param array $settings
-     *
      * @throws CannotAddNonexistentClass
      */
-    private function boot_settings(array $settings)
+    private function boot_settings()
     {
         // contextual use for routes and di
         $app = $this;
@@ -414,6 +414,18 @@ class Application extends \Silex\Application implements Container
         // set native dependencies
         $this->container->has('config') ?: $this->container->add([get_class($this->config), 'config'], $this->config);
         $this->container->add([self::class, 'app'], $this);
+    }
+
+    /**
+     *  Register aliases.
+     */
+    private function register_aliases()
+    {
+        if ($this->config->has('aliases')) {
+            foreach ($this->config['aliases'] as $alias => $class) {
+                class_alias($class, $alias);
+            }
+        }
     }
 
     /**
