@@ -14,17 +14,13 @@
  *  licenses where obtainable.
  */
 
+use F9\Application\Application;
 use Nine\Logger;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\VarDumper\VarDumper;
 
-/**
- * @package Nine
- * @version 0.4.2
- * @author  Greg Truesdell <odd.greg@gmail.com>
- */
 class ReportingServiceProvider extends ServiceProvider
 {
     public function boot(Container $app)
@@ -36,7 +32,7 @@ class ReportingServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param Container $app
+     * @param Container|Application $app
      */
     public function register(Container $app)
     {
@@ -48,7 +44,6 @@ class ReportingServiceProvider extends ServiceProvider
         ( ! $app['debug']) ?: $app['dump'] = $app->protect(function ($var) { return (new VarDumper)::dump($var); });
 
         /** Register the app error factory */
-        /** @noinspection PhpUndefinedMethodInspection */
         $app->error(function (\Exception $e) use ($app) {
 
             // handle HTTP exceptions
