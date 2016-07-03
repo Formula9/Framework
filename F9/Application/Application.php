@@ -58,34 +58,35 @@ class Application extends \Silex\Application implements Container
 {
     const VERSION = '0.4.2';
 
-    /** Add the form() method. Dependency: `FormServiceProvider` */
-    use FormTrait;
+    use
+        /** `FormServiceProvider` */
+        FormTrait,
 
-    /** Add security encodePassword() and isGranted() methods. Dependency: `SecurityServiceProvider` */
-    use SecurityTrait;
+        /** `SecurityServiceProvider` */
+        SecurityTrait,
 
-    /** Add trans() and transChoice() methods. Dependency: `TranslationServiceProvider` */
-    use TranslationTrait;
+        /** `TranslationServiceProvider` */
+        TranslationTrait,
 
-    /** Add path() and url() methods. Dependency: `UrlGeneratorServiceProvider` */
-    use UrlGeneratorTrait;
+        /** `UrlGeneratorServiceProvider` */
+        UrlGeneratorTrait;
 
-    /** @var static $app This class -- inherits Pimple\Container as application container. */
+    /** @var static $app */
     protected $app;
 
-    /** @var ConfigInterface $config The framework configuration collection. */
+    /** @var ConfigInterface $config */
     protected $config;
 
-    /** @var Container $container The framework dependency injection container. */
+    /** @var Container $container */
     protected $container;
 
-    /** @var EventDispatcher $events The application event dispatcher. */
+    /** @var EventDispatcher $events */
     protected $events;
 
-    /** @var GlobalScope */
+    /** @var GlobalScope $global_scope */
     protected $global_scope;
 
-    /** @var array */
+    /** @var array $settings */
     protected $settings;
 
     /**
@@ -106,16 +107,9 @@ class Application extends \Silex\Application implements Container
         $this->container = $container;
         $this->events = $events;
         $this->global_scope = $global_scope;
+        $this->settings = $config['app'];
 
-        // note: app.context is registered by the AppFactory class
-        // when instantiating this class, and contains one of either
-        // 'app' for an application, 'api' for an API, or 'cli' for
-        // a command line.
-        //
-        // see: AppFactory
-        $this->settings = $config[$container->get('app.context')];
-
-        // creates the Silex\Application instance.
+        // Silex\Application
         parent::__construct($this->settings);
 
         $this->configure($config);
@@ -411,7 +405,7 @@ class Application extends \Silex\Application implements Container
         setlocale(LC_ALL, $this['locale']);
 
         $this['nine.container'] = $this->container; # Forge::getInstance();
-        $this['nine.settings'] = function () use ($settings) { return $settings; };
+        //$this['nine.settings'] = function () use ($settings) { return $settings; };
         $this['nine.events'] = function () { return $this->events; };
 
         // For DI, associate the Pimple\Container with this instance of F9\Application.

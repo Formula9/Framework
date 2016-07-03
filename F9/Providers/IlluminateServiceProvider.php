@@ -29,10 +29,9 @@ class IlluminateServiceProvider extends ServiceProvider
         // bind with the illuminate container (Forge, actually.)
         $this->container->add([Filesystem::class, 'filesystem'], $app['filesystem']);
         $this->container->add([Composer::class, 'composer'], $app['composer']);
-        $this->container->singleton([\Illuminate\Contracts\Container\Container::class, 'Container'], $app['illuminate.container']);
+        $this->container->add(\Illuminate\Contracts\Container\Container::class, $app['illuminate.container']);
 
         // register with the application for dependency injection
-        //$app[Composer::class] = function ($app) { return $app['composer']; };
         $app[IlluminateContainer::class] = function ($app) { return $app['illuminate.container']; };
         $app[IlluminateDispatcher::class] = function ($app) { return $app['illuminate.events']; };
     }

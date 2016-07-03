@@ -152,7 +152,7 @@ class AppFactory
         ];
 
         // register this factory
-        Forge::set(['AppFactory', static::class], $this);
+        Forge::set([static::class, 'AppFactory'], $this);
     }
 
     /**
@@ -194,7 +194,7 @@ class AppFactory
         $app['app.context'] = $container['app.context'];
 
         // register the new Application
-        $container->singleton(['Application', NineApplication::class], $app);
+        $container->singleton([NineApplication::class, 'Application'], $app);
 
         // synchronize the Application instance with the forge.
         Forge::setApplication($app);

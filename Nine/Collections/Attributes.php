@@ -1,5 +1,8 @@
 <?php namespace Nine\Collections;
 
+use Nine\Collections\Exceptions\ImmutableViolationException;
+use Nine\Traits\WithImmutability;
+
 /**
  * **A simple immutable attribute collection. **
  *
@@ -13,10 +16,6 @@
  * @version 0.4.2
  * @author  Greg Truesdell
  */
-
-use Nine\Collections\Exceptions\ImmutableViolationException;
-use Nine\Traits\WithImmutability;
-
 class Attributes implements \ArrayAccess, AttributesInterface
 {
     use WithImmutability;

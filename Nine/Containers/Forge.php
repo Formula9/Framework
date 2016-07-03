@@ -104,8 +104,9 @@ class Forge extends Container implements ContainerInterface
             list($abstract, $alias) = array_values($abstract);
 
             if ( ! class_exists($abstract)) {
-                new CannotAddNonexistentClass(
-                    "add(['$abstract', '$alias'],...) makes no sense. `$alias` must refer to an existing class.");
+                throw new CannotAddNonexistentClass(
+                    "add(['$abstract', '$alias'],...) makes no sense. `$alias` must refer to an existing class."
+                );
             }
 
             // formatted for illuminate container bind method
