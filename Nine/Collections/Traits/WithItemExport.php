@@ -57,8 +57,9 @@ trait WithItemExport
     {
         $export_structure = $key === '*' ? var_export($this->{'items'}, TRUE) : var_export($this->{'items'}[$key], TRUE);
 
-        //$key = $key !== '*' ?: 'compiled';
-        $base_name = $base_name ?: $key === '*' ? 'export.php' : $key . '.php';
+        if (NULL === $base_name) {
+            $base_name = $key === '*' ? 'export.php' : $key . '.php';
+        }
 
         $export_text = "<?php \n return " . $export_structure . ';';
         $export_filename = $path . $base_name;
