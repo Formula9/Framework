@@ -34,7 +34,6 @@ use Silex\Application\UrlGeneratorTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use function Nine\elapsed_time_since_request;
 
 /**
  * The Application class is the pivotal object for configuring framework providers

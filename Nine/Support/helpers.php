@@ -434,7 +434,7 @@ if ( ! function_exists('w')) {
     }
 }
 
-if ( ! function_exists('ww')) {
+if ( ! function_exists('tuples')) {
 
     /**
      * Converts an encoded string to an associative array.
