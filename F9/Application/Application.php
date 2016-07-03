@@ -23,6 +23,7 @@ use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Support\Contracts\ServiceProviderInterface;
 use F9\Support\Provider\ServiceProvider;
 use Nine\Collections\Config;
+use Nine\Collections\GlobalScope;
 use Nine\Containers\ContainerInterface as Container;
 use Nine\Contracts\ConfigInterface;
 use Silex\Api\EventListenerProviderInterface;
@@ -81,6 +82,9 @@ class Application extends \Silex\Application implements Container
     /** @var EventDispatcher $events The application event dispatcher. */
     protected $events;
 
+    /** @var GlobalScope */
+    protected $global_scope;
+
     /** @var array */
     protected $settings;
 
@@ -93,13 +97,15 @@ class Application extends \Silex\Application implements Container
      * @param Container              $container
      * @param Config|ConfigInterface $config
      * @param EventDispatcher        $events
+     * @param GlobalScope            $global_scope
      */
-    public function __construct(Container $container, Config $config, EventDispatcher $events)
+    public function __construct(Container $container, Config $config, EventDispatcher $events, GlobalScope $global_scope)
     {
         $this->app = $this;
         $this->config = $config;
         $this->container = $container;
         $this->events = $events;
+        $this->global_scope = $global_scope;
 
         // note: app.context is registered by the AppFactory class
         // when instantiating this class, and contains one of either
@@ -119,7 +125,8 @@ class Application extends \Silex\Application implements Container
      * **Add (bind) an to an implementation, with optional alias.**
      *
      * This method completes the ContainerInterface requirement and operates
-     * solely on the application|pimple container.
+     * solely on the application|pimple container. It is a mirror of the Forge
+     * method of the same name.
      *
      *  Notes:<br>
      *      - `$abstract` is either `['<abstract>', '<alias>']`, `['<abstract>']` or `'<abstract>'`.<br>
@@ -257,6 +264,14 @@ class Application extends \Silex\Application implements Container
         $message
             ? $session->getFlashBag()->add($type, $message)
             : $session->getFlashBag()->clear();
+    }
+
+    /**
+     * @return GlobalScope
+     */
+    public function getGlobalScope()
+    {
+        return $this->global_scope;
     }
 
     /**

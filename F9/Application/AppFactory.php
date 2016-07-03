@@ -47,28 +47,8 @@ use Symfony\Component\Debug\ErrorHandler;
  */
 class AppFactory
 {
-    // these constants trigger the creation of applications
-    // with differing contexts. Note also that the value of
-    // each is the key into the Config object configuration.
-    //
-    // ie: config(AppFactory::APP) references the config/app.php
-    //     configuration file, etc.
-    //
-
-    /** Create an `F9\Application` instance. */
-    const API = 'api';
-
-    /** Create an `F9\Api` instance (future). */
-    const CLI = 'cli';
-
-    /** Create an `F9\Cli` instance (future). */
-    const APP = 'app';
-
     /** @var bool */
     private static $booted;
-
-    /** @var string - the boot context. ie: 'app' = web app, 'api' = XHR API */
-    private static $context;
 
     /** @var array - booted environment */
     private static $env = [
@@ -88,32 +68,15 @@ class AppFactory
      *
      * This is a `private` method called by the static `make_*` methods.
      *
-     * @param string $context - the environment context.
      */
-    private function __construct($context = self::APP)
+    private function __construct()
     {
-        static::$context = $context;
+        //static::$context = $context;
         static::$booted = NULL !== static::$booted ?: FALSE;
         static::$instance = $this;
 
         $this->install_error_handling();
         $this->detect_environment();
-    }
-
-    /**
-     * **Returns the Application environment context.**
-     *
-     * Returns `NULL` if not bootstrapped, otherwise one of:
-     *
-     *      'app' -- An Application.
-     *      'api' -- An Application that receives API requests.
-     *      'cli' -- A commandline handler.
-     *
-     * @return string
-     */
-    public static function getContext() : string
-    {
-        return static::$context;
     }
 
     /**
@@ -212,31 +175,36 @@ class AppFactory
     {
         // this is the Illuminate Container
         $container = Forge::getInstance();
-        $container['app.context'] = static::APP;
+        // running as a web app
+        $container['app.context'] = 'app';
 
         // we'll start by loading the configuration into the Forge Container
         $container->add([Scope::class, 'context'], function () { return new Scope; });
         $container->add('environment', function () use ($container) { return $container['GlobalScope']; });
         $container->singleton([GlobalScope::class, 'GlobalScope'], $global_scope = new GlobalScope($this));
-        $container->singleton([Paths::class, 'paths'], new Paths($paths));
-        $container->singleton([Config::class, 'config'], $config = Config::createFromFolder(\CONFIG));
+        $container->singleton([Paths::class, 'Paths'], new Paths($paths));
+        $container->singleton([Config::class, 'Config'], $config = Config::createFromFolder(\CONFIG));
+        $container->singleton([Events::class, 'Events'], $events = Events::getInstance());
+
+        $container->add('paths', function () use ($container) { return $container['Paths']; });
+        $container->add('config', function () use ($container) { return $container['Config']; });
 
         // the reason we are here
-        $app = new NineApplication($container, $config, Events::getInstance());
+        $app = new NineApplication($container, $config, $events, $global_scope);
         $app['app.context'] = $container['app.context'];
 
         // register the new Application
         $container->singleton(['Application', NineApplication::class], $app);
 
         // synchronize the Application instance with the forge.
-        Forge::setApplication(app());
+        Forge::setApplication($app);
 
         // additional $app registrations. @formatter:off
         $app['container']       = $container;
         $app['global.scope']    = $global_scope;
         $app['app.factory']     = $this;
         $app['flashbag']        = $app->factory(function () use ($app) { return $app['session']->getFlashBag(); });
-        $app['paths']           = $paths;
+        $app['paths']           = $container['Paths'];
         //@formatter:on
 
         return $app;
