@@ -1,25 +1,25 @@
-<?php namespace Nine\Library;
+<?php
 
-    /**
-     * Globally accessible convenience functions.
-     *
-     * @package Nine Collections
-     * @version 0.4.2
-     * @author  Greg Truesdell <odd.greg@gmail.com>
-     */
+/**
+ * Convenience Library functions.
+ *
+ * @package Nine Collections
+ * @version 0.4.2
+ * @author  Greg Truesdell <odd.greg@gmail.com>
+ */
 
-//use Closure;
+use Nine\Library\Lib;
 
 if (PHP_VERSION_ID < 70000) {
     echo('Formula 9 requires PHP versions >= 7.0.0');
     exit(1);
 }
 
-if (defined('HELPERS_LOADED')) {
+if (defined('LIBRARY_HELPERS_LOADED')) {
     return TRUE;
 }
 
-define('HELPERS_LOADED', TRUE);
+define('LIBRARY_HELPERS_LOADED', TRUE);
 
 if ( ! function_exists('e')) {
     /**
