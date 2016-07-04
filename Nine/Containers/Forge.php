@@ -353,9 +353,6 @@ class Forge extends Container implements ContainerInterface
     /** @noinspection PhpIllegalArrayKeyTypeInspection */
     /** @noinspection PhpUnusedLocalVariableInspection */
     \$STATIC_METHOD_TYPES = [
-        new \F9\Application\Application => ['' == '@',
-%%MAP%%
-        ],
         path('')      => ['' instanceof \Nine\Collections\Paths,],
         config('')    => ['' instanceof \Nine\Collections\Config,],
         app('')       => ['' instanceof \F9\Application\Application,
@@ -366,10 +363,6 @@ class Forge extends Container implements ContainerInterface
 %%MAP%%
         ],
         \Nine\Containers\Forge::find('')  => [
-%%MAP%%
-        ],
-        \Nine\Containers\ContainerInterface => [
-            '' instanceof \Forge,
 %%MAP%%
         ],
     ];
