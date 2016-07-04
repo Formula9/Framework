@@ -45,6 +45,10 @@ class BladeViewServiceProvider extends ServiceProvider
                 ->add([BladeConfigurationSet::class, BladeViewConfigurationInterface::class],
                     function () use ($app) { return $app['blade.context']; });
 
+            $this->container
+                ->add([BladeView::class, 'BladeView'],
+                    function () use ($app) { return new BladeView($app['blade.context']); });
+
             // for dependency injection. ie: DI::make(BladeView::class)
             $app[BladeViewConfigurationInterface::class] = function ($app) { return $app['blade.context']; };
 

@@ -54,6 +54,10 @@ class TwigViewServiceProvider extends ServiceProvider
 
             $container->singleton([TwigConfigurationSet::class, TwigViewConfigurationInterface::class],
                 function () use ($app) { return $app['twig.context']; });
+
+            $container->add([TwigView::class, 'TwigView'],
+                function () use ($app) { return new TwigView($app['twig.context']); });
+
         }
     }
 
