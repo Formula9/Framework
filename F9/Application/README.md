@@ -27,4 +27,4 @@ The following code is an example of minimal booting for the AppFactory:
    
 	$app->run();
 	
-Subsequent calls to AppFactory::make() return a reference to the previously create Application object.
+Subsequent calls to AppFactory::make() return a reference to the previously created Application object.

@@ -17,7 +17,7 @@ or add the following to composer.json
     
 usually with 
     
-        "minimum-stability": "dev",
+    "minimum-stability": "dev",
 
 Or you can fork it and fill your boots.
 
