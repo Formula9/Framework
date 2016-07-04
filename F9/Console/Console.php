@@ -72,11 +72,19 @@ class Console extends Application
     }
 
     /**
+     * Registers an array of application mode Command class names.
+     *
+     * Reads all classes located in the given path, so only Commands
+     * should be the only classes in the path.
+     *
      * @param string $command_path
      */
     public function registerAppCommandsIn(string $command_path)
     {
         $commands = $this->registerCommandsIn($command_path);
+
+        // this may not be the only call to register application mode commands,
+        // so merge with the app commands array.
         $this->app_commands = array_merge($this->app_commands, $commands);
     }
 
