@@ -313,10 +313,10 @@ class Forge extends Container implements ContainerInterface
 
         // fold in forge aliases that do not already exist in the $app.
         foreach ($forge_aliases as $abstract => $alias) {
-            // add only what doesn't already exist.
-            isset($keys[$abstract]) ?: $keys[] = "\\$abstract";
-            // map all cases, however
-            $map[] = "'$alias' instanceof \\$abstract,";
+            if (class_exists($abstract)) {
+                isset($keys[$abstract]) ?: $keys[] = "\\$abstract";
+                $map[] = "'$alias' instanceof \\$abstract,";
+            }
         }
 
         // Iterate through the key list to collect registrations.
