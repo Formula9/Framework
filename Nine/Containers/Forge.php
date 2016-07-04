@@ -16,6 +16,7 @@
 
 namespace Nine\Containers;
 
+use Carbon\Carbon;
 use ErrorException;
 use F9\Application\Application;
 use F9\Exceptions\CannotAddNonexistentClass;
@@ -335,41 +336,52 @@ class Forge extends Container implements ContainerInterface
         $map = array_unique($map);
         sort($map);
 
+        // compile the map
         foreach ($map as $entry) {
             $code .= '            ' . $entry . PHP_EOL;
         }
 
-        $template = <<< TEMPLATE
-<?php namespace PHPSTORM_META {
-
-    /**
-     * PhpStorm Meta Code-completion index created with Formula 9 Forge.
-     *
-     * @package Nine
-     * @version 0.4.2
-     * @author  Greg Truesdell <odd.greg@gmail.com>
-     */
-
-    /** @noinspection PhpIllegalArrayKeyTypeInspection */
-    /** @noinspection PhpUnusedLocalVariableInspection */
-    \$STATIC_METHOD_TYPES = [
-        path('')      => ['' instanceof \Nine\Collections\Paths,],
-        config('')    => ['' instanceof \Nine\Collections\Config,],
-        app('')       => ['' instanceof \F9\Application\Application,
-%%MAP%%
-        ],
-        forge('')     => [
-            '' instanceof \Nine\Containers\Forge,
-%%MAP%%
-        ],
-        \Nine\Containers\Forge::find('')  => [
-%%MAP%%
-        ],
-    ];
-}
-TEMPLATE;
+        $template = file_get_contents(__DIR__ . '/assets/meta.php.template');
+        //        $template = <<< TEMPLATE
+        //<?php namespace PHPSTORM_META {
+        //
+        //    /**
+        //     * PhpStorm Meta Code-completion index created with Formula 9 Forge.
+        //     *
+        //     * @package Nine
+        //     * @version 0.4.2
+        //     * @author  Greg Truesdell <odd.greg@gmail.com>
+        //     */
+        //
+        //    /** @noinspection PhpIllegalArrayKeyTypeInspection */
+        //    /** @noinspection PhpUnusedLocalVariableInspection */
+        //    \$STATIC_METHOD_TYPES = [
+        //        path('')      => [
+        //            '' instanceof \Nine\Collections\Paths,],
+        //        config('')    => [
+        //            '' instanceof \Nine\Collections\Config,],
+        //        app('')       => [
+        //            '' == '@',
+        //            '' instanceof \F9\Application\Application,
+        //%%MAP%%
+        //        ],
+        //        forge('')     => [
+        //            '' == '@',
+        //            '' instanceof \Nine\Containers\Forge,
+        //%%MAP%%
+        //        ],
+        //        \Nine\Containers\Forge::find('')  => [
+        //            '' == '@',
+        //%%MAP%%
+        //        ],
+        //    ];
+        //}
+        //TEMPLATE;
 
         $template = str_replace('%%MAP%%', $code, $template);
+        $template = str_replace('%%DATE%%', Carbon::now()->toDateTimeString(), $template);
+        $template = str_replace('%%COUNT%%', count($map), $template);
+        $template = str_replace('%%ID%%', Lib::generate_token(8, '$meta$'), $template);
 
         if (FALSE === file_put_contents(ROOT . '.phpstorm.meta.php', $template)) {
             throw new CollectionExportWriteFailure('Unable to update .phpstorm.meta.php.');
