@@ -358,15 +358,14 @@ class Forge extends Container implements ContainerInterface
         ],
         path('')      => ['' instanceof \Nine\Collections\Paths,],
         config('')    => ['' instanceof \Nine\Collections\Config,],
-        app('')       => ['' == '@',
+        app('')       => ['' instanceof \F9\Application\Application,
 %%MAP%%
         ],
         forge('')     => [
-            '' == '@',
+            '' instanceof \Nine\Containers\Forge,
 %%MAP%%
         ],
         \Nine\Containers\Forge::find('')  => [
-            '' == '@',
 %%MAP%%
         ],
         \Nine\Containers\ContainerInterface => [
