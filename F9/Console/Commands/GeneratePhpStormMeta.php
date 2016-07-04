@@ -25,7 +25,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @version 0.4.2
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-
 class GeneratePhpStormMeta extends Command
 {
     /**
@@ -43,6 +42,12 @@ class GeneratePhpStormMeta extends Command
     <info>formula generate:phpstorm_meta</info>
 EOT
             );
+
+        /**
+         * Touch common classes to ensure that their dependencies are registered with
+         * the Forge. Some of these may already be registered in the boot sequence through
+         * `AppFactory::make(...)`.
+         */
 
         //@formatter:off
         $application    = forge()->make(Application::class);
@@ -62,6 +67,7 @@ EOT
 
         $db_connection  = app('db.connection');
         $db_manager     = app('db');
+        //@formatter:on
 
     }
 
