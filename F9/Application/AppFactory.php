@@ -176,7 +176,7 @@ class AppFactory
         // this is the Illuminate Container
         $container = Forge::getInstance();
         // running as a web app
-        $container['app.context'] = 'app';
+        //$container['app.context'] = 'app';
 
         // we'll start by loading the configuration into the Forge Container
         $container->add([Scope::class, 'context'], function () { return new Scope; });
@@ -191,7 +191,7 @@ class AppFactory
 
         // the reason we are here
         $app = new NineApplication($container, $config, $events, $global_scope);
-        $app['app.context'] = $container['app.context'];
+        $app['app.context'] = 'app';
 
         // register the new Application
         $container->singleton([NineApplication::class, 'Application'], $app);
