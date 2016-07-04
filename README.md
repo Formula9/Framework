@@ -7,14 +7,7 @@ This is primarily for my own entertainment and use. Considering how many MVC-ish
  the wild, I can't imagine how anyone would want to use this. Other than me. As such, it is designed for my own use and with my own 
  quirky preferences. Much of it is either inspired by similar works, or includes the works of others.
  
-Before installing, you will need to include the following in your composer.json file (usually before autoload):
-
-    ,
-    "repositories"     : [
-        { "type": "vcs", "url": "https://github.com/Formula9/Framework.git" }
-    ]
-    
-Then use the following:
+To install use the following:
 
     composer require formula9/framework
     
