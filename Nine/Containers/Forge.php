@@ -332,7 +332,9 @@ class Forge extends Container implements ContainerInterface
         }
 
         // sort and build code segment
+        $map = array_unique($map);
         sort($map);
+
         foreach ($map as $entry) {
             $code .= '            ' . $entry . PHP_EOL;
         }
@@ -356,18 +358,18 @@ class Forge extends Container implements ContainerInterface
         ],
         path('')      => ['' instanceof \Nine\Collections\Paths,],
         config('')    => ['' instanceof \Nine\Collections\Config,],
-        app('')       => ['' instanceof \F9\Application\Application,
+        app('')       => ['' == '@',
 %%MAP%%
         ],
         forge('')     => [
-            '' instanceof \Forge,
-%%MAP%%
-        ],
-        \Forge::find('')  => [
             '' == '@',
 %%MAP%%
         ],
-        new \Nine\Containers\ContainerInterface => [
+        \Nine\Containers\Forge::find('')  => [
+            '' == '@',
+%%MAP%%
+        ],
+        \Nine\Containers\ContainerInterface => [
             '' instanceof \Forge,
 %%MAP%%
         ],
