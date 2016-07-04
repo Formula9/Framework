@@ -2,6 +2,7 @@
     "name"             : "formula9/framework",
     "description"      : "Framework Packages for Formula9 (Nine).",
     "type"             : "library",
+    "keywords"         : [ "PHP7", "MVC", "framework", "Formula9", "Silex" ],
     "license"          : "MIT",
     "authors"          : [
         {
@@ -9,6 +10,11 @@
             "email": "odd.greg@gmail.com"
         }
     ],
+    "homepage"         : "https://github.com/Formula9/Framework",
+    "support"          : {
+        "issues": "https://github.com/Formula9/Framework/issues",
+        "source": "https://github.com/Formula9/Framework"
+    },
     "autoload"         : {
         "classmap"             : [
             "F9",
@@ -46,9 +52,9 @@
         "symfony/yaml"         : "~3.1"
     },
     "require-dev"      : {
-        "vlucas/phpdotenv" : "^2.1@dev",
-        "phpunit/phpunit"  : "^5.1@dev",
-        "tracy/tracy"      : "^2.4@dev",
-        "psy/psysh"        : "@stable"
+        "vlucas/phpdotenv": "^2.1@dev",
+        "phpunit/phpunit" : "^5.1@dev",
+        "tracy/tracy"     : "^2.4@dev",
+        "psy/psysh"       : "@stable"
     }
 }
