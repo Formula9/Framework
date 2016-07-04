@@ -23,6 +23,7 @@ use F9\Exceptions\ContainerConflictError;
 use F9\Exceptions\DependencyInstanceNotFound;
 use F9\Support\Provider\PimpleDumpProvider;
 use Nine\Collections\Config;
+use Nine\Exceptions\CollectionExportWriteFailure;
 use Nine\Library\Lib;
 
 /**
@@ -286,6 +287,8 @@ class Forge extends Container implements ContainerInterface
      * @param bool $build_catalog
      *
      * @return array
+     * @throws CollectionExportWriteFailure
+     * @throws DependencyInstanceNotFound
      */
     public static function makePhpStormMeta($build_catalog = FALSE)
     {
@@ -348,6 +351,9 @@ class Forge extends Container implements ContainerInterface
     /** @noinspection PhpIllegalArrayKeyTypeInspection */
     /** @noinspection PhpUnusedLocalVariableInspection */
     \$STATIC_METHOD_TYPES = [
+        new \F9\Application\Application => ['' == '@',
+%%MAP%%
+        ],
         path('')      => ['' instanceof \Nine\Collections\Paths,],
         config('')    => ['' instanceof \Nine\Collections\Config,],
         app('')       => ['' instanceof \F9\Application\Application,
@@ -358,7 +364,7 @@ class Forge extends Container implements ContainerInterface
 %%MAP%%
         ],
         \Forge::find('')  => [
-            '' instanceof \Forge,
+            '' == '@',
 %%MAP%%
         ],
         new \Nine\Containers\ContainerInterface => [
@@ -370,7 +376,10 @@ class Forge extends Container implements ContainerInterface
 TEMPLATE;
 
         $template = str_replace('%%MAP%%', $code, $template);
-        file_put_contents(ROOT . '.phpstorm.meta.php', $template);
+
+        if (FALSE === file_put_contents(ROOT . '.phpstorm.meta.php', $template)) {
+            throw new CollectionExportWriteFailure('Unable to update .phpstorm.meta.php.');
+        }
 
         if ($build_catalog) {
             self::build_catalog($keys, $app);
