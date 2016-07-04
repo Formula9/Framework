@@ -72,6 +72,15 @@ class Console extends Application
     }
 
     /**
+     * @param string $command_path
+     */
+    public function registerAppCommandsIn(string $command_path)
+    {
+        $commands = $this->registerCommandsIn($command_path);
+        $this->app_commands = array_merge($this->app_commands, $commands);
+    }
+
+    /**
      * Registers any commands found the the provided path.
      *
      * Note: All classes found in the folder are loaded, so don't put anything
