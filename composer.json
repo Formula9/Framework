@@ -1,6 +1,6 @@
 {
     "name"             : "formula9/framework",
-    "description"      : "Framework Packages for Formula9 (Nine).",
+    "description"      : "Core classes for the Formula Nine PHP Framework built on Silex 2.",
     "type"             : "library",
     "keywords"         : [ "PHP7", "MVC", "framework", "Formula9", "Silex" ],
     "license"          : "MIT",
