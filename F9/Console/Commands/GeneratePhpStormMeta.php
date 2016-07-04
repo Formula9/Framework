@@ -20,13 +20,13 @@ class GeneratePhpStormMeta extends Command
     protected function configure()
     {
         $this
-            ->setName('generate::phpstorm_meta')
+            ->setName('generate:phpstorm_meta')
             ->setDescription('Generate the development PhpStorm code-completion file.')
             ->setHelp(<<<EOT
   Generate the development PhpStorm code-completion file.
 
   Usage:
-    <info>formula generate::phpstorm_meta</info>
+    <info>formula generate:phpstorm_meta</info>
 EOT
             );
     }
