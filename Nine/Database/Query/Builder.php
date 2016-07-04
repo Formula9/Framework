@@ -3,17 +3,17 @@
 use Aura\SqlQuery\QueryFactory;
 
 /**
- * QueryBuilder provides a method for creating SQL queries targeted at
+ * Builder provides a method for creating SQL queries targeted at
  * specific database driver types.
  *
- * Built on Aura/SqlQuery components, QueryBuilder simplifies query generation
+ * Built on Aura/SqlQuery components, Builder simplifies query generation
  * by encapsulating and condensing features provided by Aura/SqlQuery.
  *
  * @package Nine
  * @version 0.4.2
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-class QueryBuilder
+class Builder
 {
     /** @var QueryFactory */
     protected $query_factory;
