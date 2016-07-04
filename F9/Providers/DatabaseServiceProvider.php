@@ -144,7 +144,7 @@ class DatabaseServiceProvider extends ServiceProvider implements EventListenerPr
             $pdo = $app['database']->getPDO();
 
             $app['pdo'] = $pdo;
-            Forge::set([\PDO::class, 'pdo'], $pdo);
+            Forge::set([get_class($pdo), 'pdo'], $pdo);
             Forge::set([Database::class, 'database'], function () use ($app) {
                 return $app['database'];
             });
