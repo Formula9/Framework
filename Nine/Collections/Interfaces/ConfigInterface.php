@@ -54,10 +54,4 @@ interface ConfigInterface
      */
     public static function createFromYaml($yaml);
 
-    /**
-     * @param $abstract
-     *
-     * @return mixed
-     */
-    public static function setting($abstract);
 }

@@ -76,7 +76,7 @@ class TwigView extends AbstractView
     /** @var Twig_Loader_Filesystem */
     protected $twig_loader;
 
-    public function __construct(TwigConfigurationSet $context)
+    public function __construct(TwigViewConfigurationInterface $context)
     {
         $this->context = $context;
         $this->defaults = $context->settings();

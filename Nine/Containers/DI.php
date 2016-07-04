@@ -15,9 +15,9 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Illuminate\Contracts\Container\Container as IlluminateContainer;
 use Illuminate\Database\ConnectionInterface;
 use Pimple\Container as PimpleContainer;
-use Illuminate\Contracts\Container\Container as IlluminateContainer;
 
 class DI extends Container implements ContainerInterface
 {
@@ -447,7 +447,7 @@ class DI extends Container implements ContainerInterface
      *
      * @return bool|mixed
      */
-    public static function hasService($abstract, $return_concrete = TRUE)
+    public static function hasService(string $abstract, bool $return_concrete = TRUE)
     {
         foreach (static::$service_locators as $service_locator) {
             if ($service_locator instanceof PimpleContainer and isset($service_locator[$abstract])) {
@@ -511,7 +511,7 @@ class DI extends Container implements ContainerInterface
      *
      * @param bool $enable If TRUE, the container will throw an exception if an abstract is not found.
      */
-    public static function useExceptions($enable = TRUE)
+    public static function useExceptions(bool $enable = TRUE)
     {
         static::$fail_with_exception = $enable;
     }

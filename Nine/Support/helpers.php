@@ -1,18 +1,18 @@
-<?php namespace Nine;
+<?php
 
-    /**
-     * F9 (Formula Nine) Personal PHP Framework
-     *
-     * Copyright (c) 2010-2016, Greg Truesdell (<odd.greg@gmail.com>)
-     * License: MIT (reference: https://opensource.org/licenses/MIT)
-     *
-     * Acknowledgements:
-     *  - The code provided in this file (and in the Framework in general) may include
-     * open sourced software licensed for the purpose, refactored code from related
-     * packages, or snippets/methods found on sites throughout the internet.
-     *  - All originator copyrights remain in force where applicable, as well as their
-     *  licenses where obtainable.
-     */
+/**
+ * F9 (Formula Nine) Personal PHP Framework
+ *
+ * Copyright (c) 2010-2016, Greg Truesdell (<odd.greg@gmail.com>)
+ * License: MIT (reference: https://opensource.org/licenses/MIT)
+ *
+ * Acknowledgements:
+ *  - The code provided in this file (and in the Framework in general) may include
+ * open sourced software licensed for the purpose, refactored code from related
+ * packages, or snippets/methods found on sites throughout the internet.
+ *  - All originator copyrights remain in force where applicable, as well as their
+ *  licenses where obtainable.
+ */
 
 /**
  * Globally accessible convenience functions.
@@ -27,11 +27,10 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Closure;
 use Illuminate\Database\Eloquent\Model;
-use LogicException;
 use Nine\Collections\Collection;
 use Nine\Collections\Scope;
+use Nine\Containers\Forge;
 use Psr\Log\LoggerInterface;
 
 if (PHP_VERSION_ID < 70000) {
@@ -42,13 +41,13 @@ if (PHP_VERSION_ID < 70000) {
 // if this helpers file is included more than once, then calculate
 // the global functions exposed and return a simple catalog.
 
-if (defined('HELPERS_LOADED')) {
+if (defined('SUPPORT_HELPERS_LOADED')) {
     return TRUE;
 }
 
-define('HELPERS_LOADED', TRUE);
+define('SUPPORT_HELPERS_LOADED', TRUE);
 
-if ( ! function_exists('array_accept')) {
+if ( ! function_exists('array_except')) {
     /**
      * Get all of the given array except for a specified array of items.
      *
@@ -279,7 +278,7 @@ if ( ! function_exists('scope')) {
     function scope() : Scope
     {
         static $gs;
-        $gs = $gs ?: \Forge::find('global.scope');
+        $gs = $gs ?: Forge::find('global.scope');
 
         return $gs;
     }
@@ -435,7 +434,7 @@ if ( ! function_exists('w')) {
     }
 }
 
-if ( ! function_exists('ww')) {
+if ( ! function_exists('tuples')) {
 
     /**
      * Converts an encoded string to an associative array.

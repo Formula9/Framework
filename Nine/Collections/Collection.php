@@ -9,7 +9,6 @@
 
 use Nine\Library\Lib;
 use Nine\Traits\WithItemTransforms;
-use function Nine\Library\value;
 
 class Collection implements \ArrayAccess, \Countable, \IteratorAggregate, \JsonSerializable
 {

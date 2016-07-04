@@ -1,4 +1,4 @@
-<?php namespace Nine;
+<?php namespace Nine\Database;
 
 use Nine\Collections\Collection;
 use PDO;

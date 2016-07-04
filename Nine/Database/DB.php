@@ -1,4 +1,4 @@
-<?php
+<?php namespace Nine\Database;
 
 /**
  * F9 (Formula Nine) Personal PHP Framework
@@ -14,12 +14,11 @@
  *  licenses where obtainable.
  */
 
-use Illuminate\Database\ConnectionInterface;
-use Nine\DatabaseInterface;
-use Nine\Exceptions\DBUnrecognizedMethodCall;
 use Illuminate\Database\Connection;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
-use Nine\Database;
+use Nine\Containers\Forge;
+use Nine\Exceptions\DBUnrecognizedMethodCall;
 
 /**
  * DB is a convenience class that encapsulates method access to the
@@ -63,7 +62,7 @@ class DB
         // include only if the framework Database should be used.
         if (config('database.database_enabled')) {
             // get the current database object
-            static::$database = Forge::find('nine.db');
+            static::$database = Forge::find('Database');
         }
 
         // include only if eloquent should be used.
@@ -119,7 +118,6 @@ class DB
     public static function connection($connection_name) : ConnectionInterface
     {
         static::$instance = static::$instance ?: new static();
-
         $eloquent = Forge::find('db');
 
         return $eloquent->connection($connection_name);

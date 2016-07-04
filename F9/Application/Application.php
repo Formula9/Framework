@@ -18,12 +18,11 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use App\Events\ApplicationEvent;
-use F9\Events\NineEvents;
+use F9\Exceptions\ApplicationProviderNotFoundException;
 use F9\Exceptions\CannotAddNonexistentClass;
-use F9\Support\Contracts\ServiceProviderInterface;
 use F9\Support\Provider\ServiceProvider;
 use Nine\Collections\Config;
+use Nine\Collections\GlobalScope;
 use Nine\Containers\ContainerInterface as Container;
 use Nine\Contracts\ConfigInterface;
 use Silex\Api\EventListenerProviderInterface;
@@ -34,7 +33,6 @@ use Silex\Application\UrlGeneratorTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use function Nine\elapsed_time_since_request;
 
 /**
  * The Application class is the pivotal object for configuring framework providers
@@ -58,31 +56,35 @@ class Application extends \Silex\Application implements Container
 {
     const VERSION = '0.4.2';
 
-    /** Add the form() method. Dependency: `FormServiceProvider` */
-    use FormTrait;
+    use
+        /** `FormServiceProvider` */
+        FormTrait,
 
-    /** Add security encodePassword() and isGranted() methods. Dependency: `SecurityServiceProvider` */
-    use SecurityTrait;
+        /** `SecurityServiceProvider` */
+        SecurityTrait,
 
-    /** Add trans() and transChoice() methods. Dependency: `TranslationServiceProvider` */
-    use TranslationTrait;
+        /** `TranslationServiceProvider` */
+        TranslationTrait,
 
-    /** Add path() and url() methods. Dependency: `UrlGeneratorServiceProvider` */
-    use UrlGeneratorTrait;
+        /** `UrlGeneratorServiceProvider` */
+        UrlGeneratorTrait;
 
-    /** @var static $app This class -- inherits Pimple\Container as application container. */
+    /** @var static $app */
     protected $app;
 
-    /** @var ConfigInterface $config The framework configuration collection. */
+    /** @var ConfigInterface $config */
     protected $config;
 
-    /** @var Container $container The framework dependency injection container. */
+    /** @var Container $container */
     protected $container;
 
-    /** @var EventDispatcher $events The application event dispatcher. */
+    /** @var EventDispatcher $events */
     protected $events;
 
-    /** @var array */
+    /** @var GlobalScope $global_scope */
+    protected $global_scope;
+
+    /** @var array $settings */
     protected $settings;
 
     /**
@@ -94,23 +96,18 @@ class Application extends \Silex\Application implements Container
      * @param Container              $container
      * @param Config|ConfigInterface $config
      * @param EventDispatcher        $events
+     * @param GlobalScope            $global_scope
      */
-    public function __construct(Container $container, Config $config, EventDispatcher $events)
+    public function __construct(Container $container, Config $config, EventDispatcher $events, GlobalScope $global_scope)
     {
         $this->app = $this;
         $this->config = $config;
         $this->container = $container;
         $this->events = $events;
+        $this->global_scope = $global_scope;
+        $this->settings = $config['app'];
 
-        // note: app.context is registered by the AppFactory class
-        // when instantiating this class, and contains one of either
-        // 'app' for an application, 'api' for an API, or 'cli' for
-        // a command line.
-        //
-        // see: AppFactory
-        $this->settings = $config[$container->get('app.context')];
-
-        // creates the Silex\Application instance.
+        // Silex\Application
         parent::__construct($this->settings);
 
         $this->configure($config);
@@ -120,7 +117,8 @@ class Application extends \Silex\Application implements Container
      * **Add (bind) an to an implementation, with optional alias.**
      *
      * This method completes the ContainerInterface requirement and operates
-     * solely on the application|pimple container.
+     * solely on the application|pimple container. It is a mirror of the Forge
+     * method of the same name.
      *
      *  Notes:<br>
      *      - `$abstract` is either `['<abstract>', '<alias>']`, `['<abstract>']` or `'<abstract>'`.<br>
@@ -171,7 +169,9 @@ class Application extends \Silex\Application implements Container
     }
 
     /**
-     * **Boot the `Silex\Application` object and boot all registered providers.**
+     * **Boot the `Application` all registered providers.**
+     *
+     * Also handle subscribing to published service provider events.
      */
     public function boot()
     {
@@ -181,15 +181,9 @@ class Application extends \Silex\Application implements Container
 
         $this->booted = TRUE;
 
-        /**
-         * Slow boots:
-         *
-         * "12|13 -- F9\Support\Provider\RoutingServiceProvider"
-         * "24|25 -- F9\Support\Provider\DatabaseServiceProvider"
-         * "26|27 -- F9\Support\Provider\EloquentServiceProvider"
-         * "34|35 -- Silex\Provider\SecurityServiceProvider"
-         */
+        // boots service providers and subscribes to provider events
         foreach ($this->providers as $provider) {
+
             if ($provider instanceof EventListenerProviderInterface) {
                 $provider->subscribe($this, $this['dispatcher']);
             }
@@ -235,7 +229,7 @@ class Application extends \Silex\Application implements Container
     }
 
     /**
-     * This exists solely for template use.
+     * **Get current elapsed time in readable format.**
      *
      * @return int
      */
@@ -258,6 +252,14 @@ class Application extends \Silex\Application implements Container
         $message
             ? $session->getFlashBag()->add($type, $message)
             : $session->getFlashBag()->clear();
+    }
+
+    /**
+     * @return GlobalScope
+     */
+    public function getGlobalScope()
+    {
+        return $this->global_scope;
     }
 
     /**
@@ -343,7 +345,14 @@ class Application extends \Silex\Application implements Container
      * @param array  $server
      * @param null   $content
      */
-    public function subRequest($uri, $method = 'GET', $parameters = [], $cookies = [], $files = [], $server = [], $content = NULL)
+    public function subRequest(
+        string $uri,
+        string $method = 'GET',
+        array $parameters = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = [],
+        $content = NULL)
     {
         $this->run(Request::create($uri, $method, $parameters, $cookies, $files, $server, $content), HttpKernelInterface::SUB_REQUEST);
     }
@@ -359,13 +368,15 @@ class Application extends \Silex\Application implements Container
         $this['config'] = function () use ($config) { return $config; };
 
         // settings
-        $this->boot_settings($this->settings);
+        $this->boot_settings();
 
         // events
         $this->boot_application_events();
 
         // configured providers (via config/app.php)
         $this->register_configured_providers();
+
+        $this->register_aliases();
     }
 
     /**
@@ -380,13 +391,11 @@ class Application extends \Silex\Application implements Container
     }
 
     /**
-     * Register settings and base objects
-     *
-     * @param array $settings
+     * Apply and register `Application` settings.
      *
      * @throws CannotAddNonexistentClass
      */
-    private function boot_settings(array $settings)
+    private function boot_settings()
     {
         // contextual use for routes and di
         $app = $this;
@@ -397,7 +406,6 @@ class Application extends \Silex\Application implements Container
         setlocale(LC_ALL, $this['locale']);
 
         $this['nine.container'] = $this->container; # Forge::getInstance();
-        $this['nine.settings'] = function () use ($settings) { return $settings; };
         $this['nine.events'] = function () { return $this->events; };
 
         // For DI, associate the Pimple\Container with this instance of F9\Application.
@@ -409,19 +417,34 @@ class Application extends \Silex\Application implements Container
     }
 
     /**
-     * Register the loaded provider list (from app.php or api.php)
+     *  Register the aliases found in the 'aliases' array config setting.
+     */
+    private function register_aliases()
+    {
+        if ($this->config->has('aliases')) {
+            foreach ($this->config['aliases'] as $alias => $class) {
+                class_alias($class, $alias);
+            }
+        }
+    }
+
+    /**
+     * Register the loaded provider list (ie: from app.php)
      */
     private function register_configured_providers()
     {
         // load and register all providers listed in config/app.php
         foreach ((array) $this->settings['providers'] as $provider) {
-            /** @var ServiceProviderInterface $new_provider */
-            //$new_provider = new $provider($this);
-            $this->register(new $provider($this));
+
+            if ( ! class_exists($provider)) {
+                throw new ApplicationProviderNotFoundException("Provider '$provider' not found.");
+            }
+
+            if (class_exists($provider)) {
+                $this->register(new $provider($this));
+            }
         }
 
         $this->boot();
-
-        $this['dispatcher']->dispatch(NineEvents::APPLICATION_STARTUP, new ApplicationEvent($this, $this->settings['providers']));
     }
 }

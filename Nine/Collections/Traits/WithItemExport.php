@@ -8,7 +8,8 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Nine\Lib;
+use Nine\Exceptions\CollectionExportWriteFailure;
+use Nine\Library\Lib;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -50,23 +51,25 @@ trait WithItemExport
      *                               - (use '*' to write the entire collection)
      * @param string|null $base_name - the optional base filename
      *
-     * @throws \BadMethodCallException
+     * @throws CollectionExportWriteFailure
      */
     public function exportPHPFile($path, $key, $base_name = NULL)
     {
-        $base_name = $base_name ?: $key;
-
         $export_structure = $key === '*' ? var_export($this->{'items'}, TRUE) : var_export($this->{'items'}[$key], TRUE);
 
-        $export_config = "<?php \n return " . $export_structure . ';';
-        $export_filename = $path . $base_name . '.php';
+        if (NULL === $base_name) {
+            $base_name = $key === '*' ? 'export.php' : $key . '.php';
+        }
+
+        $export_text = "<?php \n return " . $export_structure . ';';
+        $export_filename = $path . $base_name;
 
         if (file_exists($export_filename)) {
             unlink($export_filename);
         }
 
-        if (FALSE === file_put_contents($export_filename, $export_config)) {
-            throw new \BadMethodCallException('Failed writing configurations file to ' . $export_filename);
+        if (FALSE === file_put_contents($export_filename, $export_text)) {
+            throw new CollectionExportWriteFailure("Failed exporting `$export_filename` - cannot write contents.");
         }
     }
 

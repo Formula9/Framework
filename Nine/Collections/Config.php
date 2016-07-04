@@ -18,6 +18,8 @@ use Nine\Traits\WithItemImportExport;
  */
 class Config extends Collection implements ConfigInterface
 {
+    const COMPILED_CONFIG_FILENAME = '_compiled.php_';
+
     // for YAML and JSON import and export methods
     use WithItemImportExport;
 
@@ -28,6 +30,23 @@ class Config extends Collection implements ConfigInterface
     protected $base_path = '';
 
     /**
+     * Compile the Config contents to a single file in the given path.
+     *
+     * @param string      $path     Defaults to the path in the CONFIG constant.
+     * @param string|NULL $filename Defaults to the filename in the self::COMPILED_CONFIG_FILENAME constant.
+     */
+    public function compile(string $path = CONFIG, string $filename = self::COMPILED_CONFIG_FILENAME)
+    {
+        if ( ! $this->has('compiled')) {
+            $this['compiled'] = $path . $filename;
+        }
+
+        $this->exportPHPFile($path, '*', $filename);
+
+        $this->forget('compiled');
+    }
+
+    /**
      * @param array $import
      */
     public function importArray(Array $import)
@@ -36,6 +55,19 @@ class Config extends Collection implements ConfigInterface
             function ($key, $value) { $this->set($key, $value); },
             array_keys($import), array_values($import)
         );
+    }
+
+    /**
+     * @param string $base_path
+     * @param string $compiled_filename
+     */
+    public function importCompiledFile(string $base_path = CONFIG, string $compiled_filename = self::COMPILED_CONFIG_FILENAME)
+    {
+        $import = include $base_path . $compiled_filename;
+
+        foreach ($import as $key => $item) {
+            $this->items[$key] = $item;
+        }
     }
 
     /**
@@ -57,6 +89,14 @@ class Config extends Collection implements ConfigInterface
      */
     public function importFolder($base_path, $mask = '*.php') : Config
     {
+        // determine if the requested folder has been compiled.
+        if ($mask === '*.php' and $this->isCompiled()) {
+            // yes, so import the compiled file instead.
+            $this->importCompiledFile();
+
+            return $this;
+        }
+
         // extract the extension from the mask
         $extension = str_replace('*', '', $mask);
 
@@ -64,6 +104,19 @@ class Config extends Collection implements ConfigInterface
         $this->import_files($this->parse_folder($base_path, $mask), $extension);
 
         return $this;
+    }
+
+    /**
+     * Determines if a folder of PHP configuration files has been compiled.
+     *
+     * @param string $base_path         Defaults to the CONFIG path.
+     * @param string $compiled_filename Defaults to the self::COMPILED_CONFIG_FILENAME filename.
+     *
+     * @return bool
+     */
+    public function isCompiled(string $base_path = CONFIG, string $compiled_filename = self::COMPILED_CONFIG_FILENAME) : bool
+    {
+        return file_exists($base_path . $compiled_filename);
     }
 
     /**
@@ -121,16 +174,6 @@ class Config extends Collection implements ConfigInterface
         $config->importYAML($yaml);
 
         return $config;
-    }
-
-    /**
-     * @param $abstract
-     *
-     * @return mixed
-     */
-    public static function setting($abstract)
-    {
-        return parent::all()[$abstract];
     }
 
     /**

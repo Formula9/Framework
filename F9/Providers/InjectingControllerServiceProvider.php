@@ -22,9 +22,9 @@ class InjectingControllerServiceProvider extends ServiceProvider
      */
     public function register(Container $app)
     {
-        $app['injector'] = $injector = $app->factory(function ($app) { return $this->container->make(Reflector::class); });
+        $app['injector'] = $injector = $app->factory(function () { return $this->container->make(Reflector::class); });
 
-        $this->container->add([Reflector::class, 'injector'], function ($app) {
+        $this->container->add([Reflector::class, 'injector'], function () {
             return new Reflector($this->container, Request::createFromGlobals());
         });
 

@@ -1,7 +1,8 @@
 {
     "name"             : "formula9/framework",
-    "description"      : "Framework Packages for Formula9 (Nine).",
+    "description"      : "Core classes for the Formula Nine PHP Framework built on Silex 2.",
     "type"             : "library",
+    "keywords"         : [ "PHP7", "MVC", "framework", "Formula9", "Silex" ],
     "license"          : "MIT",
     "authors"          : [
         {
@@ -9,12 +10,19 @@
             "email": "odd.greg@gmail.com"
         }
     ],
+    "homepage"         : "https://github.com/Formula9/Framework",
+    "support"          : {
+        "issues": "https://github.com/Formula9/Framework/issues",
+        "source": "https://github.com/Formula9/Framework"
+    },
     "autoload"         : {
         "classmap"             : [
             "F9",
-            "Nine"
+            "Nine",
+            "tests"
         ],
         "exclude-from-classmap": [
+            "Nine/Contracts/Container"
         ]
     },
     "minimum-stability": "stable",
@@ -22,7 +30,9 @@
         "php"                  : "^7.0.4",
 
         "silex/silex"          : "2.0.*",
-        "aura/sql"             : "^2.4",
+
+        "aura/sql"             : "^2.5",
+        "aura/sqlquery"        : "^2.6",
 
         "illuminate/database"  : "~5.2",
         "illuminate/support"   : "~5.2",

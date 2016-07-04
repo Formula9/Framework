@@ -21,10 +21,11 @@
 use F9\Application\Application as NineApplication;
 use F9\Exceptions\ConfigurationException;
 use F9\Exceptions\FeatureNotImplemented;
-use Forge;
 use Nine\Collections\Config;
+use Nine\Collections\GlobalScope;
 use Nine\Collections\Paths;
 use Nine\Collections\Scope;
+use Nine\Containers\Forge;
 use Nine\Events\Events;
 use Silex\Application as SilexApplication;
 use Silex\ExceptionHandler;
@@ -46,28 +47,8 @@ use Symfony\Component\Debug\ErrorHandler;
  */
 class AppFactory
 {
-    // these constants trigger the creation of applications
-    // with differing contexts. Note also that the value of
-    // each is the key into the Config object configuration.
-    //
-    // ie: config(AppFactory::APP) references the config/app.php
-    //     configuration file, etc.
-    //
-
-    /** Create an `F9\Application` instance. */
-    const API = 'api';
-
-    /** Create an `F9\Api` instance (future). */
-    const CLI = 'cli';
-
-    /** Create an `F9\Cli` instance (future). */
-    const APP = 'app';
-
     /** @var bool */
     private static $booted;
-
-    /** @var string - the boot context. ie: 'app' = web app, 'api' = XHR API */
-    private static $context;
 
     /** @var array - booted environment */
     private static $env = [
@@ -87,32 +68,15 @@ class AppFactory
      *
      * This is a `private` method called by the static `make_*` methods.
      *
-     * @param string $context - the environment context.
      */
-    private function __construct($context = self::APP)
+    private function __construct()
     {
-        static::$context = $context;
+        //static::$context = $context;
         static::$booted = NULL !== static::$booted ?: FALSE;
         static::$instance = $this;
 
         $this->install_error_handling();
         $this->detect_environment();
-    }
-
-    /**
-     * **Returns the Application environment context.**
-     *
-     * Returns `NULL` if not bootstrapped, otherwise one of:
-     *
-     *      'app' -- An Application.
-     *      'api' -- An Application that receives API requests.
-     *      'cli' -- A commandline handler.
-     *
-     * @return string
-     */
-    public static function getContext() : string
-    {
-        return static::$context;
     }
 
     /**
@@ -137,11 +101,11 @@ class AppFactory
     /**
      * **Make a new Application instance.**
      *
-     * @param string $context is the code that determines which Application type to make. (`'app'`,`'api'`,`'cli'`)
+     * @param array $paths
      *
      * @return Application
      */
-    public static function make($context = self::APP) : Application
+    public static function make(array $paths) : Application
     {
         // The Application is, in effect, a singleton...
         // so if the application already exists then simply return it.
@@ -150,13 +114,13 @@ class AppFactory
         }
 
         // cache AppFactory instance.
-        static::$instance ?: new static($context);
+        static::$instance ?: new static($paths);
 
         // block anything else from making a new Application.
         static::$booted = TRUE;
 
         // make the application
-        $application = static::$instance->make_application($context);
+        $application = static::$instance->make_application($paths);
         Forge::setApplication($application);
 
         return $application;
@@ -171,8 +135,6 @@ class AppFactory
     public static function makeAPI()
     {
         throw new FeatureNotImplemented();
-
-        //return static::$instance->make_application(self::API);
     }
 
     /**
@@ -190,7 +152,7 @@ class AppFactory
         ];
 
         // register this factory
-        Forge::set([static::class, 'app.factory'], $this);
+        Forge::set([static::class, 'AppFactory'], $this);
     }
 
     /**
@@ -205,39 +167,42 @@ class AppFactory
     }
 
     /**
-     * @param $context
+     * @param array $paths
      *
      * @return Application
      */
-    private function make_application($context) : Application
+    private function make_application(array $paths) : Application
     {
         // this is the Illuminate Container
         $container = Forge::getInstance();
-        $container['app.context'] = $context;
 
         // we'll start by loading the configuration into the Forge Container
-        $container->add([Paths::class, 'paths'], $paths = new Paths(include BOOT . 'paths.php'));
-        $container->add([Config::class, 'config'], $config = Config::createFromFolder(\CONFIG));
         $container->add([Scope::class, 'context'], function () { return new Scope; });
-        $container->add('global.scope', $global_scope = new Scope(static::$env));
-        $container->add('environment', function () use ($container) { return $container['global.scope']; });
+        $container->add('environment', function () use ($container) { return $container['GlobalScope']; });
+        $container->singleton([GlobalScope::class, 'GlobalScope'], $global_scope = new GlobalScope($this));
+        $container->singleton([Paths::class, 'Paths'], new Paths($paths));
+        $container->singleton([Config::class, 'Config'], $config = Config::createFromFolder(\CONFIG));
+        $container->singleton([Events::class, 'Events'], $events = Events::getInstance());
+
+        $container->add('paths', function () use ($container) { return $container['Paths']; });
+        $container->add('config', function () use ($container) { return $container['Config']; });
 
         // the reason we are here
-        $app = new NineApplication($container, $config, Events::getInstance());
-        $app['app.context'] = $context;
+        $app = new NineApplication($container, $config, $events, $global_scope);
+        $app['app.context'] = 'app';
 
         // register the new Application
-        $container->add([NineApplication::class, 'app'], $app);
+        $container->singleton([NineApplication::class, 'Application'], $app);
 
         // synchronize the Application instance with the forge.
-        Forge::setApplication(app());
+        Forge::setApplication($app);
 
         // additional $app registrations. @formatter:off
         $app['container']       = $container;
         $app['global.scope']    = $global_scope;
         $app['app.factory']     = $this;
         $app['flashbag']        = $app->factory(function () use ($app) { return $app['session']->getFlashBag(); });
-        $app['paths']           = $paths;
+        $app['paths']           = $container['Paths'];
         //@formatter:on
 
         return $app;

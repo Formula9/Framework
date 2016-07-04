@@ -1,4 +1,4 @@
-<?php namespace Nine;
+<?php namespace Nine\Database;
 
 /**
  * F9 (Formula 9) Personal PHP Framework

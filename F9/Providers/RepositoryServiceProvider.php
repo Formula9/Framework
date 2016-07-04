@@ -20,6 +20,7 @@ class RepositoryServiceProvider extends ServiceProvider
 
         // Composer.
         $this->app->bind('Composer', function ($app) {
+            /** @noinspection PhpParamsInspection */
             return new Composer($app['FileSystem']);
         });
 

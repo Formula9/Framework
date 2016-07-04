@@ -23,11 +23,10 @@ class Attributes implements \ArrayAccess, AttributesInterface
     protected $items;
 
     /**
-     * @param array|null $attributes
+     * @param array|null $attributes Accept arrays, classes with toArray or toJson as sources.
      */
     public function __construct($attributes = NULL)
     {
-        // do not overwrite an uninitialized item array
         if ($attributes) {
             $this->items = $this->getArrayableItems($attributes);
 
@@ -43,7 +42,6 @@ class Attributes implements \ArrayAccess, AttributesInterface
      */
     public function __get($name)
     {
-        //if (isset($this->items[$name])) {
         if (array_key_exists($name, $this->items)) {
             return $this->items[$name];
         }
@@ -56,11 +54,11 @@ class Attributes implements \ArrayAccess, AttributesInterface
      *
      * @return array
      */
-    public function copy()
+    public function copy() : array
     {
         $copy = [];
 
-        return array_merge_recursive($copy, $this->{'items'});
+        return array_merge_recursive($copy, $this->items);
     }
 
     /**

@@ -11,7 +11,6 @@
  */
 
 use F9\Events\NineEvents;
-use Forge;
 use Illuminate\Database\ConnectionResolver;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\DatabaseManager;

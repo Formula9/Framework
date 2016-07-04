@@ -1,6 +1,9 @@
 <?php namespace F9\Support\Provider;
 
 use Pimple\Container;
+use Silex\Provider\CsrfServiceProvider;
+use Silex\Provider\FormServiceProvider as SilexFormServiceProvider;
+use Silex\Provider\ValidatorServiceProvider;
 
 /**
  * @package Nine
@@ -12,8 +15,8 @@ class FormServiceProvider extends ServiceProvider
 
     public function register(Container $app)
     {
-        $app->register(new \Silex\Provider\CsrfServiceProvider);
-        $app->register(new \Silex\Provider\FormServiceProvider);
-        $app->register(new \Silex\Provider\ValidatorServiceProvider);
+        $app->register(new CsrfServiceProvider);
+        $app->register(new SilexFormServiceProvider);
+        $app->register(new ValidatorServiceProvider);
     }
 }

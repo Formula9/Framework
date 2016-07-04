@@ -95,7 +95,8 @@ class PimpleDumpProvider implements ServiceProviderInterface, ControllerProvider
         if ( ! isset($app[$param])) {
             // Provide backward compatibility via the old parameter
             //  or set to the default — Composer's parent directory
-            $app[$param] = isset($app['dump.path']) ? $app['dump.path'] : rtrim(ROOT, '/');
+            $app[$param] = $app['dump.path'] ?? rtrim(ROOT, '/');
+            //$app[$param] = isset($app['dump.path']) ? $app['dump.path'] : rtrim(ROOT, '/');
         }
 
         $param = self::DIC_PREFIX . '.trigger_route_pattern';

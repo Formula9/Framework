@@ -14,18 +14,13 @@
  *  licenses where obtainable.
  */
 
+use F9\Application\Application;
 use Nine\Logger;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\VarDumper\VarDumper;
-use function Nine\is_not;
 
-/**
- * @package Nine
- * @version 0.4.2
- * @author  Greg Truesdell <odd.greg@gmail.com>
- */
 class ReportingServiceProvider extends ServiceProvider
 {
     public function boot(Container $app)
@@ -37,7 +32,7 @@ class ReportingServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param Container $app
+     * @param Container|Application $app
      */
     public function register(Container $app)
     {
@@ -46,19 +41,16 @@ class ReportingServiceProvider extends ServiceProvider
 
         $app['debug'] = env('DEBUG');
 
-        is_not($app['debug']) ?: $app['dump'] = $app->protect(function ($var) { return (new VarDumper)->dump($var); });
+        ( ! $app['debug']) ?: $app['dump'] = $app->protect(function ($var) { return (new VarDumper)::dump($var); });
 
         /** Register the app error factory */
-        $app->{'error'}(function (\Exception $e, $code) use ($app) {
-
-            //if ($app['debug']) {
-                //return '';
-            //}
+        $app->error(function (\Exception $e) use ($app) {
 
             // handle HTTP exceptions
             if (get_class($e) === NotFoundHttpException::class) {
 
                 /** @var NotFoundHttpException $e */
+                /** @noinspection DegradedSwitchInspection */
                 switch ($e->getStatusCode()) {
                     case 404: {
                         return response(view('404.html', ['error' => '404 - Page Not Found.']), 404);

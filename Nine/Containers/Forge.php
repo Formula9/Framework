@@ -14,14 +14,17 @@
  *  licenses where obtainable.
  */
 
+namespace Nine\Containers;
+
+use Carbon\Carbon;
+use ErrorException;
 use F9\Application\Application;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Exceptions\ContainerConflictError;
 use F9\Exceptions\DependencyInstanceNotFound;
 use F9\Support\Provider\PimpleDumpProvider;
 use Nine\Collections\Config;
-use Nine\Containers\Container;
-use Nine\Containers\ContainerInterface;
+use Nine\Exceptions\CollectionExportWriteFailure;
 use Nine\Library\Lib;
 
 /**
@@ -62,7 +65,7 @@ class Forge extends Container implements ContainerInterface
     protected function __construct()
     {
         if ( ! NULL === static::$instance) {
-            new ContainerConflictError('Cannot continue due to a container instantiation conflict [Forge].');
+            throw new ContainerConflictError('Cannot continue due to a container instantiation conflict [Forge].');
         }
 
         static::$app = NULL;
@@ -103,8 +106,9 @@ class Forge extends Container implements ContainerInterface
             list($abstract, $alias) = array_values($abstract);
 
             if ( ! class_exists($abstract)) {
-                new CannotAddNonexistentClass(
-                    "add(['$abstract', '$alias'],...) makes no sense. `$alias` must refer to an existing class.");
+                throw new CannotAddNonexistentClass(
+                    "add(['$abstract', '$alias'],...) makes no sense. `$alias` must refer to an existing class."
+                );
             }
 
             // formatted for illuminate container bind method
@@ -185,6 +189,15 @@ class Forge extends Container implements ContainerInterface
     {
         // check app first
         return (static::$app and static::$app->offsetExists($abstract)) or $this->bound($abstract);
+    }
+
+    /**
+     * @param array|string $abstract
+     * @param null         $concrete
+     */
+    public function singleton($abstract, $concrete = NULL)
+    {
+        $this->add($abstract, $concrete, static::SHARED);
     }
 
     /**
@@ -275,6 +288,8 @@ class Forge extends Container implements ContainerInterface
      * @param bool $build_catalog
      *
      * @return array
+     * @throws CollectionExportWriteFailure
+     * @throws DependencyInstanceNotFound
      */
     public static function makePhpStormMeta($build_catalog = FALSE)
     {
@@ -298,42 +313,18 @@ class Forge extends Container implements ContainerInterface
 
         // fold in forge aliases that do not already exist in the $app.
         foreach ($forge_aliases as $abstract => $alias) {
-            // add only what doesn't already exist.
-            isset($keys[$abstract]) ?: $keys[] = "\\$abstract";
-            // map all cases, however
-            $map[] = "'$alias' instanceof \\$abstract,";
+            if (class_exists($abstract)) {
+                isset($keys[$abstract]) ?: $keys[] = "\\$abstract";
+                $map[] = "'$alias' instanceof \\$abstract,";
+            }
         }
 
         // Iterate through the key list to collect registrations.
         foreach ($keys as $key) {
-
             // assume nothing
-            $appKey = NULL;
-
-            // if the key exists as an object then parse the item.
-            if (static::key_object_exists($key)) {
-                $value = $self->parseItem($app, $key);
-            }
-
-            // evaluate and possibly collect key values.
-            else {
-                $appValue = $app[$key];
-
-                switch (gettype($appValue)) {
-                    case 'object':
-                        $appKey = get_class($appValue);
-                        break;
-                    case 'string':
-                        if (class_exists($appValue)) {
-                            $appKey = $appValue;
-                        }
-                        break;
-                    default :
-                        $appKey = NULL;
-                        break;
-                }
-
-            }
+            $appKey = static::key_object_exists($key)
+                ? $self->parseValue($app, $key)
+                : self::parseKey($app, $key);
 
             // ignoring 'app' replications, add the new .phpstorm.meta entry.
             if ($appKey and $appKey !== '' and $key !== 'app') {
@@ -341,49 +332,60 @@ class Forge extends Container implements ContainerInterface
             }
         }
 
+        // sort and build code segment
+        $map = array_unique($map);
         sort($map);
 
+        // compile the map
         foreach ($map as $entry) {
             $code .= '            ' . $entry . PHP_EOL;
         }
 
-        $template = <<< TEMPLATE
-<?php namespace PHPSTORM_META {
-
-    /**
-     * PhpStorm Meta Code-completion index created with Formula 9 Forge.
-     *
-     * @package Nine
-     * @version 0.4.2
-     * @author  Greg Truesdell <odd.greg@gmail.com>
-     */
-
-    /** @noinspection PhpIllegalArrayKeyTypeInspection */
-    /** @noinspection PhpUnusedLocalVariableInspection */
-    \$STATIC_METHOD_TYPES = [
-        path('')      => ['' instanceof \Nine\Collections\Paths,],
-        config('')    => ['' instanceof \Nine\Collections\Config,],
-        app('')       => ['' instanceof \F9\Application\Application,
-%%MAP%%
-        ],
-        forge('')     => [
-            '' instanceof \Forge,
-%%MAP%%
-        ],
-        \Forge::find('')  => [
-            '' instanceof \Forge,
-%%MAP%%
-        ],
-        new \Nine\Containers\ContainerInterface => [
-            '' instanceof \Forge,
-%%MAP%%
-        ],
-    ];
-}
-TEMPLATE;
+        $template = file_get_contents(__DIR__ . '/assets/meta.php.template');
+        //        $template = <<< TEMPLATE
+        //<?php namespace PHPSTORM_META {
+        //
+        //    /**
+        //     * PhpStorm Meta Code-completion index created with Formula 9 Forge.
+        //     *
+        //     * @package Nine
+        //     * @version 0.4.2
+        //     * @author  Greg Truesdell <odd.greg@gmail.com>
+        //     */
+        //
+        //    /** @noinspection PhpIllegalArrayKeyTypeInspection */
+        //    /** @noinspection PhpUnusedLocalVariableInspection */
+        //    \$STATIC_METHOD_TYPES = [
+        //        path('')      => [
+        //            '' instanceof \Nine\Collections\Paths,],
+        //        config('')    => [
+        //            '' instanceof \Nine\Collections\Config,],
+        //        app('')       => [
+        //            '' == '@',
+        //            '' instanceof \F9\Application\Application,
+        //%%MAP%%
+        //        ],
+        //        forge('')     => [
+        //            '' == '@',
+        //            '' instanceof \Nine\Containers\Forge,
+        //%%MAP%%
+        //        ],
+        //        \Nine\Containers\Forge::find('')  => [
+        //            '' == '@',
+        //%%MAP%%
+        //        ],
+        //    ];
+        //}
+        //TEMPLATE;
 
         $template = str_replace('%%MAP%%', $code, $template);
-        file_put_contents(ROOT . '.phpstorm.meta.php', $template);
+        $template = str_replace('%%DATE%%', Carbon::now()->toDateTimeString(), $template);
+        $template = str_replace('%%COUNT%%', count($map), $template);
+        $template = str_replace('%%ID%%', Lib::generate_token(8, '$meta$'), $template);
+
+        if (FALSE === file_put_contents(ROOT . '.phpstorm.meta.php', $template)) {
+            throw new CollectionExportWriteFailure('Unable to update .phpstorm.meta.php.');
+        }
 
         if ($build_catalog) {
             self::build_catalog($keys, $app);
@@ -432,7 +434,6 @@ TEMPLATE;
     {
         static::$instance = static::$instance ?: new static();
         static::$instance->add($abstract, $concrete, $singleton);
-
     }
 
     /**
@@ -448,7 +449,6 @@ TEMPLATE;
     {
         // fail if an attempt is made to overwrite
         // an existing Application reference.
-        //if (static::contains('app') and (NULL !== static::$app) and ($app !== static::$app)) {
         if (static::$app and ($app !== static::$app)) {
             new \RuntimeException(
                 'Overwriting an existing Application instance is forbidden.');
@@ -465,7 +465,7 @@ TEMPLATE;
      *
      * @return array|null
      */
-    protected function parseItem($container, $name)
+    protected function parseValue($container, $name)
     {
         try {
             $element = $container[$name];
@@ -517,6 +517,31 @@ TEMPLATE;
         }
 
         return $value;
+    }
+
+    /**
+     * @param $app
+     * @param $key
+     *
+     * @return Application|null|\Silex\Application|string
+     */
+    protected static function parseKey($app, $key)
+    {
+        $appValue = $app[$key];
+
+        switch (gettype($appValue)) {
+            case 'object':
+                $appKey = get_class($appValue);
+                break;
+            case 'string':
+                $appKey = class_exists($appValue) ? $appValue : NULL;
+                break;
+            default :
+                $appKey = NULL;
+                break;
+        }
+
+        return $appKey;
     }
 
     /**
