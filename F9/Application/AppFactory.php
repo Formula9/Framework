@@ -175,8 +175,6 @@ class AppFactory
     {
         // this is the Illuminate Container
         $container = Forge::getInstance();
-        // running as a web app
-        //$container['app.context'] = 'app';
 
         // we'll start by loading the configuration into the Forge Container
         $container->add([Scope::class, 'context'], function () { return new Scope; });

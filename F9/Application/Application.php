@@ -20,7 +20,6 @@
 
 use F9\Exceptions\ApplicationProviderNotFoundException;
 use F9\Exceptions\CannotAddNonexistentClass;
-use F9\Support\Contracts\ServiceProviderInterface;
 use F9\Support\Provider\ServiceProvider;
 use Nine\Collections\Config;
 use Nine\Collections\GlobalScope;
@@ -170,7 +169,9 @@ class Application extends \Silex\Application implements Container
     }
 
     /**
-     * **Boot the `Silex\Application` object and boot all registered providers.**
+     * **Boot the `Application` all registered providers.**
+     *
+     * Also handle subscribing to published service provider events.
      */
     public function boot()
     {
@@ -180,15 +181,9 @@ class Application extends \Silex\Application implements Container
 
         $this->booted = TRUE;
 
-        /**
-         * Slow boots:
-         *
-         * "12|13 -- F9\Support\Provider\RoutingServiceProvider"
-         * "24|25 -- F9\Support\Provider\DatabaseServiceProvider"
-         * "26|27 -- F9\Support\Provider\EloquentServiceProvider"
-         * "34|35 -- Silex\Provider\SecurityServiceProvider"
-         */
+        // boots service providers and subscribes to provider events
         foreach ($this->providers as $provider) {
+
             if ($provider instanceof EventListenerProviderInterface) {
                 $provider->subscribe($this, $this['dispatcher']);
             }
@@ -234,7 +229,7 @@ class Application extends \Silex\Application implements Container
     }
 
     /**
-     * This exists solely for template use.
+     * **Get current elapsed time in readable format.**
      *
      * @return int
      */
@@ -350,7 +345,14 @@ class Application extends \Silex\Application implements Container
      * @param array  $server
      * @param null   $content
      */
-    public function subRequest($uri, $method = 'GET', array $parameters = [], array $cookies = [], array $files = [], array $server = [], $content = NULL)
+    public function subRequest(
+        string $uri,
+        string $method = 'GET',
+        array $parameters = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = [],
+        $content = NULL)
     {
         $this->run(Request::create($uri, $method, $parameters, $cookies, $files, $server, $content), HttpKernelInterface::SUB_REQUEST);
     }
@@ -389,7 +391,7 @@ class Application extends \Silex\Application implements Container
     }
 
     /**
-     * Register settings and base objects
+     * Apply and register `Application` settings.
      *
      * @throws CannotAddNonexistentClass
      */
@@ -404,7 +406,6 @@ class Application extends \Silex\Application implements Container
         setlocale(LC_ALL, $this['locale']);
 
         $this['nine.container'] = $this->container; # Forge::getInstance();
-        //$this['nine.settings'] = function () use ($settings) { return $settings; };
         $this['nine.events'] = function () { return $this->events; };
 
         // For DI, associate the Pimple\Container with this instance of F9\Application.
@@ -416,7 +417,7 @@ class Application extends \Silex\Application implements Container
     }
 
     /**
-     *  Register aliases.
+     *  Register the aliases found in the 'aliases' array config setting.
      */
     private function register_aliases()
     {
@@ -428,14 +429,12 @@ class Application extends \Silex\Application implements Container
     }
 
     /**
-     * Register the loaded provider list (from app.php or api.php)
+     * Register the loaded provider list (ie: from app.php)
      */
     private function register_configured_providers()
     {
         // load and register all providers listed in config/app.php
         foreach ((array) $this->settings['providers'] as $provider) {
-            /** @var ServiceProviderInterface $new_provider */
-            //$new_provider = new $provider($this);
 
             if ( ! class_exists($provider)) {
                 throw new ApplicationProviderNotFoundException("Provider '$provider' not found.");
