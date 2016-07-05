@@ -10,6 +10,9 @@
             "email": "odd.greg@gmail.com"
         }
     ],
+    "repositories": [
+
+    ],
     "homepage"         : "https://github.com/Formula9/Framework",
     "support"          : {
         "issues": "https://github.com/Formula9/Framework/issues",
@@ -56,10 +59,5 @@
         "psy/psysh"       : "@stable",
         "mockery/mockery" : "^0.9.4",
         "fzaninotto/faker": "^1.5"
-    },
-    "extra"            : {
-        "branch-alias": {
-            "dev-master": "0.4.2.x-dev"
-        }
     }
 }
