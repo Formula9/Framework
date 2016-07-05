@@ -124,9 +124,9 @@ class MigrationServiceProvider extends ServiceProvider
             // Once we have the migration creator registered, we will create the command
             // and inject the creator. The creator is responsible for the actual file
             // creation of the migrations, and may be extended by these developers.
-            $creator = $this->app->get('migration.creator');
+            $creator = $this->container->get('migration.creator');
 
-            $composer = $this->app->get('composer');
+            $composer = $this->container->get('composer');
 
             return new MigrateMakeCommand($creator, $composer);
         });
@@ -142,7 +142,7 @@ class MigrationServiceProvider extends ServiceProvider
     protected function registerMigrateCommand()
     {
         $this->container->singleton('command.migrate', function () {
-            return new MigrateCommand($this->app->get('migrator'));
+            return new MigrateCommand($this->container->get('migrator'));
         });
 
         $this->app['command.migrate'] = function () { return $this->container['command.migrate']; };
@@ -160,7 +160,7 @@ class MigrationServiceProvider extends ServiceProvider
         // so the migrator can resolve any of these connections when it needs to.
         $this->container->singleton('migrator', function () {
             /** @var MigrationRepositoryInterface $repository */
-            $repository = $this->app['migration.repository'];
+            $repository = $this->container->get('migration.repository');
 
             return new Migrator($repository, $this->app['db'], $this->app['files']);
         });
@@ -204,7 +204,7 @@ class MigrationServiceProvider extends ServiceProvider
     protected function registerResetCommand()
     {
         $this->container->singleton('command.migrate.reset', function () {
-            return new ResetCommand($this->app->get('migrator'));
+            return new ResetCommand($this->container->get('migrator'));
         });
 
         $this->app['command.migrate.reset'] = function () { return $this->container['command.migrate.reset']; };
@@ -218,7 +218,7 @@ class MigrationServiceProvider extends ServiceProvider
     protected function registerRollbackCommand()
     {
         $this->container->singleton('command.migrate.rollback', function () {
-            return new RollbackCommand($this->app->get('migrator'));
+            return new RollbackCommand($this->container->get('migrator'));
         });
 
         $this->app['command.migrate.rollback'] = function () { return $this->container['command.migrate.rollback']; };
@@ -232,7 +232,7 @@ class MigrationServiceProvider extends ServiceProvider
     protected function registerStatusCommand()
     {
         $this->container->singleton('command.migrate.status', function () {
-            return new StatusCommand($this->app->get('migrator'));
+            return new StatusCommand($this->container->get('migrator'));
         });
     }
 
