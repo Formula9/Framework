@@ -14,8 +14,8 @@ class ArtisanStarting
     /**
      * Create a new event instance.
      *
-     * @param  \Illuminate\Console\Application  $artisan
-     * @return void
+     * @param  $artisan
+     *
      */
     public function __construct($artisan)
     {
