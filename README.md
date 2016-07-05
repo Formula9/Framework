@@ -27,7 +27,7 @@ The Formula 9 Framework classes include consoles, commands and associated servic
 are the commands required to manage portions of the framework (such as cache, generating .phpstorm.meta.php, 
 generating passwords as well as provide an `artisan` clone for migrations. 
 
-## PDO, Eloquent or Formula 9 NineBase PDO Wrapper with Query Builder.
+## PDO, Eloquent or NineBase with Query Builder.
 
 The current ORM option is `Illuminate Eloquent` with laravel `Model` support (including events and triggers.) However,
 it is not necessary to use Eloquent or any other ORM. The framework comes with the ever-present PDO perquisite - packaged 
