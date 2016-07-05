@@ -21,6 +21,21 @@ usually with
 
 Or you can fork it and fill your boots.
 
+## Console
+
+The Formula 9 Framework classes include consoles, commands and associated service providers. Included 
+are the commands required to manage portions of the framework (such as cache, generating .phpstorm.meta.php, 
+generating passwords as well as provide an `artisan` clone for migrations. 
+
+## PDO, Eloquent or Formula 9 NineBase PDO Wrapper with Query Builder.
+
+The current ORM option is `Illuminate Eloquent` with laravel `Model` support (including events and triggers.) However,
+it is not necessary to use Eloquent or any other ORM. The framework comes with the ever-present PDO perquisite - packaged 
+with a query builder and Database wrappers.
+ 
+The Query Builder uses Aura/SqlQuery in the background. Simple methods are available, yet expose all of the power 
+of Aura/SqlQuery to build, cache, store and retrieve queries.
+
 ## Coming Soon
 
 * A large number of tests exist for the framework. However, I'm not ready to release them as yet. 
