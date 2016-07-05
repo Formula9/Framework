@@ -31,7 +31,6 @@
     </filter>
     <logging>
         <log type="coverage-html" target="./tests/coverage/" highlight="true" showUncoveredFiles="true">
-
         </log>
     </logging>
     <php>

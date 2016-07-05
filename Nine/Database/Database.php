@@ -79,7 +79,7 @@ class Database implements DatabaseInterface
         if ($default['driver'] === 'sqlite') {
 
             $this->current_dsn = "{$default['driver']}:{$default['database']}";
-            $PDO = new ExtendedPdo($this->current_dsn, [], [
+            $PDO = new ExtendedPdo($this->current_dsn, NULL, NULL, [], [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]);
 
@@ -249,6 +249,11 @@ class Database implements DatabaseInterface
     {
         $tables = NULL;
 
+        // sqlite is a bit different
+        if ($this->db_default['driver'] === 'sqlite') {
+            return $this->getSqliteTables($tables);
+        }
+
         /** @var \PDOStatement $query */
         $query = static::$PDO->query('show tables');
 
@@ -267,6 +272,23 @@ class Database implements DatabaseInterface
     public static function getPDO() : PDO
     {
         return static::$PDO;
+    }
+
+    /**
+     * @param $tables
+     *
+     * @return array
+     */
+    protected function getSqliteTables($tables)
+    {
+        /** @var \PDOStatement $query */
+        $query = static::$PDO->query("SELECT name FROM sqlite_master WHERE type='table';");
+
+        while ($table = $query->fetch(SQLITE3_ASSOC)) {
+            $tables[] = $table['name'];
+        }
+
+        return $tables;
     }
 
 }

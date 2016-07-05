@@ -28,7 +28,8 @@ class EloquentServiceProvider extends ServiceProvider
      */
     public function boot(Container $app)
     {
-        $this->bootModels($this->buildConnection($this->config['database.connections.default']));
+        $app['illuminate.connection.resolver'] = $this->buildConnection($this->config->get('database.connections.default'));
+        $this->bootModels($this->buildConnection($this->config->get('database.connections.default')));
         $app['nine.events']->dispatchEvent(NineEvents::ORM_BOOTED, [$app['db']]);
     }
 
