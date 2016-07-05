@@ -1,6 +1,6 @@
 <?php
 
-namespace Nine\Console\Events;
+namespace Illuminate\Console\Events;
 
 class ArtisanStarting
 {
@@ -14,7 +14,7 @@ class ArtisanStarting
     /**
      * Create a new event instance.
      *
-     * @param  \Illuminate\Console\Application $artisan
+     * @param  $artisan
      *
      */
     public function __construct($artisan)

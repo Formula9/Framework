@@ -1,6 +1,6 @@
 <?php
 
-namespace Nine\Database\Console;
+namespace Illuminate\Console;
 
 use Illuminate\Console\OutputStyle;
 use Illuminate\Console\Parser;

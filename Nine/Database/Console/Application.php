@@ -1,11 +1,11 @@
 <?php
 
-namespace Nine\Database\Console;
+namespace Illuminate\Console;
 
 use Illuminate\Contracts\Console\Application as ApplicationContract;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
-use Nine\Console\Events\ArtisanStarting;
+use Illuminate\Console\Events\ArtisanStarting;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -37,7 +37,7 @@ class Application extends SymfonyApplication implements ApplicationContract
      */
     public function __construct(Container $laravel, Dispatcher $events, $version)
     {
-        parent::__construct('Laravel Migration Tool', 'Formula 9 ' . $version);
+        parent::__construct('Formula Nine Migration Tool', $version . ' | Built on Illuminate Database');
 
         $this->laravel = $laravel;
         $this->setAutoExit(FALSE);
