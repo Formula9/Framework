@@ -200,8 +200,7 @@ class Connections
         if ($driver === 'sqlite') {
 
             $dsn = "{$connection['driver']}:{$connection['database']}";
-
-            $PDO = new PDO($dsn, [], [
+            $PDO = new ExtendedPdo($dsn, NULL, NULL, [], [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]);
 

@@ -1,7 +1,9 @@
 <?php
 
 use F9\Application\Application;
+use F9\Providers\MigrationServiceProvider;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use Nine\Collections\Attributes;
 use Nine\Collections\Config;
 use Nine\Collections\GlobalScope;
@@ -38,3 +40,11 @@ $version        = app()::VERSION;
 $db_connection  = app('db.connection');
 $db_manager     = app('db');
 $ioc            = forge()->make(Container::class);
+
+$migrate_console = new Illuminate\Console\Application(forge('illuminate.container'), forge('illuminate.events'), '0.1');
+(new MigrationServiceProvider($application))->register($application);
+//@formatter:on
+
+$commands = glob('Nine/Database/Console/Migrations/*.php');
+
+

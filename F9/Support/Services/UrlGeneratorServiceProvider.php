@@ -22,17 +22,14 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
  */
 class UrlGeneratorServiceProvider implements ServiceProviderInterface
 {
-    public function boot(Container $app)
-    {
-    }
-
     /**
      * @param Container $app
      */
     public function register(Container $app)
     {
         /** @noinspection OnlyWritesOnParameterInspection
-         * @param $app
+         *
+         * @param $container
          *
          * @return UrlGenerator
          */
