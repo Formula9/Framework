@@ -9,36 +9,38 @@ trait ConfirmableTrait
     /**
      * Confirm before proceeding with the action.
      *
-     * @param  string    $warning
-     * @param  \Closure|bool|null  $callback
+     * @param  string             $warning
+     * @param  \Closure|bool|null $callback
+     *
      * @return bool
      */
-    public function confirmToProceed($warning = 'Application In Production!', $callback = null)
+    public function confirmToProceed($warning = 'Application In Production!', $callback = NULL)
     {
         $callback = is_null($callback) ? $this->getDefaultConfirmCallback() : $callback;
 
         $shouldConfirm = $callback instanceof Closure ? call_user_func($callback) : $callback;
 
         if ($shouldConfirm) {
+            /** @var Command $this */
             if ($this->option('force')) {
-                return true;
+                return TRUE;
             }
 
             $this->comment(str_repeat('*', strlen($warning) + 12));
-            $this->comment('*     '.$warning.'     *');
+            $this->comment('*     ' . $warning . '     *');
             $this->comment(str_repeat('*', strlen($warning) + 12));
-            $this->output->writeln('');
+            $this->getOutput()->writeln('');
 
             $confirmed = $this->confirm('Do you really wish to run this command?');
 
-            if (! $confirmed) {
+            if ( ! $confirmed) {
                 $this->comment('Command Cancelled!');
 
-                return false;
+                return FALSE;
             }
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -49,7 +51,8 @@ trait ConfirmableTrait
     protected function getDefaultConfirmCallback()
     {
         return function () {
-            return $this->getLaravel()->environment() == 'production';
+            return strtoupper(env('APP_ENV')) === 'PRODUCTION';
+            //return $this->getLaravel()->environment() === 'production';
         };
     }
 }
