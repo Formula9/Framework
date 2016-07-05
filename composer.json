@@ -30,7 +30,7 @@
     "require"          : {
         "php"                  : "^7.0.4",
 
-        "silex/silex"          : "2.0.*",
+        "formula9/core"        : "0.4.2.x-dev",
 
         "aura/sql"             : "^2.5",
         "aura/sqlquery"        : "^2.6",
@@ -60,5 +60,10 @@
         "psy/psysh"       : "@stable",
         "mockery/mockery" : "^0.9.4",
         "fzaninotto/faker": "^1.5"
+    },
+    "extra"            : {
+        "branch-alias": {
+            "dev-master": "0.4.2.x-dev"
+        }
     }
 }

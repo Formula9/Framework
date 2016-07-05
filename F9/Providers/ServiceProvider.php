@@ -24,6 +24,14 @@ use Nine\Containers\Forge;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface as PimpleServiceProviderInterface;
 
+/**
+ * The ServiceProvider provides access to the Config, F9\Application (Pimple) and
+ * the central dependency container Forge (derived from illuminate/container.)
+ *
+ * Silex service providers require that the register methods are passed
+ * a reference to the Pimple Container.
+ *
+ */
 abstract class ServiceProvider implements PimpleServiceProviderInterface
 {
     /** @var \F9\Application\Application|Container */
