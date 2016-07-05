@@ -1,14 +1,14 @@
 <?php namespace F9\Providers;
 
 use F9\Support\Provider\ServiceProvider;
-use Illuminate\Console\Events\ArtisanStarting;
-use Illuminate\Database\Console\Migrations\InstallCommand;
-use Illuminate\Database\Console\Migrations\MigrateCommand;
-use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
-use Illuminate\Database\Console\Migrations\RefreshCommand;
-use Illuminate\Database\Console\Migrations\ResetCommand;
-use Illuminate\Database\Console\Migrations\RollbackCommand;
-use Illuminate\Database\Console\Migrations\StatusCommand;
+use Nine\Console\Events\ArtisanStarting;
+use Nine\Database\Console\Migrations\InstallCommand;
+use Nine\Database\Console\Migrations\MigrateCommand;
+use Nine\Database\Console\Migrations\MigrateMakeCommand;
+use Nine\Database\Console\Migrations\RefreshCommand;
+use Nine\Database\Console\Migrations\ResetCommand;
+use Nine\Database\Console\Migrations\RollbackCommand;
+use Nine\Database\Console\Migrations\StatusCommand;
 use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;

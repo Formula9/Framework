@@ -1,10 +1,11 @@
 <?php
 
-namespace Illuminate\Console;
+namespace Nine\Database\Console;
 
 use Illuminate\Contracts\Console\Application as ApplicationContract;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
+use Nine\Console\Events\ArtisanStarting;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -42,7 +43,7 @@ class Application extends SymfonyApplication implements ApplicationContract
         $this->setAutoExit(FALSE);
         $this->setCatchExceptions(FALSE);
 
-        $events->fire(new Events\ArtisanStarting($this));
+        $events->fire(new ArtisanStarting($this));
     }
 
     /**

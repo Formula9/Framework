@@ -3,7 +3,6 @@
 use F9\Application\Application;
 use F9\Providers\MigrationServiceProvider;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use Nine\Collections\Attributes;
 use Nine\Collections\Config;
 use Nine\Collections\GlobalScope;
