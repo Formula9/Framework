@@ -37,7 +37,7 @@ class Application extends SymfonyApplication implements ApplicationContract
      */
     public function __construct(Container $laravel, Dispatcher $events, $version)
     {
-        parent::__construct('Formula Nine Migration Tool', $version . ' | Built on Illuminate Database');
+        parent::__construct('Formula Nine', $version);
 
         $this->laravel = $laravel;
         $this->setAutoExit(FALSE);
