@@ -38,13 +38,17 @@ class Console extends Application
         $this->config = $config;
         $this->paths = $paths;
 
+        // the parent is a hijacked copy of the illuminate console application.
+        // we hijacked it mainly to override a few properties - such as the title.
         parent::__construct(forge('illuminate.container'), forge('illuminate.events'), $version);
 
+        // this is usually the only time this service provider is needed
         (new MigrationServiceProvider(forge('app')))->register(forge('app'));
 
         // in all cases, register the framework commands
         $this->registerFrameworkCommands();
 
+        // register the cloned artisan commands
         $this->registerArtisanCommands();
     }
 
