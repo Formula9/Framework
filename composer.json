@@ -10,6 +10,9 @@
             "email": "odd.greg@gmail.com"
         }
     ],
+    "repositories": [
+
+    ],
     "homepage"         : "https://github.com/Formula9/Framework",
     "support"          : {
         "issues": "https://github.com/Formula9/Framework/issues",
@@ -29,18 +32,14 @@
     "minimum-stability": "stable",
     "require"          : {
         "php"                  : "^7.0.4",
-
-        "formula9/core"        : "0.4.2.x-dev",
-
+        "formula9/core"        : "dev-master",
         "aura/sql"             : "^2.5",
         "aura/sqlquery"        : "^2.6",
-
         "illuminate/database"  : "~5.2",
         "illuminate/support"   : "~5.2",
         "illuminate/events"    : "~5.2",
         "illuminate/filesystem": "~5.2",
         "illuminate/view"      : "~5.2",
-
         "symfony/console"      : "~3.0.8",
         "symfony/form"         : "~3.1",
         "symfony/process"      : "~3.1",
