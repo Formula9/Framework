@@ -33,6 +33,17 @@ class Events extends EventDispatcher
     protected static $_instance;
 
     /**
+     * @param string $event
+     * @param Event  $event_object
+     *
+     * @return \Symfony\Component\EventDispatcher\Event
+     */
+    public static function dispatchClassEvent(string $event, Event $event_object)
+    {
+        return static::$_instance->dispatch($event, $event_object);
+    }
+
+    /**
      * **Dispatch a generic event.**
      *
      * @param       $event
@@ -41,7 +52,7 @@ class Events extends EventDispatcher
      *
      * @return array|null
      */
-    public static function dispatchEvent($event, array $payload = [], $halt = FALSE)
+    public static function dispatchEvent(string $event, array $payload = [], bool $halt = FALSE)
     {
         static::instantiate();
 
