@@ -10,7 +10,7 @@
             "email": "odd.greg@gmail.com"
         }
     ],
-    "repositories": [
+    "repositories"     : [
 
     ],
     "homepage"         : "https://github.com/Formula9/Framework",
@@ -32,7 +32,7 @@
     "minimum-stability": "stable",
     "require"          : {
         "php"                  : "^7.0.4",
-        "formula9/core"        : "dev-master",
+        "formula9/core"        : "~1.0",
         "aura/sql"             : "^2.5",
         "aura/sqlquery"        : "^2.6",
         "illuminate/database"  : "~5.2",
