@@ -18,6 +18,12 @@ or add the following to composer.json
 usually with 
     
     "minimum-stability": "dev",
+    
+and finally:
+
+```bash    
+    composer install
+```
 
 Or you can fork it and fill your boots.
 
