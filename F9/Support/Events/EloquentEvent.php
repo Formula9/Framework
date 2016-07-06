@@ -50,4 +50,12 @@ class EloquentEvent extends Event implements EloquentEventInterface
         return $this->database;
     }
 
+    /**
+     * @return array
+     */
+    public function getPayload() : array
+    {
+
+    }
+
 }

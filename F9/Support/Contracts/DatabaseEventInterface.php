@@ -29,7 +29,14 @@ interface DatabaseEventInterface
     public function getContext() : string;
 
     /**
-     * @return mixed
+     * @return DatabaseEventInterface
      */
     public function getDatabase();
+
+    /**
+     * @return array
+     */
+    public function getPayload();
+
+
 }

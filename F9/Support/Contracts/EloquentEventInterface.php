@@ -27,4 +27,10 @@ interface EloquentEventInterface
      * @return DatabaseManager
      */
     public function getDatabase();
+
+    /**
+     * @return array
+     */
+    public function getPayload();
+
 }

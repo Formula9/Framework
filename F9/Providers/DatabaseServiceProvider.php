@@ -6,10 +6,10 @@
  * @editor  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use F9\Events\DatabaseEvent;
 use App\Listener\DatabaseListener;
 use F9\Application\Application;
 use F9\Contracts\BootableProvider;
+use F9\Events\DatabaseEvent;
 use F9\Events\NineEvents;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Exceptions\DependencyInstanceNotFound;
@@ -18,7 +18,6 @@ use Nine\Containers\Forge;
 use Nine\Database\Connections;
 use Nine\Database\Database;
 use Nine\Database\NineBase;
-use Nine\Events\Events;
 use Pimple\Container;
 use Silex\Api\EventListenerProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -81,7 +80,8 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
             $this->container->add([NineBase::class, 'NineBase'],
                 function () use ($container) {
                     /** @var Forge $container */
-                    return new NineBase($container->get('Connections')); }
+                    return new NineBase($container->get('Connections'));
+                }
             );
 
             // Nine\Database

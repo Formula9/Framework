@@ -50,11 +50,19 @@ class DatabaseEvent extends Event implements DatabaseEventInterface
     }
 
     /**
-     * @return mixed
+     * @return DatabaseInterface
      */
     public function getDatabase()
     {
         return $this->database;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPayload() : array
+    {
+        return $this->payload;
     }
 
 }
