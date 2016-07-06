@@ -8,19 +8,20 @@ This is primarily for my own entertainment and use. Considering how many MVC-ish
  quirky preferences. Much of it is either inspired by similar works, or includes the works of others.
  
 To install use the following:
-
-    composer require formula9/framework
+```
+composer require formula9/framework
+```
     
 or add the following to composer.json
-    
+```json    
     "formula9/framework" : "dev-master"
+```
     
 usually with 
 ```json    
 "minimum-stability": "dev",
 ```    
 and finally:
-
 ```    
 composer install
 ```
