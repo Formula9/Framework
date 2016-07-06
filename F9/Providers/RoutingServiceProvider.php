@@ -25,7 +25,7 @@ class RoutingServiceProvider extends ServiceProvider implements BootableProvider
     {
         /** @var \Silex\Application $app */
         if (class_exists(ControllerRoutingProvider::class)) {
-            $app->mount('', new ControllerRoutingProvider());
+            $app->mount('', new ControllerRoutingProvider($app));
         }
     }
 
