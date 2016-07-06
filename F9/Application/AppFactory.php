@@ -30,6 +30,7 @@ use Nine\Events\Events;
 use Silex\Application as SilexApplication;
 use Silex\ExceptionHandler;
 use Symfony\Component\Debug\ErrorHandler;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * __The `AppFactory` class boots the framework environment and constructs the
@@ -189,8 +190,10 @@ class AppFactory
 
         // the reason we are here
         $app = new NineApplication($container, $config, $events, $global_scope);
-        // set the Core event dispatcher instance in the Formula Nine Events object
+
+        // align the Nine Events object with the Core EventDispatcher (Symfony)
         Events::setEventDispatcher($app['dispatcher']);
+
         $app['app.context'] = 'app';
 
         // register the new Application
