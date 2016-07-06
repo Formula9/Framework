@@ -43,7 +43,7 @@ class DatabaseEvent extends Event
     /**
      * @return string
      */
-    public function getContext()
+    public function getContext() : string
     {
         return $this->context;
     }

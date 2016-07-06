@@ -24,7 +24,7 @@ class ApplicationEvent extends Event
         parent::__construct($payload, $halt);
     }
 
-    public function getApp()
+    public function getApplication() : Application
     {
         return $this->app;
     }
