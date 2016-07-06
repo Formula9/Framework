@@ -51,11 +51,13 @@ class RouterListener implements EventSubscriberInterface
     public function __construct($matcher, RequestStack $requestStack, RequestContext $context = NULL, LoggerInterface $logger = NULL)
     {
         if ( ! $matcher instanceof UrlMatcherInterface && ! $matcher instanceof RequestMatcherInterface) {
-            throw new \InvalidArgumentException('Matcher must either implement UrlMatcherInterface or RequestMatcherInterface.');
+            throw new \InvalidArgumentException(
+                'Matcher must either implement UrlMatcherInterface or RequestMatcherInterface.');
         }
 
         if (NULL === $context && ! $matcher instanceof RequestContextAwareInterface) {
-            throw new \InvalidArgumentException('You must either pass a RequestContext or the matcher must implement RequestContextAwareInterface.');
+            throw new \InvalidArgumentException(
+                'You must either pass a RequestContext or the matcher must implement RequestContextAwareInterface.');
         }
 
         $this->matcher = $matcher;
