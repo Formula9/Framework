@@ -8,7 +8,7 @@ This is primarily for my own entertainment and use. Considering how many MVC-ish
  quirky preferences. Much of it is either inspired by similar works, or includes the works of others.
  
 To install use the following:
-```
+```shell
 composer require formula9/framework
 ```
     
@@ -22,7 +22,7 @@ usually with
 "minimum-stability": "dev",
 ```    
 and finally:
-```    
+```shell    
 composer install
 ```
 
