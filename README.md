@@ -14,7 +14,7 @@ composer require formula9/framework
     
 or add the following to composer.json
 ```json    
-    "formula9/framework" : "dev-master"
+"formula9/framework" : "dev-master"
 ```
     
 usually with 
