@@ -20,6 +20,7 @@
 
 use App\Events\ApplicationEvent;
 use F9\Events\NineEvents;
+use F9\Exceptions\ApplicationBootSequenceError;
 use F9\Exceptions\ApplicationProviderNotFoundException;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Support\Provider\ServiceProvider;
@@ -74,6 +75,9 @@ class Application extends \Silex\Application implements Container
 
     /** @var static $app */
     protected $app;
+
+    /** @var bool */
+    protected $booting = FALSE;
 
     /** @var ConfigInterface $config */
     protected $config;
@@ -182,7 +186,12 @@ class Application extends \Silex\Application implements Container
             return;
         }
 
-        $this->booted = TRUE;
+        if ($this->booting) {
+            throw new ApplicationBootSequenceError(
+                'The Application `boot()` method must not be called while the application is booting.');
+        }
+
+        $this->booting = TRUE;
 
         // boots service providers and subscribes to provider events
         foreach ($this->providers as $provider) {
@@ -195,6 +204,8 @@ class Application extends \Silex\Application implements Container
                 $provider->boot($this);
             }
         }
+
+        $this->booted = TRUE;
     }
 
     /**
@@ -330,7 +341,7 @@ class Application extends \Silex\Application implements Container
             $request = Request::createFromGlobals();
         }
 
-        Events::dispatchClassEvent(NineEvents::APPLICATION_STARTUP, new ApplicationEvent($this, compact('request', 'type')));
+        Events::dispatchClassEvent(NineEvents::APPLICATION_STARTUP, new ApplicationEvent($this, ['request']));
 
         // register the request
         $this['request'] = $request;

@@ -197,6 +197,9 @@ class AppFactory
         // synchronize the Application instance with the forge.
         Forge::setApplication($app);
 
+        // set the Core event dispatcher instance in the Formula Nine Events object
+        //Events::setEventDispatcher($app['dispatcher']);
+
         // additional $app registrations. @formatter:off
         $app['container']       = $container;
         $app['global.scope']    = $global_scope;

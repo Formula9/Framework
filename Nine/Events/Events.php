@@ -2,6 +2,7 @@
 
 use Nine\Contracts\ListenerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * **The Nine Events class extends the Symfony EventDispatcher
@@ -28,6 +29,22 @@ class Events extends EventDispatcher
     public static function dispatchClassEvent(string $event, Event $event_object)
     {
         return static::$_instance->dispatch($event, $event_object);
+    }
+
+    /**
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public static function setEventDispatcher(EventDispatcherInterface $dispatcher)
+    {
+        static::$_instance = $dispatcher;
+    }
+
+    /**
+     * @return Events
+     */
+    public static function getDispatcher()
+    {
+        return static::$_instance;
     }
 
     /**
@@ -71,9 +88,9 @@ class Events extends EventDispatcher
      * If the class has already been instantiated then return the object reference.
      * Otherwise, return a new instantiation.
      *
-     * @return Events|static
+     * @return Events|EventDispatcherInterface|static
      */
-    static public function getInstance() : Events
+    static public function getInstance() : EventDispatcherInterface
     {
         static::instantiate();
 
