@@ -12,6 +12,7 @@
 
 use F9\Application\Application;
 use F9\Contracts\BootableProvider;
+use F9\Events\EloquentEvent;
 use F9\Events\NineEvents;
 use Illuminate\Contracts\Queue\EntityResolver;
 use Illuminate\Database\ConnectionResolver;
@@ -33,7 +34,7 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
     {
         $app['illuminate.connection.resolver'] = $this->buildConnection($this->config->get('database.connections.default'));
         $this->bootModels($this->buildConnection($this->config->get('database.connections.default')));
-        Events::dispatchEvent(NineEvents::ORM_BOOTED, [$app['db']]);
+        Events::dispatchClassEvent(NineEvents::ORM_BOOTED, new EloquentEvent($this->container->get('db')));
     }
 
     /**
@@ -43,20 +44,18 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
      */
     public function register(Container $app)
     {
-        $forge = $this->container;
-
         $this->registerFactories();
 
-        $app['db.factory'] = function () use ($forge) {
-            return $forge['db.factory'];
+        $app['db.factory'] = function () {
+            return $this->container['db.factory'];
         };
 
-        $app['db'] = function () use ($forge) {
-            return $forge['db'];
+        $app['db'] = function () {
+            return $this->container['db'];
         };
 
-        $app['db.connection'] = $app->factory(function () use ($forge) {
-            return $forge['db.connection'];
+        $app['db.connection'] = $app->factory(function ()  {
+            return $this->container['db.connection'];
         });
     }
 
@@ -81,7 +80,7 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
         Model::setEventDispatcher($this->app['illuminate.events']);
         Model::setConnectionResolver($resolver);
 
-        Events::dispatchEvent(NineEvents::MODELS_BOOTED);
+        Events::dispatchClassEvent(NineEvents::MODELS_BOOTED, new EloquentEvent($this->container->get('db')));
     }
 
     /**

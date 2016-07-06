@@ -6,10 +6,11 @@
  * @editor  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use App\Events\DatabaseEvent;
+use F9\Events\DatabaseEvent;
 use App\Listener\DatabaseListener;
 use F9\Application\Application;
 use F9\Contracts\BootableProvider;
+use F9\Events\NineEvents;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Exceptions\DependencyInstanceNotFound;
 use Illuminate\Filesystem\ClassFinder;
@@ -17,6 +18,7 @@ use Nine\Containers\Forge;
 use Nine\Database\Connections;
 use Nine\Database\Database;
 use Nine\Database\NineBase;
+use Nine\Events\Events;
 use Pimple\Container;
 use Silex\Api\EventListenerProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -143,6 +145,8 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
 
             /** @noinspection PhpUndefinedMethodInspection */
             $pdo = $app['database']->getPDO();
+
+            Events::dispatchClassEvent(NineEvents::DATABASE_BOOTED, new DatabaseEvent($app['nine.db']));
 
             $app['pdo'] = $pdo;
             Forge::set([get_class($pdo), 'pdo'], $pdo);
