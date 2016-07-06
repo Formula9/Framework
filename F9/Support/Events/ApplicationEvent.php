@@ -1,4 +1,4 @@
-<?php namespace App\Events;
+<?php namespace F9\Events;
 
 /**
  * @package Nine
