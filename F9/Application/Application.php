@@ -18,6 +18,8 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use App\Events\ApplicationEvent;
+use F9\Events\NineEvents;
 use F9\Exceptions\ApplicationProviderNotFoundException;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Support\Provider\ServiceProvider;
@@ -25,6 +27,7 @@ use Nine\Collections\Config;
 use Nine\Collections\GlobalScope;
 use Nine\Containers\ContainerInterface as Container;
 use Nine\Contracts\ConfigInterface;
+use Nine\Events\Events;
 use Silex\Api\EventListenerProviderInterface;
 use Silex\Application\FormTrait;
 use Silex\Application\SecurityTrait;
@@ -326,6 +329,8 @@ class Application extends \Silex\Application implements Container
         if (NULL === $request) {
             $request = Request::createFromGlobals();
         }
+
+        Events::dispatchClassEvent(NineEvents::APPLICATION_STARTUP, new ApplicationEvent($this, compact('request', 'type')));
 
         // register the request
         $this['request'] = $request;
