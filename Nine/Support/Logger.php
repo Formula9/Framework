@@ -14,6 +14,9 @@
  *  licenses where obtainable.
  */
 
+use Nine\Exceptions\CriticalApplicationFailure;
+use Nine\Exceptions\ApplicationFailureAlert;
+use Pimple\Container;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -23,13 +26,15 @@ use Psr\Log\LoggerInterface;
  */
 class Logger implements LoggerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
+    /** @var Container */
+    private $app;
+
+    /** @var LoggerInterface */
     private $logger;
 
-    public function __construct($logger)
+    public function __construct(Container $app, $logger)
     {
+        $this->app = $app;
         $this->logger = $logger;
     }
 
@@ -43,10 +48,13 @@ class Logger implements LoggerInterface
      * @param array  $context
      *
      * @return null
+     * @throws ApplicationFailureAlert
      */
     public function alert($message, array $context = [])
     {
-        // TODO: Implement alert() method.
+        $this->log('alert', $message, $context);
+
+        throw new ApplicationFailureAlert($message);
     }
 
     /**
@@ -58,10 +66,13 @@ class Logger implements LoggerInterface
      * @param array  $context
      *
      * @return null
+     * @throws CriticalApplicationFailure
      */
     public function critical($message, array $context = [])
     {
-        // TODO: Implement critical() method.
+        $this->log('critical', $message, $context);
+
+        throw new CriticalApplicationFailure($message);
     }
 
     /**

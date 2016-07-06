@@ -32,7 +32,7 @@
     "minimum-stability": "stable",
     "require"          : {
         "php"                  : "^7.0.4",
-        "formula9/core"        : "~1.0",
+        "formula9/core"        : "~1.0.1",
         "aura/sql"             : "^2.5",
         "aura/sqlquery"        : "^2.6",
         "illuminate/database"  : "~5.2",
@@ -40,6 +40,8 @@
         "illuminate/events"    : "~5.2",
         "illuminate/filesystem": "~5.2",
         "illuminate/view"      : "~5.2",
+        "monolog/monolog"      : "^1.20",
+
         "symfony/console"      : "~3.0.8",
         "symfony/form"         : "~3.1",
         "symfony/process"      : "~3.1",

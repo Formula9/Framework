@@ -27,7 +27,7 @@ class ReportingServiceProvider extends ServiceProvider
     {
         if (env('DEBUG') and isset($app['nine.logger'])) {
             // replace the current logger with the F9 framework logger
-            $app['logger'] = new Logger($app['nine.logger']);
+            $app['logger'] = new Logger($app, $app['nine.logger']);
         }
     }
 
