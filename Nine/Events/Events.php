@@ -36,7 +36,7 @@ class Events extends EventDispatcher
      */
     public static function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
-        //static::$_instance = $dispatcher;
+        static::$_instance = $dispatcher;
     }
 
     /**
