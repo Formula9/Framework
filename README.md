@@ -16,13 +16,13 @@ or add the following to composer.json
     "formula9/framework" : "dev-master"
     
 usually with 
-    
-    "minimum-stability": "dev",
-    
+```json    
+"minimum-stability": "dev",
+```    
 and finally:
 
-```bash    
-    composer install
+```    
+composer install
 ```
 
 Or you can fork it and fill your boots.
