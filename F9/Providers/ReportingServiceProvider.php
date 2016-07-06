@@ -15,15 +15,16 @@
  */
 
 use F9\Application\Application;
+use F9\Contracts\BootableProvider;
 use Nine\Logger;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\VarDumper\VarDumper;
 
-class ReportingServiceProvider extends ServiceProvider
+class ReportingServiceProvider extends ServiceProvider implements BootableProvider
 {
-    public function boot(Container $app)
+    public function boot(Application $app)
     {
         if (env('DEBUG') and isset($app['nine.logger'])) {
             // replace the current logger with the F9 framework logger

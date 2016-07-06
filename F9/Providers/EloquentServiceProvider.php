@@ -10,7 +10,10 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use F9\Application\Application;
+use F9\Contracts\BootableProvider;
 use F9\Events\NineEvents;
+use Illuminate\Contracts\Queue\EntityResolver;
 use Illuminate\Database\ConnectionResolver;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\DatabaseManager;
@@ -19,18 +22,18 @@ use Illuminate\Database\Eloquent\QueueEntityResolver;
 use Nine\Events\Events;
 use Pimple\Container;
 
-class EloquentServiceProvider extends ServiceProvider
+class EloquentServiceProvider extends ServiceProvider implements BootableProvider
 {
     /**
      * Bootstrap the application events.
      *
-     * @param Container $app
+     * @param Application|Container $app
      */
-    public function boot(Container $app)
+    public function boot(Application $app)
     {
         $app['illuminate.connection.resolver'] = $this->buildConnection($this->config->get('database.connections.default'));
         $this->bootModels($this->buildConnection($this->config->get('database.connections.default')));
-        $app['nine.events']->dispatchEvent(NineEvents::ORM_BOOTED, [$app['db']]);
+        Events::dispatchEvent(NineEvents::ORM_BOOTED, [$app['db']]);
     }
 
     /**
@@ -44,15 +47,15 @@ class EloquentServiceProvider extends ServiceProvider
 
         $this->registerFactories();
 
-        $app['db.factory'] = function ($app) use ($forge) {
+        $app['db.factory'] = function () use ($forge) {
             return $forge['db.factory'];
         };
 
-        $app['db'] = function ($app) use ($forge) {
+        $app['db'] = function () use ($forge) {
             return $forge['db'];
         };
 
-        $app['db.connection'] = $app->factory(function ($app) use ($forge) {
+        $app['db.connection'] = $app->factory(function () use ($forge) {
             return $forge['db.connection'];
         });
     }
@@ -78,7 +81,7 @@ class EloquentServiceProvider extends ServiceProvider
         Model::setEventDispatcher($this->app['illuminate.events']);
         Model::setConnectionResolver($resolver);
 
-        $this->app['nine.events']->dispatchEvent(NineEvents::MODELS_BOOTED);
+        Events::dispatchEvent(NineEvents::MODELS_BOOTED);
     }
 
     /**
@@ -142,10 +145,6 @@ class EloquentServiceProvider extends ServiceProvider
      */
     protected function registerQueueableEntityResolver()
     {
-        $this->container->singleton(
-            \Illuminate\Contracts\Queue\EntityResolver::class,
-            function () {
-                return new QueueEntityResolver;
-            });
+        $this->container->singleton(EntityResolver::class, function () { return new QueueEntityResolver; });
     }
 }

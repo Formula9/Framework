@@ -6,6 +6,8 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use F9\Application\Application;
+use F9\Contracts\BootableProvider;
 use Nine\Containers\Forge;
 use Nine\Views\TwigConfigurationSet;
 use Nine\Views\TwigView;
@@ -26,13 +28,15 @@ use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Fragment\HIncludeFragmentRenderer;
 
-class TwigViewServiceProvider extends ServiceProvider
+class TwigViewServiceProvider extends ServiceProvider implements BootableProvider
 {
 
     /**
-     * @param Container $app
+     * @param Application|Container $app
+     *
+     * @throws \F9\Exceptions\CannotAddNonexistentClass
      */
-    public function boot(Container $app)
+    public function boot(Application $app)
     {
         /** @var Forge $container */
         list($config, $container) = [$this->config, $this->container];

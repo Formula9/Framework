@@ -14,6 +14,8 @@
  *  licenses where obtainable.
  */
 
+use F9\Application\Application;
+use F9\Contracts\BootableProvider;
 use Nine\Views\TwigView;
 use Pimple\Container;
 
@@ -22,9 +24,9 @@ use Pimple\Container;
  * @version 0.4.2
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-class ViewServiceProvider extends ServiceProvider
+class ViewServiceProvider extends ServiceProvider implements BootableProvider
 {
-    public function boot(Container $app)
+    public function boot(Application $app)
     {
         if ($this->config['view.twig.enabled'] && class_exists(TwigViewServiceProvider::class)) {
             $app['twig.view'] = $app->factory(function ($app) { return new TwigView($app['twig.context']); });

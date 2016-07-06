@@ -11,6 +11,7 @@
 
 namespace Silex\Provider;
 
+use F9\Contracts\BootableProvider;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex\Api\BootableProviderInterface;
@@ -57,9 +58,9 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class F9WebProfilerServiceProvider implements ServiceProviderInterface, ControllerProviderInterface, BootableProviderInterface, EventListenerProviderInterface
+class F9WebProfilerServiceProvider implements ServiceProviderInterface, ControllerProviderInterface, BootableProvider, EventListenerProviderInterface
 {
-    public function boot(Application $app)
+    public function boot(NineApplication $app)
     {
         $app->mount($app['profiler.mount_prefix'], $this->connect($app));
     }

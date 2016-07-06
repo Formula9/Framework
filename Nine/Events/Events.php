@@ -1,19 +1,6 @@
 <?php namespace Nine\Events;
 
-/*===================================================================================
- = F9 (Formula 9) Personal PHP Framework                                         =
- =                                                                                  =
- = Copyright (c) 2010-2016, Greg Truesdell (<odd.greg@gmail.com>)                   =
- = License: MIT (reference: https://opensource.org/licenses/MIT)                    =
- =                                                                                  =
- = Acknowledgements:                                                                =
- =  - The code provided in this file (and in the Framework in general) may include  =
- = open sourced software licensed for the purpose, refactored code from related     =
- = packages, or snippets/methods found on sites throughout the internet.            =
- =  - All originator copyrights remain in force where applicable, as well as their  =
- =  licenses where obtainable.                                                      =
- ===================================================================================*/
-
+use Nine\Contracts\ListenerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -60,6 +47,25 @@ class Events extends EventDispatcher
     }
 
     /**
+     * Forget a listener.
+     *
+     * example:
+     *
+     *      Events::listen('an.event', [$this, 'onAnEvent']);
+     *      ...
+     *      Events::forget('an.event', [$this, 'onAnEvent']);
+     *
+     * @param string   $eventName
+     * @param callable $listener
+     */
+    public static function forget(string $eventName, callable $listener)
+    {
+        static::instantiate();
+
+        static::$_instance->removeListener($eventName, $listener);
+    }
+
+    /**
      * **Return an singleton instance of the Class.**
      *
      * If the class has already been instantiated then return the object reference.
@@ -72,6 +78,52 @@ class Events extends EventDispatcher
         static::instantiate();
 
         return static::$_instance;
+    }
+
+    /**
+     * Listen for an event and handle it with an inline callable.
+     *
+     * example:
+     *
+     *  `Events::listen(NineEvents::DATABASE_BOOTED, function ($event, $eventName, $dispatcher) { ... }, 100);`
+     *
+     * @param string   $eventName
+     * @param callable $listener
+     * @param int      $priority
+     */
+    public static function listen(string $eventName, callable $listener, int $priority = 0)
+    {
+        static::instantiate();
+
+        static::$_instance->addListener($eventName, $listener, $priority);
+    }
+
+    /**
+     * Add a ListenerInterface-derived event.
+     *
+     * example:
+     *
+     *      Events::subscribe(new DatabaseListener(new DatabaseEvent($app['database']));
+     *
+     * @param ListenerInterface $subscriber
+     */
+    public static function subscribe(ListenerInterface $subscriber)
+    {
+        static::instantiate();
+
+        static::$_instance->addSubscriber($subscriber);
+    }
+
+    /**
+     * Unsubscribe a listener.
+     *
+     * @param ListenerInterface $subscriber
+     */
+    public static function unsubscribe(ListenerInterface $subscriber)
+    {
+        static::instantiate();
+
+        static::$_instance->removeSubscriber($subscriber);
     }
 
     /**

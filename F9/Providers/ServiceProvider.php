@@ -50,9 +50,4 @@ abstract class ServiceProvider implements PimpleServiceProviderInterface
         $this->config = $this->app['config'];
     }
 
-    /**
-     * @param Container $app
-     */
-    public function boot(Container $app) { }
-
 }

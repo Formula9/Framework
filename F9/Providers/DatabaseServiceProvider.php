@@ -8,6 +8,8 @@
 
 use App\Events\DatabaseEvent;
 use App\Listener\DatabaseListener;
+use F9\Application\Application;
+use F9\Contracts\BootableProvider;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Exceptions\DependencyInstanceNotFound;
 use Illuminate\Filesystem\ClassFinder;
@@ -19,14 +21,13 @@ use Pimple\Container;
 use Silex\Api\EventListenerProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class DatabaseServiceProvider extends ServiceProvider implements EventListenerProviderInterface
+class DatabaseServiceProvider extends ServiceProvider implements BootableProvider, EventListenerProviderInterface
 {
     /**
-     * @param Container $app
+     * @param Application|Container $app
      *
-     * @throws CannotAddNonexistentClass
      */
-    public function boot(Container $app)
+    public function boot(Application $app)
     {
         $this->register_databases($app);
         $this->register_models();

@@ -8,6 +8,7 @@
 
 use App\Provider\ControllerRoutingProvider;
 use F9\Application\Application;
+use F9\Contracts\BootableProvider;
 use F9\Exceptions\CannotAddNonexistentClass;
 use InvalidArgumentException;
 use Pimple\Container;
@@ -17,10 +18,10 @@ use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 
-class RoutingServiceProvider extends ServiceProvider
+class RoutingServiceProvider extends ServiceProvider implements BootableProvider
 {
 
-    public function boot(Container $app)
+    public function boot(Application $app)
     {
         /** @var \Silex\Application $app */
         if (class_exists(ControllerRoutingProvider::class)) {

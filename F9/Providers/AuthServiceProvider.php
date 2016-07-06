@@ -6,15 +6,17 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use F9\Application\Application;
+use F9\Contracts\BootableProvider;
 use Pimple\Container;
 use Silex\Provider\RememberMeServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class AuthServiceProvider extends ServiceProvider
+class AuthServiceProvider extends ServiceProvider implements BootableProvider
 {
-    public function boot(Container $app)
+    public function boot(Application $app)
     {
         $this->app->bootProvider(SecurityServiceProvider::class);
     }

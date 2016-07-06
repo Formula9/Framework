@@ -1,5 +1,7 @@
 <?php namespace F9\Support\Provider;
 
+use F9\Application\Application;
+use F9\Contracts\BootableProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Engines\CompilerEngine;
@@ -18,12 +20,14 @@ use Pimple\Container;
  * @version 0.4.2
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-class BladeViewServiceProvider extends ServiceProvider
+class BladeViewServiceProvider extends ServiceProvider implements BootableProvider
 {
     /**
-     * @param Container $app
+     * @param Application|Container $app
+     *
+     * @throws \F9\Exceptions\CannotAddNonexistentClass
      */
-    public function boot(Container $app)
+    public function boot(Application $app)
     {
         // only if enabled
         if ($app['config']['view.blade.enabled']) {
@@ -47,13 +51,13 @@ class BladeViewServiceProvider extends ServiceProvider
 
             $this->container
                 ->add([BladeView::class, 'BladeView'],
-                    function () use ($app) { return new BladeView($app['blade.context']); });
+                    function () use ($app) { return new BladeView($this->app['blade.context']); });
 
             // for dependency injection. ie: DI::make(BladeView::class)
             $app[BladeViewConfigurationInterface::class] = function ($app) { return $app['blade.context']; };
 
-            $app['blade'] = $app->factory(function ($app) { return new Blade($app['blade.context']); });
-            $app['blade.view'] = $app->factory(function ($app) { return new BladeView($app['blade.context']); });
+            $app['blade'] = $app->factory(function () { return new Blade($this->app['blade.context']); });
+            $app['blade.view'] = $app->factory(function () { return new BladeView($this->app['blade.context']); });
         }
     }
 
