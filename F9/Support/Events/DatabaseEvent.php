@@ -6,13 +6,14 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use F9\Contracts\DatabaseEventInterface;
 use Nine\Database\DatabaseInterface;
 use Nine\Events\Event;
 
 /**
  * Base Database Event
  */
-class DatabaseEvent extends Event
+class DatabaseEvent extends Event implements DatabaseEventInterface
 {
     /** @var mixed */
     protected $context;

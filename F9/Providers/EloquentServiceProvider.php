@@ -34,7 +34,7 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
     {
         $app['illuminate.connection.resolver'] = $this->buildConnection($this->config->get('database.connections.default'));
         $this->bootModels($this->buildConnection($this->config->get('database.connections.default')));
-        Events::dispatchClassEvent(NineEvents::ORM_BOOTED, new EloquentEvent($this->container->get('db')));
+        $this->app['dispatcher']->dispatch(NineEvents::ORM_BOOTED, new EloquentEvent($this->container->get('db')));
     }
 
     /**
