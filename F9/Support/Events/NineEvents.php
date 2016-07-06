@@ -79,6 +79,7 @@ final class NineEvents
     const PDO_BOOTED          = 'database.pdo_booted';
     const ORM_BOOTED          = 'database.orm_booted';
     const DATABASE_BOOTED     = 'database.booted';
+    const DATABASE_QUERY      = 'database.query';
     const DATABASE_REGISTERED = 'database.registered';
     const MODELS_BOOTED       = 'database.models.booted';
 
