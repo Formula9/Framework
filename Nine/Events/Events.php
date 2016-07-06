@@ -36,7 +36,7 @@ class Events extends EventDispatcher
      */
     public static function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
-        static::$_instance = $dispatcher;
+        //static::$_instance = $dispatcher;
     }
 
     /**
@@ -90,7 +90,7 @@ class Events extends EventDispatcher
      *
      * @return Events|EventDispatcherInterface|static
      */
-    static public function getInstance() : EventDispatcherInterface
+    static public function getInstance()
     {
         static::instantiate();
 

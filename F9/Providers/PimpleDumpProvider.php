@@ -1,15 +1,13 @@
 <?php namespace F9\Support\Provider;
 
-use F9\Application\Application as NineApplication;
-use F9\Contracts\BootableProvider;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex\Api\BootableProviderInterface;
 use Silex\Api\ControllerProviderInterface;
-use Silex\Application as SilexApplication;
+use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-class PimpleDumpProvider implements ServiceProviderInterface, ControllerProviderInterface, BootableProvider
+class PimpleDumpProvider implements ServiceProviderInterface, ControllerProviderInterface, BootableProviderInterface
 {
     const DIC_PREFIX = 'pimple_dump';
 
@@ -18,9 +16,9 @@ class PimpleDumpProvider implements ServiceProviderInterface, ControllerProvider
     private $processed = FALSE;
 
     /**
-     * @param NineApplication $app
+     * @param Application $app
      */
-    public function boot(NineApplication $app)
+    public function boot(Application $app)
     {
         $app->mount('/', $this->connect($app));
 
@@ -39,7 +37,7 @@ class PimpleDumpProvider implements ServiceProviderInterface, ControllerProvider
         }
     }
 
-    public function connect(SilexApplication $app)
+    public function connect(Application $app)
     {
         $self = $this;
         $controllersFactory = $app['controllers_factory'];

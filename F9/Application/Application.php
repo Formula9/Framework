@@ -18,8 +18,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use App\Events\ApplicationEvent;
-use F9\Events\NineEvents;
 use F9\Exceptions\ApplicationBootSequenceError;
 use F9\Exceptions\ApplicationProviderNotFoundException;
 use F9\Exceptions\CannotAddNonexistentClass;
@@ -192,6 +190,7 @@ class Application extends \Silex\Application implements Container
         }
 
         $this->booting = TRUE;
+        $this->booted = TRUE;
 
         // boots service providers and subscribes to provider events
         foreach ($this->providers as $provider) {
@@ -205,7 +204,8 @@ class Application extends \Silex\Application implements Container
             }
         }
 
-        $this->booted = TRUE;
+        $this->booting = FALSE;
+
     }
 
     /**
@@ -340,8 +340,6 @@ class Application extends \Silex\Application implements Container
         if (NULL === $request) {
             $request = Request::createFromGlobals();
         }
-
-        Events::dispatchClassEvent(NineEvents::APPLICATION_STARTUP, new ApplicationEvent($this, ['request']));
 
         // register the request
         $this['request'] = $request;

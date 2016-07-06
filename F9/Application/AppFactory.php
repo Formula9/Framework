@@ -189,6 +189,8 @@ class AppFactory
 
         // the reason we are here
         $app = new NineApplication($container, $config, $events, $global_scope);
+        // set the Core event dispatcher instance in the Formula Nine Events object
+        Events::setEventDispatcher($app['dispatcher']);
         $app['app.context'] = 'app';
 
         // register the new Application
@@ -196,9 +198,6 @@ class AppFactory
 
         // synchronize the Application instance with the forge.
         Forge::setApplication($app);
-
-        // set the Core event dispatcher instance in the Formula Nine Events object
-        //Events::setEventDispatcher($app['dispatcher']);
 
         // additional $app registrations. @formatter:off
         $app['container']       = $container;
