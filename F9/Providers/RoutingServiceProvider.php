@@ -29,24 +29,17 @@ class RoutingServiceProvider extends ServiceProvider implements BootableProvider
         }
     }
 
-    /**
-     * @param Container|Application $app
-     *
-     * @throws InvalidArgumentException
-     * @throws CannotAddNonexistentClass
-     * @throws \LogicException
-     */
     public function register(Container $app)
     {
         include_once APP . 'routes.php';
 
-        $app->register(new InjectingControllerServiceProvider($app));
+        $app->register(new InjectingControllerServiceProvider($this->app));
         $app->register(new ServiceControllerServiceProvider);
 
         $app[Request::class] = $app->factory(function () { return Request::createFromGlobals(); });
         $app['request'] = $app->factory(function ($app) { return $app[Request::class]; });
 
-        $app['nine.container']->add(Request::class, function () use ($app) { return $app[Request::class]; });
+        $this->container->add(Request::class, function () use ($app) { return $app[Request::class]; });
 
         $app->register(new HttpCacheServiceProvider, [
             'http_cache.cache_dir' => $app['config']['core.http_cache_dir'],
