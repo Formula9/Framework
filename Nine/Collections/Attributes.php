@@ -66,13 +66,13 @@ class Attributes implements \ArrayAccess, AttributesInterface
      *
      * _Returns NULL if the attribute does not exist._
      *
-     * @param string $id
+     * @param string $name
      *
      * @return array|null
      */
-    public function getAttribute($id) : array
+    public function getAttribute($name) : array
     {
-        return $this->items[$id] ?? NULL;
+        return $this->items[$name] ?? NULL;
     }
 
     /**

@@ -20,7 +20,6 @@ use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\QueueEntityResolver;
-use Nine\Events\Events;
 use Pimple\Container;
 
 class EloquentServiceProvider extends ServiceProvider implements BootableProvider
@@ -34,6 +33,8 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
     {
         $app['illuminate.connection.resolver'] = $this->buildConnection($this->config->get('database.connections.default'));
         $this->bootModels($this->buildConnection($this->config->get('database.connections.default')));
+
+        // Eloquent boot event
         $this->app['dispatcher']->dispatch(NineEvents::ORM_BOOTED, new EloquentEvent($this->container->get('db')));
     }
 
@@ -46,27 +47,19 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
     {
         $this->registerFactories();
 
-        $app['db.factory'] = function () {
-            return $this->container['db.factory'];
-        };
-
-        $app['db'] = function () {
-            return $this->container['db'];
-        };
-
-        $app['db.connection'] = $app->factory(function ()  {
-            return $this->container['db.connection'];
-        });
+        $app['db'] = function () { return $this->container['db']; };
+        $app['db.connection'] = $app->factory(function () { return $this->container['db.connection']; });
+        $app['db.factory'] = function () { return $this->container['db.factory']; };
     }
 
     /**
-     * @param array $db_config
+     * @param array $dbConfig
      *
      * @return DatabaseManager
      */
-    protected function bootIlluminateDatabase(array $db_config)
+    protected function bootIlluminateDatabase(array $dbConfig)
     {
-        $this->bootModels($this->buildConnection($db_config));
+        $this->bootModels($this->buildConnection($dbConfig));
 
         return $this->container['db.manager'];
     }
@@ -80,18 +73,18 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
         Model::setEventDispatcher($this->app['illuminate.events']);
         Model::setConnectionResolver($resolver);
 
-        Events::dispatchClassEvent(NineEvents::MODELS_BOOTED, new EloquentEvent($this->container->get('db')));
+        $this->app['dispatcher']->dispatch(NineEvents::MODELS_BOOTED, new EloquentEvent($this->container->get('db')));
     }
 
     /**
-     * @param array $db_config
+     * @param array $dbConfig
      *
      * @return \Illuminate\Database\ConnectionResolver
      */
-    protected function buildConnection(array $db_config)
+    protected function buildConnection(array $dbConfig)
     {
         $connFactory = new ConnectionFactory($this->container);
-        $conn = $connFactory->make($db_config);
+        $conn = $connFactory->make($dbConfig);
 
         $resolver = new ConnectionResolver();
         $resolver->addConnection('default', $conn);

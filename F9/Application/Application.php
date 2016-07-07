@@ -218,11 +218,11 @@ class Application extends \Silex\Application implements Container
      *      any other provider(s) is not registered, then there will be no
      *      indication of which or how many were not found.
      *
-     * @param string|array $provider_class The registered provider class(es) to boot (if it exists.)
+     * @param string|array $providerClass The registered provider class(es) to boot (if it exists.)
      *
      * @return bool Returns FALSE
      */
-    public function bootProvider($provider_class) : bool
+    public function bootProvider($providerClass) : bool
     {
         // assume failure
         $booted = FALSE;
@@ -230,7 +230,7 @@ class Application extends \Silex\Application implements Container
         /** @var ServiceProvider $provider */
         foreach ($this->getProviders() as $provider) {
 
-            if (get_class($provider) === $provider_class and method_exists($provider, 'boot')) {
+            if (get_class($provider) === $providerClass and method_exists($provider, 'boot')) {
 
                 $provider->boot($this);
 
@@ -331,11 +331,11 @@ class Application extends \Silex\Application implements Container
      * **Run the application with an optional Request.**
      *
      * @param Request|NULL $request
-     * @param int          $type
+     * @param int          $requestType
      *
      * @throws \Exception
      */
-    public function run(Request $request = NULL, $type = HttpKernelInterface::MASTER_REQUEST)
+    public function run(Request $request = NULL, $requestType = HttpKernelInterface::MASTER_REQUEST)
     {
         if (NULL === $request) {
             $request = Request::createFromGlobals();
@@ -343,7 +343,7 @@ class Application extends \Silex\Application implements Container
 
         // register the request
         $this['request'] = $request;
-        $response = $this->handle($request, $type);
+        $response = $this->handle($request, $requestType);
         $response->send();
         $this->terminate($request, $response);
     }
@@ -381,16 +381,10 @@ class Application extends \Silex\Application implements Container
         // use the Config object
         $this['config'] = function () use ($config) { return $config; };
 
-        // settings
-        $this->boot_settings();
-
-        // events
-        $this->boot_application_events();
-
-        // configured providers (via config/app.php)
-        $this->register_configured_providers();
-
-        $this->register_aliases();
+        $this->bootSettings();
+        $this->bootApplicationEvents();
+        $this->registerConfiguredProviders();
+        $this->registerAliases();
     }
 
     /**
@@ -398,7 +392,7 @@ class Application extends \Silex\Application implements Container
      *
      * @throws \InvalidArgumentException
      */
-    private function boot_application_events()
+    private function bootApplicationEvents()
     {
         // override Symfony EventDispatcher::class with framework Events::class.
         $this['dispatcher_class'] = get_class($this->events);
@@ -409,7 +403,7 @@ class Application extends \Silex\Application implements Container
      *
      * @throws CannotAddNonexistentClass
      */
-    private function boot_settings()
+    private function bootSettings()
     {
         // contextual use for routes and di
         $app = $this;
@@ -433,7 +427,7 @@ class Application extends \Silex\Application implements Container
     /**
      *  Register the aliases found in the 'aliases' array config setting.
      */
-    private function register_aliases()
+    private function registerAliases()
     {
         if ($this->config->has('aliases')) {
             foreach ($this->config['aliases'] as $alias => $class) {
@@ -445,7 +439,7 @@ class Application extends \Silex\Application implements Container
     /**
      * Register the loaded provider list (ie: from app.php)
      */
-    private function register_configured_providers()
+    private function registerConfiguredProviders()
     {
         // load and register all providers listed in config/app.php
         foreach ((array) $this->settings['providers'] as $provider) {

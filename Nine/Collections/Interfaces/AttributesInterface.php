@@ -28,11 +28,11 @@ interface AttributesInterface
      *
      * _Returns NULL if the attribute does not exist._
      *
-     * @param string $id
+     * @param string $name
      *
      * @return array|null
      */
-    public function getAttribute($id) : array;
+    public function getAttribute($name) : array;
 
     /**
      * **Returns an arrayable clone of this class.**

@@ -20,26 +20,26 @@ trait WithItemImport
     /**
      * Import (merge) values from a json file into the collection by key.
      *
-     * @param $json_string
+     * @param $jsonString
      *
      * @param $key
      *
      * @return mixed
      * @throws \InvalidArgumentException
      */
-    public function importJSON($json_string, $key = '')
+    public function importJSON($jsonString, $key = '')
     {
-        $json_string = $this->get_value($json_string);
-        $import = json_decode($json_string, TRUE);
+        $jsonString = $this->getValue($jsonString);
+        $import = json_decode($jsonString, TRUE);
 
         // an empty key signifies direct import
-        return $this->import_value($import, $key);
+        return $this->importValue($import, $key);
     }
 
     /**
      * Import (merge) values from a yaml file.
      *
-     * @param string $yaml_string
+     * @param string $yamlString
      * @param string $key
      *
      * @return array
@@ -47,12 +47,12 @@ trait WithItemImport
      *
      * @throws ParseException
      */
-    public function importYAML($yaml_string, $key = '')
+    public function importYAML($yamlString, $key = '')
     {
-        $yaml_string = $this->get_value($yaml_string);
-        $import = YAML::parse($yaml_string);
+        $yamlString = $this->getValue($yamlString);
+        $import = YAML::parse($yamlString);
 
-        return $this->import_value($import, $key);
+        return $this->importValue($import, $key);
     }
 
     /**
@@ -63,7 +63,7 @@ trait WithItemImport
      *
      * @return string
      */
-    protected function get_value($value)
+    protected function getValue($value)
     {
         // load the source file from the OS if a valid filename is passed.
         if (file_exists($value)) {
@@ -82,11 +82,11 @@ trait WithItemImport
      * @return array
      * @throws \InvalidArgumentException
      */
-    protected function import_value($value, $key = '')
+    protected function importValue($value, $key = '')
     {
         // an empty key signifies direct import
         return $key === ''
-            ? $this->merge_value($value)
+            ? $this->mergeValue($value)
             : $this->items[$key] = $value;
     }
 
@@ -98,7 +98,7 @@ trait WithItemImport
      * @return array
      * @throws \InvalidArgumentException
      */
-    protected function merge_value($value)
+    protected function mergeValue($value)
     {
         if (Lib::is_assoc($value)) {
             return $this->items = array_merge($this->items, $value);

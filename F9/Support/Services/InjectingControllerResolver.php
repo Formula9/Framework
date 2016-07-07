@@ -36,7 +36,7 @@ class InjectingControllerResolver implements ControllerResolverInterface, Pimple
     protected $controllerResolver;
 
     /** @var Request */
-    protected $current_request;
+    protected $currentRequest;
 
     /** @var ContainerInterface */
     protected $injector;
@@ -75,27 +75,27 @@ class InjectingControllerResolver implements ControllerResolverInterface, Pimple
     public function getArguments(Request $request, $controller) : array
     {
         // store the current request for local reference.
-        $this->current_request = $request;
+        $this->currentRequest = $request;
 
         // if the controller is an array then assume the controller is [<controller_class>, <method>]
         if (is_array($controller)) {
-            $r = new \ReflectionMethod($controller[0], $controller[1]);
+            $reflection = new \ReflectionMethod($controller[0], $controller[1]);
         }
 
         // --or-- if an instantiated controller object which is not a Closure then
         //      assume the `__invoke` method
         elseif (is_object($controller) && ! $controller instanceof \Closure) {
-            $r = new \ReflectionObject((object) $controller);
-            $r = $r->getMethod('__invoke');
+            $reflection = new \ReflectionObject((object) $controller);
+            $reflection = $reflection->getMethod('__invoke');
         }
 
         // --finally-- assume the controller is a `callable` entity
         else {
-            $r = new \ReflectionFunction($controller);
+            $reflection = new \ReflectionFunction($controller);
         }
 
         // collect and return the list of constructor|controller:method parameters
-        return $this->injector->getMethodArguments($request, $controller, $r->getParameters());
+        return $this->injector->getMethodArguments($request, $controller, $reflection->getParameters());
     }
 
     /**

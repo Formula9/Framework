@@ -30,8 +30,8 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
      */
     public function boot(Application $app)
     {
-        $this->register_databases($app);
-        $this->register_models();
+        $this->registerDatabases($app);
+        $this->registerModels();
     }
 
     /**
@@ -133,7 +133,7 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
      * @return Container
      * @throws CannotAddNonexistentClass
      */
-    private function register_databases(Container $app)
+    private function registerDatabases(Container $app)
     {
         if ($this->config['database.database_enabled']) {
 
@@ -161,7 +161,7 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
      *
      * @throws CannotAddNonexistentClass
      */
-    private function register_models()
+    private function registerModels()
     {
         // if using eloquent then register all of the eloquent models.
         if ($this->config['database.eloquent_enabled']) {

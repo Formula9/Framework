@@ -18,17 +18,17 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class Events extends EventDispatcher
 {
     /** @var Events */
-    protected static $_instance;
+    protected static $instance;
 
     /**
      * @param string $event
-     * @param Event  $event_object
+     * @param Event  $eventObject
      *
      * @return \Symfony\Component\EventDispatcher\Event
      */
-    public static function dispatchClassEvent(string $event, Event $event_object)
+    public static function dispatchClassEvent(string $event, Event $eventObject)
     {
-        return static::$_instance->dispatch($event, $event_object);
+        return static::$instance->dispatch($event, $eventObject);
     }
 
     /**
@@ -36,7 +36,7 @@ class Events extends EventDispatcher
      */
     public static function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
-        static::$_instance = $dispatcher;
+        static::$instance = $dispatcher;
     }
 
     /**
@@ -44,7 +44,7 @@ class Events extends EventDispatcher
      */
     public static function getDispatcher()
     {
-        return static::$_instance;
+        return static::$instance;
     }
 
     /**
@@ -60,7 +60,7 @@ class Events extends EventDispatcher
     {
         static::instantiate();
 
-        return static::$_instance->dispatch($event, new Event($payload, $halt));
+        return static::$instance->dispatch($event, new Event($payload, $halt));
     }
 
     /**
@@ -79,7 +79,7 @@ class Events extends EventDispatcher
     {
         static::instantiate();
 
-        static::$_instance->removeListener($eventName, $listener);
+        static::$instance->removeListener($eventName, $listener);
     }
 
     /**
@@ -94,7 +94,7 @@ class Events extends EventDispatcher
     {
         static::instantiate();
 
-        return static::$_instance;
+        return static::$instance;
     }
 
     /**
@@ -112,7 +112,7 @@ class Events extends EventDispatcher
     {
         static::instantiate();
 
-        static::$_instance->addListener($eventName, $listener, $priority);
+        static::$instance->addListener($eventName, $listener, $priority);
     }
 
     /**
@@ -128,7 +128,7 @@ class Events extends EventDispatcher
     {
         static::instantiate();
 
-        static::$_instance->addSubscriber($subscriber);
+        static::$instance->addSubscriber($subscriber);
     }
 
     /**
@@ -140,7 +140,7 @@ class Events extends EventDispatcher
     {
         static::instantiate();
 
-        static::$_instance->removeSubscriber($subscriber);
+        static::$instance->removeSubscriber($subscriber);
     }
 
     /**
@@ -148,6 +148,6 @@ class Events extends EventDispatcher
      */
     private static function instantiate()
     {
-        static::$_instance = static::$_instance ?: new static();
+        static::$instance = static::$instance ?: new static();
     }
 }

@@ -147,7 +147,7 @@ abstract class AbstractView extends Scope
      */
     public function share($data)
     {
-        $this->context->global_scope()->import_value($data);
+        $this->context->global_scope()->importValue($data);
     }
 
     /**

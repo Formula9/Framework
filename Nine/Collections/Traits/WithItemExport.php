@@ -49,27 +49,27 @@ trait WithItemExport
      * @param string      $path      - the file to write
      * @param string      $key       - the block of data to write
      *                               - (use '*' to write the entire collection)
-     * @param string|null $base_name - the optional base filename
+     * @param string|null $baseName  - the optional base filename
      *
      * @throws CollectionExportWriteFailure
      */
-    public function exportPHPFile($path, $key, $base_name = NULL)
+    public function exportPHPFile($path, $key, $baseName = NULL)
     {
         $export_structure = $key === '*' ? var_export($this->{'items'}, TRUE) : var_export($this->{'items'}[$key], TRUE);
 
-        if (NULL === $base_name) {
-            $base_name = $key === '*' ? 'export.php' : $key . '.php';
+        if (NULL === $baseName) {
+            $baseName = $key === '*' ? 'export.php' : $key . '.php';
         }
 
-        $export_text = "<?php \n return " . $export_structure . ';';
-        $export_filename = $path . $base_name;
+        $exportText = "<?php \n return " . $export_structure . ';';
+        $exportFilename = $path . $baseName;
 
-        if (file_exists($export_filename)) {
-            unlink($export_filename);
+        if (file_exists($exportFilename)) {
+            unlink($exportFilename);
         }
 
-        if (FALSE === file_put_contents($export_filename, $export_text)) {
-            throw new CollectionExportWriteFailure("Failed exporting `$export_filename` - cannot write contents.");
+        if (FALSE === file_put_contents($exportFilename, $exportText)) {
+            throw new CollectionExportWriteFailure("Failed exporting `$exportFilename` - cannot write contents.");
         }
     }
 
