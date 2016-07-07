@@ -232,7 +232,7 @@ final class Reflector
      */
     public function invokeClassMethod($class, $method = NULL, $execute = TRUE)
     {
-        // is the class described by `class:method`?
+        // is the class described by `class@method`?
         if (is_string($class) and Lib::str_has(':', $class)) {
             list($class, $method) = explode(':', $class);
         }

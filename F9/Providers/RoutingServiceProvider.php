@@ -9,8 +9,6 @@
 use App\Provider\ControllerRoutingProvider;
 use F9\Application\Application;
 use F9\Contracts\BootableProvider;
-use F9\Exceptions\CannotAddNonexistentClass;
-use InvalidArgumentException;
 use Pimple\Container;
 use Silex\Provider\HttpCacheServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
