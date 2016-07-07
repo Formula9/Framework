@@ -27,8 +27,6 @@ use Nine\Collections\GlobalScope;
 use Nine\Containers\ContainerInterface as Container;
 use Nine\Contracts\ConfigInterface;
 use Nine\Events\Events;
-use Nine\Library\Strings;
-use RuntimeException;
 use Silex\Api\EventListenerProviderInterface;
 use Silex\Application\FormTrait;
 use Silex\Application\SecurityTrait;
@@ -88,8 +86,8 @@ class Application extends \Silex\Application implements Container
     /** @var EventDispatcher $events */
     protected $events;
 
-    /** @var GlobalScope $global_scope */
-    protected $global_scope;
+    /** @var GlobalScope $globalScope */
+    protected $globalScope;
 
     /** @var array $settings */
     protected $settings;
@@ -103,15 +101,15 @@ class Application extends \Silex\Application implements Container
      * @param Container              $container
      * @param Config|ConfigInterface $config
      * @param EventDispatcher        $events
-     * @param GlobalScope            $global_scope
+     * @param GlobalScope            $globalScope
      */
-    public function __construct(Container $container, Config $config, EventDispatcher $events, GlobalScope $global_scope)
+    public function __construct(Container $container, Config $config, EventDispatcher $events, GlobalScope $globalScope)
     {
         $this->app = $this;
         $this->config = $config;
         $this->container = $container;
         $this->events = $events;
-        $this->global_scope = $global_scope;
+        $this->globalScope = $globalScope;
         $this->settings = $config['app'];
 
         // Silex\Application
@@ -275,7 +273,7 @@ class Application extends \Silex\Application implements Container
      */
     public function getGlobalScope()
     {
-        return $this->global_scope;
+        return $this->globalScope;
     }
 
     /**
