@@ -16,6 +16,8 @@ engines:
         enabled: false
       Controversial/CamelCaseMethodName:
         enabled: false
+      Naming/ShortMethodName:
+        enabled: false
 ratings:
   paths:
   - "**.php"
