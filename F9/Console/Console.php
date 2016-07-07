@@ -15,13 +15,13 @@ use Nine\Library\Lib;
 class Console extends Application
 {
     /** @var array */
-    protected $app_commands = [];
+    protected $appCommands = [];
 
     /** @var ConfigInterface */
     protected $config;
 
     /** @var array */
-    protected $framework_commands = [];
+    protected $frameworkCommands = [];
 
     /** @var Paths */
     protected $paths;
@@ -57,7 +57,7 @@ class Console extends Application
      */
     public function getAppCommands()
     {
-        return $this->app_commands;
+        return $this->appCommands;
     }
 
     /**
@@ -65,18 +65,18 @@ class Console extends Application
      */
     public function getFrameworkCommands()
     {
-        return $this->framework_commands;
+        return $this->frameworkCommands;
     }
 
     /**
      * Accepts a single-dimension array of Command class names.
      *
-     * @param array $command_list
+     * @param array $commandList
      */
-    public function registerAppCommands(array $command_list)
+    public function registerAppCommands(array $commandList)
     {
-        foreach ($command_list as $command) {
-            $this->app_commands[] = Lib::get_class_name($command);
+        foreach ($commandList as $command) {
+            $this->appCommands[] = Lib::get_class_name($command);
             $this->add(new $command);
         }
     }
@@ -87,15 +87,15 @@ class Console extends Application
      * Reads all classes located in the given path, so only Commands
      * should be the only classes in the path.
      *
-     * @param string $command_path
+     * @param string $commandPath
      */
-    public function registerAppCommandsIn(string $command_path)
+    public function registerAppCommandsIn(string $commandPath)
     {
-        $commands = $this->registerCommandsIn($command_path);
+        $commands = $this->registerCommandsIn($commandPath);
 
         // this may not be the only call to register application mode commands,
         // so merge with the app commands array.
-        $this->app_commands = array_merge($this->app_commands, $commands);
+        $this->appCommands = array_merge($this->appCommands, $commands);
     }
 
     /**
@@ -118,15 +118,15 @@ class Console extends Application
      * Note: All classes found in the folder are loaded, so don't put anything
      *       but commands there.
      *
-     * @param string $command_path
+     * @param string $commandPath
      *
      * @return array
      */
-    private function registerCommandsIn(string $command_path) : array
+    private function registerCommandsIn(string $commandPath) : array
     {
         $commands = [];
 
-        foreach ((new ClassFinder)->findClasses($command_path) as $command) {
+        foreach ((new ClassFinder)->findClasses($commandPath) as $command) {
             $commands[] = Lib::get_class_name($command);
             $this->add(new $command);
         }
@@ -140,7 +140,7 @@ class Console extends Application
     private function registerFrameworkCommands()
     {
         $path = __DIR__ . DIRECTORY_SEPARATOR . 'Commands/';
-        $this->framework_commands = $this->registerCommandsIn($path);
+        $this->frameworkCommands = $this->registerCommandsIn($path);
     }
 
 }

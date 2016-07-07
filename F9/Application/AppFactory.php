@@ -30,7 +30,6 @@ use Nine\Events\Events;
 use Silex\Application as SilexApplication;
 use Silex\ExceptionHandler;
 use Symfony\Component\Debug\ErrorHandler;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * __The `AppFactory` class boots the framework environment and constructs the
@@ -121,7 +120,7 @@ class AppFactory
         static::$booted = TRUE;
 
         // make the application
-        $application = static::$instance->make_application($paths);
+        $application = static::$instance->makeApplication($paths);
         Forge::setApplication($application);
 
         return $application;
@@ -172,7 +171,7 @@ class AppFactory
      *
      * @return Application
      */
-    private function make_application(array $paths) : Application
+    private function makeApplication(array $paths) : Application
     {
         // this is the Illuminate Container
         $container = Forge::getInstance();
