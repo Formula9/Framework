@@ -27,6 +27,8 @@ use Nine\Collections\GlobalScope;
 use Nine\Containers\ContainerInterface as Container;
 use Nine\Contracts\ConfigInterface;
 use Nine\Events\Events;
+use Nine\Library\Strings;
+use RuntimeException;
 use Silex\Api\EventListenerProviderInterface;
 use Silex\Application\FormTrait;
 use Silex\Application\SecurityTrait;
@@ -369,6 +371,43 @@ class Application extends \Silex\Application implements Container
         $content = NULL)
     {
         $this->run(Request::create($uri, $method, $parameters, $cookies, $files, $server, $content), HttpKernelInterface::SUB_REQUEST);
+    }
+
+    /**
+     * @param mixed $template
+     * @param array $symbols
+     *
+     * @return string
+     * @throws RuntimeException
+     */
+    public function view($template, array $symbols = [])
+    {
+        // handle possible blade templates
+        if ($this->container->has('blade.view') and $this->container->get('blade.view')->hasView($template)) {
+            return $this->container->get('blade.view')->render($template, $symbols);
+        }
+
+        // handle possible twig templates
+        if ($this->container->has('twig')) {
+
+            // get the twig finder function
+            /** @var callable $twig_has */
+            $twig_has = $this->container->get('twig.finder');
+
+            if ( ! Strings::ends_with('.twig', $template)) {
+                // TWIG is all that is left, so transform to <view>.html if necessary
+                $twig_template = (FALSE === strpos($template, '.html')) ? "$template.html" : $template;
+                $template = (FALSE === strpos($twig_template, '.twig')) ? "$twig_template.twig" : $twig_template;
+            }
+
+            // try locating the
+            if ($twig_has($template)) {
+                return $this->container->get('twig')->render($template, $symbols);
+            }
+        }
+
+        // there is no other renderer to use
+        throw new RuntimeException("Cannot determine suitable rendering engine for view `$template`.");
     }
 
     /**
