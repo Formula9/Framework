@@ -29,5 +29,6 @@ exclude_paths:
 - Nine/Containers/PhpStormMeta.php
 - Nine/Collections/Collection.php
 - Nine/Database/Console/
+- Nine/Database/QueryBuilder
 - Nine/Support/Inflector.php
 - Nine/Support/helpers.php
