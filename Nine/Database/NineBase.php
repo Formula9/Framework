@@ -7,11 +7,10 @@
  */
 
 use Aura\Sql\ExtendedPdo;
-use Aura\SqlQuery\QueryFactory;
 use Nine\Collections\Collection;
 use Nine\Exceptions\DBConnectionFailed;
 use Nine\Exceptions\DBConnectionNotFound;
-use Nine\Exceptions\DBInvalidQueryType;
+use Opulence\QueryBuilders\QueryBuilder;
 use PDO;
 use PDOStatement;
 
@@ -23,10 +22,10 @@ class NineBase
     protected $connection;
 
     /** @var string */
-    protected $connection_name;
+    protected $connectionName;
 
-    /** @var QueryFactory */
-    protected $query_factory;
+    /** @var QueryBuilder */
+    protected $queryBuilder;
 
     /** @var string|DBQueryInterface */
     protected $sql;
@@ -42,23 +41,13 @@ class NineBase
         $this->connections = $connections;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return DBQueryInterface
-     * @throws DBInvalidQueryType
-     */
-    public function build(string $type = 'select')
+    public function build()
     {
-        $types = static::QUERY_TYPES;
-
-        if ( ! in_array($type, $types, TRUE)) {
-            throw new DBInvalidQueryType("`$type` is not a valid query type. Use 'delete', 'insert', 'select' or 'update'");
+        if (NULL === $this->connection) {
+            throw new DBConnectionNotFound('Cannot build a query. No connection found.');
         }
 
-        $type = 'new' . ucwords($type);
-
-        return $this->query_factory->{$type}();
+        return $this->queryBuilder;
     }
 
     /**
@@ -88,27 +77,40 @@ class NineBase
      *
      * All queries will operate on the last opened connection.
      *
-     * @param string $connection_name
+     * @param string $connectionName
      *
      * @return NineBase
      * @throws DBConnectionFailed
      * @throws DBConnectionNotFound
      */
-    public function connect(string $connection_name) : NineBase
+    public function connect(string $connectionName) : NineBase
     {
         // invalidate the current connection and related parameters
         $this->connection = NULL;
-        $this->connection_name = NULL;
-        $this->query_factory = NULL;
+        $this->connectionName = '';
+        $this->queryBuilder = NULL;
 
         // either opens the connection or retrieves it from cache.
         // also, will throw an exception id the connection doesn't exist
         // or a problem was encountered while connecting to the data source.
-        $this->connection = $this->connections->getConnection($connection_name);
-        $this->connection_name = $connection_name;
+        $this->connection = $this->connections->getConnection($connectionName);
+        $this->connectionName = $connectionName;
 
         // build a query factory for the connection driver type
-        $this->query_factory = new QueryFactory($this->connections->getConnectionSettings($connection_name)['driver']);
+        switch ($this->connections->getConnectionSettings($connectionName)['driver']) {
+            case 'mysql':
+                // use MySql
+                $this->queryBuilder = new \Opulence\QueryBuilders\MySql\QueryBuilder();
+                break;
+            case 'pgsql':
+                // use PostgreSql
+                $this->queryBuilder = new \Opulence\QueryBuilders\PostgreSql\QueryBuilder();
+                break;
+            default :
+                // generic
+                $this->queryBuilder = new GenericQueryBuilder();
+                break;
+        }
 
         return $this;
     }
@@ -118,9 +120,9 @@ class NineBase
      */
     public function disconnect()
     {
-        $this->connections->closeConnection($this->connection_name);
+        $this->connections->closeConnection($this->connectionName);
         $this->connection = NULL;
-        $this->connection_name = NULL;
+        $this->connectionName = NULL;
         $this->sql = NULL;
         $this->statement = NULL;
     }
@@ -165,7 +167,7 @@ class NineBase
      */
     public function getConnectionName() : string
     {
-        return $this->connection_name !== NULL ?? '';
+        return ! (NULL === $this->connectionName) ? $this->connectionName : '';
     }
 
     /**
