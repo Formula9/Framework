@@ -57,12 +57,4 @@ class DatabaseEvent extends Event implements DatabaseEventInterface
         return $this->database;
     }
 
-    /**
-     * @return array
-     */
-    public function getPayload() : array
-    {
-        return $this->payload;
-    }
-
 }

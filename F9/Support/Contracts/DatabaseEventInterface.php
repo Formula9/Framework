@@ -33,10 +33,4 @@ interface DatabaseEventInterface
      */
     public function getDatabase();
 
-    /**
-     * @return array
-     */
-    public function getPayload();
-
-
 }

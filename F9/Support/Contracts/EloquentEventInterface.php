@@ -28,9 +28,4 @@ interface EloquentEventInterface
      */
     public function getDatabase();
 
-    /**
-     * @return array
-     */
-    public function getPayload();
-
 }

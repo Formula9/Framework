@@ -7,12 +7,13 @@
  */
 
 use F9\Application\Application;
+use F9\Contracts\ApplicationEventInterface;
 use Nine\Events\Event;
 
 /**
  * Base Application Event
  */
-class ApplicationEvent extends Event
+class ApplicationEvent extends Event implements ApplicationEventInterface
 {
     /** @var Application */
     private $app;
