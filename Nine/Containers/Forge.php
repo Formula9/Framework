@@ -89,8 +89,6 @@ class Forge extends Container implements ContainerInterface
      * @param mixed           $concrete
      *
      * @throws CannotAddNonexistentClass
-     * @internal param bool $shared
-     *
      */
     public function add($abstract, $concrete = NULL)
     {
