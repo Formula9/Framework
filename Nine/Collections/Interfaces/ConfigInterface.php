@@ -25,12 +25,12 @@ interface ConfigInterface
     /**
      * Imports (merges) config files found in the specified directory.
      *
-     * @param string $base_path
+     * @param string $basePath
      * @param string $mask
      *
      * @return static
      */
-    public function importFolder($base_path, $mask = '*.php');
+    public function importFolder($basePath, $mask = '*.php');
 
     /**
      *

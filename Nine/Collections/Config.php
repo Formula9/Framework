@@ -26,8 +26,8 @@ class Config extends Collection implements ConfigInterface
     // for \ArrayAccess methods that support `dot` indexes
     use WithItemArrayAccess;
 
-    /** @var string $base_path The base path to a configuration directory. */
-    protected $base_path = '';
+    /** @var string $basePath The base path to a configuration directory. */
+    protected $basePath = '';
 
     /**
      * Compile the Config contents to a single file in the given path.
@@ -58,12 +58,12 @@ class Config extends Collection implements ConfigInterface
     }
 
     /**
-     * @param string $base_path
-     * @param string $compiled_filename
+     * @param string $basePath
+     * @param string $compiledFilename
      */
-    public function importCompiledFile(string $base_path = CONFIG, string $compiled_filename = self::COMPILED_CONFIG_FILENAME)
+    public function importCompiledFile(string $basePath = CONFIG, string $compiledFilename = self::COMPILED_CONFIG_FILENAME)
     {
-        $import = include $base_path . $compiled_filename;
+        $import = include $basePath . $compiledFilename;
 
         foreach ($import as $key => $item) {
             $this->items[$key] = $item;
@@ -76,18 +76,18 @@ class Config extends Collection implements ConfigInterface
      */
     public function importFile($file)
     {
-        $this->import_files($file, '.php');
+        $this->importFiles($file, '.php');
     }
 
     /**
      * Imports (merges) config files found in the specified directory.
      *
-     * @param string $base_path
+     * @param string $basePath
      * @param string $mask
      *
      * @return Config
      */
-    public function importFolder($base_path, $mask = '*.php') : Config
+    public function importFolder($basePath, $mask = '*.php') : Config
     {
         // determine if the requested folder has been compiled.
         if ($mask === '*.php' and $this->isCompiled()) {
@@ -101,7 +101,7 @@ class Config extends Collection implements ConfigInterface
         $extension = str_replace('*', '', $mask);
 
         // import the files
-        $this->import_files($this->parse_folder($base_path, $mask), $extension);
+        $this->importFiles($this->parseFolder($basePath, $mask), $extension);
 
         return $this;
     }
@@ -109,14 +109,14 @@ class Config extends Collection implements ConfigInterface
     /**
      * Determines if a folder of PHP configuration files has been compiled.
      *
-     * @param string $base_path         Defaults to the CONFIG path.
-     * @param string $compiled_filename Defaults to the self::COMPILED_CONFIG_FILENAME filename.
+     * @param string $basePath         Defaults to the CONFIG path.
+     * @param string $compiledFilename Defaults to the self::COMPILED_CONFIG_FILENAME filename.
      *
      * @return bool
      */
-    public function isCompiled(string $base_path = CONFIG, string $compiled_filename = self::COMPILED_CONFIG_FILENAME) : bool
+    public function isCompiled(string $basePath = CONFIG, string $compiledFilename = self::COMPILED_CONFIG_FILENAME) : bool
     {
-        return file_exists($base_path . $compiled_filename);
+        return file_exists($basePath . $compiledFilename);
     }
 
     /**
@@ -128,7 +128,7 @@ class Config extends Collection implements ConfigInterface
     public function setBasePath(string $path) : Config
     {
         if (is_dir($path)) {
-            $this->base_path = $path;
+            $this->basePath = $path;
         }
         else {
             throw new \InvalidArgumentException("Config base path `$path` does not exist.");
@@ -180,10 +180,10 @@ class Config extends Collection implements ConfigInterface
      * Register a configuration using the base name of the file.
      *
      * @param        $extension
-     * @param        $file_path
+     * @param        $filePath
      * @param string $key
      */
-    private function import_by_extension($extension, $file_path, $key = '')
+    private function importByExtension($extension, $filePath, $key = '')
     {
         $extension = strtolower(str_replace('*', '', $extension));
 
@@ -192,26 +192,26 @@ class Config extends Collection implements ConfigInterface
         }
 
         # add the base path if necessary
-        $file_path = file_exists($file_path) ? $file_path : $this->base_path . "/$file_path";
+        $filePath = file_exists($filePath) ? $filePath : $this->basePath . "/$filePath";
 
         # include only if the root key does not exist
         if ( ! $this->offsetExists($key)) {
             switch ($extension) {
                 case '.php':
 
-                    if ( ! file_exists($file_path)) {
-                        throw new \InvalidArgumentException("Config file $file_path does not exist.");
+                    if ( ! file_exists($filePath)) {
+                        throw new \InvalidArgumentException("Config file $filePath does not exist.");
                     }
 
                     /** @noinspection UntrustedInclusionInspection */
-                    $import = include "$file_path";
+                    $import = include "$filePath";
                     break;
                 case '.yaml':
                 case '.yml':
-                    $import = $this->importYAML($file_path);
+                    $import = $this->importYAML($filePath);
                     break;
                 case '.json':
-                    $import = $this->importJSON($file_path);
+                    $import = $this->importJSON($filePath);
                     break;
                 default :
                     $import = NULL;
@@ -229,32 +229,32 @@ class Config extends Collection implements ConfigInterface
      * Import configuration data from a set of files.
      *
      * @param array  $files
-     * @param string $file_extension
+     * @param string $fileExtension
      */
-    private function import_files(array $files, $file_extension = '.php')
+    private function importFiles(array $files, $fileExtension = '.php')
     {
         foreach ($files as $config_file) {
             # use the base name as the config key.
             # i.e.: `config/happy.php` -> `happy`
-            $config_key = basename($config_file, $file_extension);
+            $config_key = basename($config_file, $fileExtension);
 
             # load
-            $this->import_by_extension($file_extension, $config_file, $config_key);
+            $this->importByExtension($fileExtension, $config_file, $config_key);
         }
     }
 
     /**
      * Glob a set of file names from a normalized path.
      *
-     * @param string $base_path
-     * @param string $file_extension
+     * @param string $basePath
+     * @param string $fileExtension
      *
      * @return array
      */
-    private function parse_folder($base_path, $file_extension = '.php') : array
+    private function parseFolder($basePath, $fileExtension = '.php') : array
     {
-        $base_path = rtrim(realpath($base_path), '/') . '/';
+        $basePath = rtrim(realpath($basePath), '/') . '/';
 
-        return glob($base_path . $file_extension);
+        return glob($basePath . $fileExtension);
     }
 }

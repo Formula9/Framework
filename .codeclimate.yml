@@ -16,5 +16,6 @@ exclude_paths:
 - tests/
 - Nine/Cache/
 - Nine/Containers/assets/
+- Nine/Collections/Collection.php
 - Nine/Database/Console/
 
