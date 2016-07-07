@@ -103,8 +103,6 @@ final class Reflector
      */
     public function getMethodArguments(Request $request, $controller, array $parameters) : array
     {
-        ddump($controller);
-
         // use this request
         $this->current_request = $request;
 
