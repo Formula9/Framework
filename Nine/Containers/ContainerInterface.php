@@ -25,7 +25,7 @@ interface ContainerInterface
      * @param mixed           $concrete
      * @param bool            $shared
      */
-    public function add($abstract, $concrete = NULL, $shared = FALSE);
+    public function add($abstract, $concrete = NULL);
 
     /**
      * **Report whether an abstract exists in the container.**

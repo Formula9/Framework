@@ -142,7 +142,7 @@ class Application extends \Silex\Application implements Container
      * @throws CannotAddNonexistentClass
      * @throws \InvalidArgumentException
      */
-    public function add($abstract, $concrete = NULL, $shared = FALSE)
+    public function add($abstract, $concrete = NULL)
     {
         // an array, we expect [<class_name>, <alias>]
         if (is_array($abstract)) {

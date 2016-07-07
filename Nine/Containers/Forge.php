@@ -81,58 +81,20 @@ class Forge extends Container implements ContainerInterface
      *      - Incorrect: `add(['thing', Thing::class], ...)`<br>
      *    <br>
      *
-     * @see `make()` - make (or get) an abstracted class or alias.
-     * @see `get()`  - static pseudonym for `make()`.
-     * @see `put()`  - static pseudonym for `add()`.
+     * @see      `make()` - make (or get) an abstracted class or alias.
+     * @see      `get()`  - static pseudonym for `make()`.
+     * @see      `put()`  - static pseudonym for `add()`.
      *
      * @param string|string[] $abstract
      * @param mixed           $concrete
-     * @param bool            $shared
      *
      * @throws CannotAddNonexistentClass
+     * @internal param bool $shared
+     *
      */
-    public function add($abstract, $concrete = NULL, $shared = self::SHARED)
+    public function add($abstract, $concrete = NULL)
     {
-        // an array, we expect [<class_name>, <alias>]
-        if (is_array($abstract)) {
-
-            // validate the abstract
-            list($abstract, $alias) = array_values($abstract);
-
-            if ( ! class_exists($abstract)) {
-                throw new CannotAddNonexistentClass(
-                    "add(['$abstract', '$alias'],...) makes no sense. `$alias` must refer to an existing class."
-                );
-            }
-
-            // formatted for illuminate container bind method
-            $abstract = [$alias => $abstract];
-
-        }
-
-        // `add` treats non-callable concretes as instances
-        if ( ! is_callable($concrete)) {
-            $this->instance($abstract, $concrete);
-
-            return;
-        }
-
-        $this->bind($abstract, $concrete, $shared);
-    }
-
-    /**
-     * Call the given Closure / class@method and inject its dependencies.
-     *
-     * Note: Uses the illuminate/container `call()` method.
-     *
-     * @param  callable|string $callback
-     * @param  array           $args
-     *
-     * @return mixed
-     */
-    public function callWithDependencyInjection($callback, array $args = [])
-    {
-        return $this->call($callback, $args);
+        $this->register($abstract, $concrete);
     }
 
     /**
@@ -191,7 +153,7 @@ class Forge extends Container implements ContainerInterface
      */
     public function singleton($abstract, $concrete = NULL)
     {
-        $this->add($abstract, $concrete, static::SHARED);
+        $this->register($abstract, $concrete, static::SINGLETON);
     }
 
     /**
@@ -305,19 +267,19 @@ class Forge extends Container implements ContainerInterface
      *
      * Static pseudonym for `add()`.
      *
-     * @see `add()`, `get()`
+     * @see      `add()`, `get()`
      *
      * @param string|string[] $abstract
      * @param null            $concrete
-     * @param bool            $singleton
      *
-     * @return void
      * @throws CannotAddNonexistentClass
+     * @internal param bool $singleton
+     *
      */
-    public static function set($abstract, $concrete = NULL, $singleton = FALSE)
+    public static function set($abstract, $concrete = NULL)
     {
         static::$instance = static::$instance ?: new static();
-        static::$instance->add($abstract, $concrete, $singleton);
+        static::$instance->register($abstract, $concrete);
     }
 
     /**
@@ -342,28 +304,38 @@ class Forge extends Container implements ContainerInterface
     }
 
     /**
-     * @param $app
-     * @param $key
+     * @param          $abstract
+     * @param callable $concrete
+     * @param bool     $shared
      *
-     * @return Application|null|\Silex\Application|string
+     * @throws CannotAddNonexistentClass
      */
-    protected static function parseKey($app, $key)
+    protected function register($abstract, $concrete = NULL, $shared = self::SHARED)
     {
-        $appValue = $app[$key];
+        // an array, we expect [<class_name>, <alias>]
+        if (is_array($abstract)) {
 
-        switch (gettype($appValue)) {
-            case 'object':
-                $appKey = get_class($appValue);
-                break;
-            case 'string':
-                $appKey = class_exists($appValue) ? $appValue : NULL;
-                break;
-            default :
-                $appKey = NULL;
-                break;
+            // validate the abstract
+            list($abstract, $alias) = array_values($abstract);
+
+            if ( ! class_exists($abstract)) {
+                throw new CannotAddNonexistentClass(
+                    "add(['$abstract', '$alias'],...) makes no sense. `$alias` must refer to an existing class."
+                );
+            }
+
+            // formatted for illuminate container bind method
+            $abstract = [$alias => $abstract];
+
         }
 
-        return $appKey;
-    }
+        // `add` treats non-callable concretes as instances
+        if ( ! is_callable($concrete)) {
+            $this->instance($abstract, $concrete);
 
+            return;
+        }
+
+        $this->bind($abstract, $concrete, $shared);
+    }
 }
