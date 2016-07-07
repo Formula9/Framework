@@ -111,16 +111,16 @@ class DB
     }
 
     /**
-     * @param $connection_name
+     * @param $connectionName
      *
      * @return \Illuminate\Database\ConnectionInterface
      */
-    public static function connection($connection_name) : ConnectionInterface
+    public static function connection($connectionName) : ConnectionInterface
     {
         static::$instance = static::$instance ?: new static();
         $eloquent = Forge::find('db');
 
-        return $eloquent->connection($connection_name);
+        return $eloquent->connection($connectionName);
     }
 
     /**
@@ -166,15 +166,15 @@ class DB
     }
 
     /**
-     * @param string $id
+     * @param string $connectionName
      *
      * @return DB|static
      */
-    public static function setConnection($id = 'default') : DB
+    public static function setConnection($connectionName = 'default') : DB
     {
         static::$instance = static::$instance ?: new static();
 
-        return static::using($id);
+        return static::using($connectionName);
     }
 
     /**
@@ -211,15 +211,15 @@ class DB
      *      - or -
      *      DB::using(<connection_name>)->table...
      *
-     * @param string $connection_name
+     * @param string $connectionName
      *
      * @return DB
      */
-    public static function using($connection_name = 'default') : DB
+    public static function using($connectionName = 'default') : DB
     {
         static::$instance = static::$instance ?: new static();
 
-        static::$connection = Forge::find('db')->connection($connection_name);
+        static::$connection = Forge::find('db')->connection($connectionName);
 
         return static::$instance;
     }
