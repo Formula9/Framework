@@ -78,15 +78,13 @@ class Scope implements \ArrayAccess, \Countable, \JsonSerializable, ScopeInterfa
      * **Forget a plugin if it exists.**
      *
      * @param string $pluginName The name of the plugin. May include '.' and '_'
-     * @param bool   $sort
      */
-    public function forgetPlugin($pluginName, $sort = FALSE)
+    public function forgetPlugin($pluginName)
     {
         if (array_key_exists($pluginName, $this->plugins)) {
             unset($this->plugins[$pluginName]);
 
-            // optionally, sort the result
-            ! $sort ?: ksort($this->plugins);
+            ksort($this->plugins);
         }
     }
 
