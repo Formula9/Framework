@@ -17,13 +17,11 @@
 namespace Nine\Containers;
 
 use Carbon\Carbon;
-use ErrorException;
 use F9\Application\Application;
 use F9\Exceptions\CannotAddNonexistentClass;
 use F9\Exceptions\ContainerConflictError;
 use F9\Exceptions\DependencyInstanceNotFound;
 use F9\Support\Provider\PimpleDumpProvider;
-use Nine\Collections\Config;
 use Nine\Exceptions\CollectionExportWriteFailure;
 use Nine\Library\Lib;
 
@@ -210,7 +208,7 @@ class Forge extends Container implements ContainerInterface
      * @throws CannotAddNonexistentClass
      * @throws DependencyInstanceNotFound
      */
-    public static function Application() : Application
+    public static function getApplication() : Application
     {
         return self::$app;
     }
@@ -285,13 +283,11 @@ class Forge extends Container implements ContainerInterface
     }
 
     /**
-     * @param bool $build_catalog
-     *
      * @return array
      * @throws CollectionExportWriteFailure
      * @throws DependencyInstanceNotFound
      */
-    public static function makePhpStormMeta($build_catalog = FALSE)
+    public static function makePhpStormMeta()
     {
         static::$instance ?: new static();
 
@@ -342,41 +338,6 @@ class Forge extends Container implements ContainerInterface
         }
 
         $template = file_get_contents(__DIR__ . '/assets/meta.php.template');
-        //        $template = <<< TEMPLATE
-        //<?php namespace PHPSTORM_META {
-        //
-        //    /**
-        //     * PhpStorm Meta Code-completion index created with Formula 9 Forge.
-        //     *
-        //     * @package Nine
-        //     * @version 0.4.2
-        //     * @author  Greg Truesdell <odd.greg@gmail.com>
-        //     */
-        //
-        //    /** @noinspection PhpIllegalArrayKeyTypeInspection */
-        //    /** @noinspection PhpUnusedLocalVariableInspection */
-        //    \$STATIC_METHOD_TYPES = [
-        //        path('')      => [
-        //            '' instanceof \Nine\Collections\Paths,],
-        //        config('')    => [
-        //            '' instanceof \Nine\Collections\Config,],
-        //        app('')       => [
-        //            '' == '@',
-        //            '' instanceof \F9\Application\Application,
-        //%%MAP%%
-        //        ],
-        //        forge('')     => [
-        //            '' == '@',
-        //            '' instanceof \Nine\Containers\Forge,
-        //%%MAP%%
-        //        ],
-        //        \Nine\Containers\Forge::find('')  => [
-        //            '' == '@',
-        //%%MAP%%
-        //        ],
-        //    ];
-        //}
-        //TEMPLATE;
 
         $template = str_replace('%%MAP%%', $code, $template);
         $template = str_replace('%%DATE%%', Carbon::now()->toDateTimeString(), $template);
@@ -385,10 +346,6 @@ class Forge extends Container implements ContainerInterface
 
         if (FALSE === file_put_contents(ROOT . '.phpstorm.meta.php', $template)) {
             throw new CollectionExportWriteFailure('Unable to update .phpstorm.meta.php.');
-        }
-
-        if ($build_catalog) {
-            self::build_catalog($keys, $app);
         }
 
         return $map;
@@ -542,72 +499,6 @@ class Forge extends Container implements ContainerInterface
         }
 
         return $appKey;
-    }
-
-    /**
-     * @param $keys
-     * @param $app
-     */
-    private static function build_catalog($keys, $app)
-    {
-        $catalog = [];
-        foreach ($keys as $key) {
-
-            $concrete = static::contains($key) ? static::$instance->get($key) : $app[$key];
-            $concrete_type = gettype($concrete);
-
-            switch ($concrete_type) {
-
-                case 'object':
-                    $class = get_class($concrete);
-                    $concrete = $class === 'Closure' ? closure_dump($concrete) : $class;
-                    break;
-
-                case 'array':
-                    $display = [];
-                    if (Lib::is_assoc($concrete)) {
-                        foreach ($concrete as $idx => $data) {
-                            $display[$idx] = gettype($data) === 'object' ? get_class($data) : $data;
-                        }
-                    }
-                    else {
-                        foreach ($concrete as $value) {
-                            if (is_array($value)) {
-                                if (Lib::is_assoc($value)) {
-                                    foreach ($value as $name => $data) {
-                                        $display[$key][$name] = gettype($data) === 'object' ? get_class($data) : $data;
-                                    }
-                                    $concrete = $display;
-                                }
-                                else {
-                                    $display[] = $concrete;
-                                } #Lib::is_assoc($value) ? ($concrete) : $concrete;
-                            }
-                            else {
-                                $display[] = gettype($value) === 'object' ? get_class($value) : $value;
-                            }
-                        }
-                    }
-                    $concrete = $display;
-                    break;
-
-                default :
-                    try {
-                        $concrete = in_array($concrete_type, ['string', 'boolean', 'integer', 'array'], TRUE) ? $concrete : $concrete_type;
-
-                    } catch (ErrorException $e) {
-                        $concrete = $concrete_type;
-                    }
-
-                    //return $key;
-                    break;
-            }
-
-            $catalog[$key] = $concrete;
-        }
-
-        $reference = new Config(['catalog' => $catalog]);
-        $reference->exportPHPFile(APP, 'catalog');
     }
 
     /**

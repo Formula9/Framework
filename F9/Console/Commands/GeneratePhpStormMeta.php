@@ -5,7 +5,6 @@ use Nine\Collections\Attributes;
 use Nine\Collections\Config;
 use Nine\Collections\GlobalScope;
 use Nine\Collections\Paths;
-use Nine\Containers\Forge;
 use Nine\Database\Connections;
 use Nine\Database\Database;
 use Nine\Database\DB;
@@ -50,23 +49,23 @@ EOT
          */
 
         //@formatter:off
-        $application    = forge()->make(Application::class);
-        $attributes     = forge()->make(Attributes::class);
-        $blade          = forge()->make(Blade::class);
-        $blade_config   = forge()->make(BladeViewConfigurationInterface::class);
-        $blade_view     = forge()->make(BladeView::class);
-        $config         = forge()->make(Config::class);
-        $connections    = forge()->make(Connections::class);
-        $database       = forge()->make(Database::class);
-        $db             = forge()->make(DB::class);
-        $global_scope   = forge()->make(GlobalScope::class);
-        $ninebase       = forge()->make(NineBase::class);
-        $paths          = forge()->make(Paths::class);
-        $twig_config    = forge()->make(TwigViewConfigurationInterface::class);
-        $twig_view      = forge()->make(TwigView::class);
+        forge()->make(Application::class);
+        forge()->make(Attributes::class);
+        forge()->make(Blade::class);
+        forge()->make(BladeViewConfigurationInterface::class);
+        forge()->make(BladeView::class);
+        forge()->make(Config::class);
+        forge()->make(Connections::class);
+        forge()->make(Database::class);
+        forge()->make(DB::class);
+        forge()->make(GlobalScope::class);
+        forge()->make(NineBase::class);
+        forge()->make(Paths::class);
+        forge()->make(TwigViewConfigurationInterface::class);
+        forge()->make(TwigView::class);
 
-        $db_connection  = app('db.connection');
-        $db_manager     = app('db');
+        app('db.connection');
+        app('db');
         //@formatter:on
 
     }
@@ -80,10 +79,11 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        Forge::makePhpStormMeta();
+        forge()->makePhpStormMeta();
+        //Forge::makePhpStormMeta();
 
-        $header_style = new OutputFormatterStyle('white', 'default', ['bold']);
-        $output->getFormatter()->setStyle('header', $header_style);
+        $headerStyle = new OutputFormatterStyle('white', 'default', ['bold']);
+        $output->getFormatter()->setStyle('header', $headerStyle);
         $output->writeln('<header>Generated PhpStorm code-completion file.</header>');
     }
 

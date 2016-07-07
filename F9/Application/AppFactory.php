@@ -110,8 +110,8 @@ class AppFactory
     {
         // The Application is, in effect, a singleton...
         // so if the application already exists then simply return it.
-        if ((NULL !== static::$instance) and (NULL !== Forge::Application())) {
-            return Forge::Application();
+        if ((NULL !== static::$instance) and (NULL !== Forge::getApplication())) {
+            return Forge::getApplication();
         }
 
         // cache AppFactory instance.
