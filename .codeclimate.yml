@@ -9,6 +9,9 @@ engines:
     enabled: true
   phpmd:
     enabled: true
+    checks:
+      Controversial/CamelCaseMethodName:
+        enabled: false
 ratings:
   paths:
   - "**.php"
@@ -19,4 +22,4 @@ exclude_paths:
 - Nine/Collections/Collection.php
 - Nine/Database/Console/
 - Nine/Containers/DI.php
-
+- Nine/Support/Inflector.php
