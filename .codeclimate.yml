@@ -18,4 +18,5 @@ exclude_paths:
 - Nine/Containers/assets/
 - Nine/Collections/Collection.php
 - Nine/Database/Console/
+- Nine/Containers/DI.php
 
