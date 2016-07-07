@@ -56,9 +56,8 @@ class Scope implements \ArrayAccess, \Countable, \JsonSerializable, ScopeInterfa
             if ($method instanceof Closure) {
                 return call_user_func_array($method->bindTo($this, get_class($this)), $parameters);
             }
-            else {
-                return call_user_func_array($method, $parameters);
-            }
+
+            return call_user_func_array($method, $parameters);
         }
 
         throw new BadMethodCallException("Plug-in {$method} does not exist.");
