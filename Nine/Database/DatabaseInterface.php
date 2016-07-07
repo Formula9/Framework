@@ -11,12 +11,13 @@ interface DatabaseInterface
     /**
      * **Describe a table**
      *
-     * @param string $table_name
-     * @param bool   $detailed - true returns detailed field description
+     * @param string $tableName
      *
      * @return array
+     * @internal param bool $detailed - true returns detailed field description
+     *
      */
-    public function describe($table_name, $detailed = FALSE) : array;
+    public function describe($tableName) : array;
 
     /**
      * **Table `delete from` method.**
@@ -65,5 +66,5 @@ interface DatabaseInterface
      *
      * @return null|PDO
      */
-    public static function getPDO() : PDO;
+    public static function getPdo() : PDO;
 }
