@@ -43,7 +43,7 @@ abstract class AbstractView extends Scope
     protected $scope;
 
     /** @var array - a list of paths to search for the template file */
-    protected $template_paths = [];
+    protected $templatePaths = [];
 
     /**
      * AbstractView constructor.
@@ -57,7 +57,7 @@ abstract class AbstractView extends Scope
         // Context - for symbols and variables
         parent::__construct($context->settings());
 
-        $this->scope = $context->global_scope();
+        $this->scope = $context->globalScope();
         $this->events = $context->events();
     }
 
@@ -95,9 +95,9 @@ abstract class AbstractView extends Scope
     public function addViewPath($path, $prepend = TRUE) : array
     {
         $prepend_or_append = $prepend ? 'array_unshift' : 'array_push';
-        $prepend_or_append($this->template_paths, $path);
+        $prepend_or_append($this->templatePaths, $path);
 
-        return $this->template_paths;
+        return $this->templatePaths;
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class AbstractView extends Scope
     public function hasView($template) : bool
     {
         $finder = new Finder();
-        $finder->in($this->template_paths);
+        $finder->in($this->templatePaths);
 
         return $finder->contains($template) or $finder->contains("$template.php");
     }
@@ -147,7 +147,7 @@ abstract class AbstractView extends Scope
      */
     public function share($data)
     {
-        $this->context->global_scope()->importValue($data);
+        $this->context->globalScope()->importValue($data);
     }
 
     /**

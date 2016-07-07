@@ -18,7 +18,7 @@ interface ViewConfigurationInterface
     /**
      * @return Scope
      */
-    public function global_scope() : Scope;
+    public function globalScope() : Scope;
 
     /**
      * @return array

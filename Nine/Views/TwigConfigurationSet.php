@@ -58,7 +58,7 @@ final class TwigConfigurationSet extends Scope implements TwigViewConfigurationI
     /**
      * @return Scope
      */
-    public function global_scope() : Scope
+    public function globalScope() : Scope
     {
         return $this['global'];
     }

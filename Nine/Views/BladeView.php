@@ -45,7 +45,7 @@ class BladeView extends AbstractView
     private $template;
 
     /** @var FileViewFinder - the Blade view finder */
-    private $view_finder;
+    private $viewFinder;
 
     /**
      * Construct a compatible environment for Blade template rendering by
@@ -74,10 +74,10 @@ class BladeView extends AbstractView
         parent::addViewPath($path, $prepend);
 
         // as far as I can tell, we need to reconstruct the FileViewFinder
-        unset($this->view_finder);
-        $this->view_finder = new FileViewFinder(new Filesystem, $this->template_paths);
+        unset($this->viewFinder);
+        $this->viewFinder = new FileViewFinder(new Filesystem, $this->templatePaths);
 
-        return $this->template_paths;
+        return $this->templatePaths;
     }
 
     /**
@@ -111,7 +111,7 @@ class BladeView extends AbstractView
      */
     public function getViewPaths() : array
     {
-        return $this->view_finder->getPaths();
+        return $this->viewFinder->getPaths();
     }
 
     /**
@@ -124,7 +124,7 @@ class BladeView extends AbstractView
     public function hasView($template) : bool
     {
         try {
-            $this->view_finder->find($template);
+            $this->viewFinder->find($template);
         } catch (\InvalidArgumentException $e) {
             return FALSE;
         }
@@ -198,10 +198,10 @@ class BladeView extends AbstractView
      */
     protected function configure(BladeViewConfigurationInterface $context)
     {
-        $this->template_paths = $context->paths();
+        $this->templatePaths = $context->paths();
         $this->events = $context->events();
-        $this->view_finder = $context->finder();
-        $this->scope = $context->global_scope();
+        $this->viewFinder = $context->finder();
+        $this->scope = $context->globalScope();
     }
 
 }

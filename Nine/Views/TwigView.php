@@ -81,7 +81,7 @@ class TwigView extends AbstractView
         $this->context = $context;
         $this->defaults = $context->settings();
 
-        $this->template_paths = $this->defaults['filesystem'];
+        $this->templatePaths = $this->defaults['filesystem'];
         $this->events = $context->events();
         parent::__construct($context);
 

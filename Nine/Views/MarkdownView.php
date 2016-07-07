@@ -47,7 +47,7 @@ class MarkdownView extends AbstractView
             throw new \InvalidArgumentException('Markdown: invalid template path.');
         }
 
-        $this->template_paths[] = realpath($templateDir);
+        $this->templatePaths[] = realpath($templateDir);
 
         return $this;
     }
@@ -73,7 +73,7 @@ class MarkdownView extends AbstractView
      */
     public function getViewPaths() : array
     {
-        return $this->template_paths;
+        return $this->templatePaths;
     }
 
     /**
@@ -83,7 +83,7 @@ class MarkdownView extends AbstractView
      */
     public function hasView($template_name) : bool
     {
-        foreach ($this->template_paths as $template_path)
+        foreach ($this->templatePaths as $template_path)
             if (is_file("$template_path/$template_name")) {
                 return TRUE;
             }
@@ -98,7 +98,7 @@ class MarkdownView extends AbstractView
      */
     public function prependPath($templateDir)
     {
-        array_unshift($this->template_paths, realpath($templateDir));
+        array_unshift($this->templatePaths, realpath($templateDir));
 
         return $this;
     }
@@ -121,7 +121,7 @@ class MarkdownView extends AbstractView
         $data = $this->collectScope($data);
 
         # search for markdown file
-        foreach ($this->template_paths as $path)
+        foreach ($this->templatePaths as $path)
             if (file_exists("$path/$name")) {
 
                 $markdown = file_get_contents("$path/$name");
@@ -184,8 +184,8 @@ class MarkdownView extends AbstractView
     private function configure(array $configuration = [])
     {
         (count($configuration) === 0)
-            ? $this->template_paths = config('view.markdown.template_paths')
-            : $this->template_paths = $configuration['template_paths'];
+            ? $this->templatePaths = config('view.markdown.template_paths')
+            : $this->templatePaths = $configuration['template_paths'];
 
         $class = array_key_exists('type', $configuration) ? $configuration['class'] : 'MarkdownExtra';
         $class = static::MARKDOWN_NAMESPACE . $class;
@@ -214,7 +214,7 @@ class MarkdownView extends AbstractView
     {
         static $cache = [];
 
-        foreach ($this->template_paths as $template_path)
+        foreach ($this->templatePaths as $template_path)
             if (is_file("$template_path/$template")) {
                 if (array_key_exists($template, $cache)) {
                     return $this->translate_template_data($cache[$template], $data);
