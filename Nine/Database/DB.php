@@ -90,6 +90,7 @@ class DB
     {
         // instantiate if necessary
         static::$instance = static::$instance ?: new static();
+        $properMethod = ucfirst($method);
 
         // look in eloquent if enabled.
         if (config('database.eloquent_enabled') and method_exists(static::$connection, $method)) {
@@ -97,9 +98,9 @@ class DB
         }
 
         // second: try any query_* methods on the framework Database class
-        if (method_exists(static::$database, "query_$method")) {
-            return call_user_func_array([static::$database, "query_$method"], $arguments);
-        }
+        //if (method_exists(static::$database, "query$properMethod")) {
+        //    return call_user_func_array([static::$database, "query$properMethod"], $arguments);
+        //}
 
         // third: try any non-query_* methods on the framework Database class
         if (method_exists(static::$database, $method)) {

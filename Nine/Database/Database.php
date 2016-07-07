@@ -131,7 +131,7 @@ class Database implements DatabaseInterface
      *
      * @return integer Count of affected rows
      */
-    public function query_delete($table, $where) : int
+    public function queryDelete($table, $where) : int
     {
         return static::$Pdo->exec("delete from $table where $where");
     }
@@ -144,7 +144,7 @@ class Database implements DatabaseInterface
      *
      * @return bool TRUE if successful, FALSE if not
      */
-    public function query_insert($table, $data) : bool
+    public function queryInsert($table, $data) : bool
     {
         ksort($data);
 
@@ -167,9 +167,9 @@ class Database implements DatabaseInterface
      *
      * @return int
      */
-    public function query_record_count($table_name) : int
+    public function queryRecordCount($table_name) : int
     {
-        $result = $this->query_select("select count(*) as records from $table_name");
+        $result = $this->querySelect("select count(*) as records from $table_name");
 
         if (count($result) > 0) {
             return $result[0]['records'];
@@ -187,7 +187,7 @@ class Database implements DatabaseInterface
      *
      * @return Collection
      */
-    public function query_select($sql, $fields = NULL, $fetchMode = NULL) : Collection
+    public function querySelect($sql, $fields = NULL, $fetchMode = NULL) : Collection
     {
         $result = static::$Pdo->prepare($sql);
 
@@ -211,7 +211,7 @@ class Database implements DatabaseInterface
      *
      * @return int number of rows updated
      */
-    public function query_update($table, $data, $where) : int
+    public function queryUpdate($table, $data, $where) : int
     {
         ksort($data);
         $fieldDetails = '';

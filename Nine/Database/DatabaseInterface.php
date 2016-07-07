@@ -27,7 +27,7 @@ interface DatabaseInterface
      *
      * @return integer Count of affected rows
      */
-    public function query_delete($table, $where) : int;
+    public function queryDelete($table, $where) : int;
 
     /**
      * **Wraps table insert queries.**
@@ -37,7 +37,7 @@ interface DatabaseInterface
      *
      * @return bool TRUE if successful, FALSE if not
      */
-    public function query_insert($table, $data) : bool;
+    public function queryInsert($table, $data) : bool;
 
     /**
      * **Wraps a SQL query. Uses Prepare to handle variable values safely.**
@@ -48,7 +48,7 @@ interface DatabaseInterface
      *
      * @return Collection
      */
-    public function query_select($sql, $fields = NULL, $fetchMode = NULL) : Collection;
+    public function querySelect($sql, $fields = NULL, $fetchMode = NULL) : Collection;
 
     /**
      * **Handles Table Update queries.**
@@ -59,7 +59,7 @@ interface DatabaseInterface
      *
      * @return int number of rows updated
      */
-    public function query_update($table, $data, $where) : int;
+    public function queryUpdate($table, $data, $where) : int;
 
     /**
      * Return the current PDO reference.**
