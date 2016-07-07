@@ -52,13 +52,14 @@
         "symfony/yaml"         : "~3.1"
     },
     "require-dev"      : {
-        "vlucas/phpdotenv": "^2.1@dev",
-        "symfony/config"  : "~3.1",
-        "symfony/form"    : "~3.1",
-        "phpunit/phpunit" : "^5.1@dev",
-        "tracy/tracy"     : "^2.4@dev",
-        "psy/psysh"       : "@stable",
-        "mockery/mockery" : "^0.9.4",
-        "fzaninotto/faker": "^1.5"
+        "vlucas/phpdotenv"             : "^2.1@dev",
+        "symfony/config"               : "~3.1",
+        "symfony/form"                 : "~3.1",
+        "phpunit/phpunit"              : "^5.1@dev",
+        "tracy/tracy"                  : "^2.4@dev",
+        "psy/psysh"                    : "@stable",
+        "mockery/mockery"              : "^0.9.4",
+        "fzaninotto/faker"             : "^1.5",
+        "codeclimate/php-test-reporter": "dev-master"
     }
 }

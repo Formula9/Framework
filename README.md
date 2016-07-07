@@ -1,3 +1,6 @@
+[![Code Climate](https://codeclimate.com/github/Formula9/Framework/badges/gpa.svg)](https://codeclimate.com/github/Formula9/Framework)
+[![Test Coverage](https://codeclimate.com/github/Formula9/Framework/badges/coverage.svg)](https://codeclimate.com/github/Formula9/Framework/coverage)
+
 # Formula 9 Framework Core Classes
 
 This repository is a compendium of loosely coupled modules that existed in the previous version of Formula 9.
