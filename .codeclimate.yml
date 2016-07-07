@@ -25,8 +25,9 @@ exclude_paths:
 - tests/
 - Nine/Cache/
 - Nine/Containers/assets/
+- Nine/Containers/DI.php
+- Nine/Containers/PhpStormMeta.php
 - Nine/Collections/Collection.php
 - Nine/Database/Console/
-- Nine/Containers/DI.php
 - Nine/Support/Inflector.php
 - Nine/Support/helpers.php
