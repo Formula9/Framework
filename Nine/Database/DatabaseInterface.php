@@ -66,5 +66,5 @@ interface DatabaseInterface
      *
      * @return null|PDO
      */
-    public static function getPdo() : PDO;
+    public static function getPDO() : PDO;
 }
