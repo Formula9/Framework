@@ -380,7 +380,7 @@ class Application extends \Silex\Application implements Container
      * @return string
      * @throws RuntimeException
      */
-    public function view($template, array $symbols = [])
+    public function render($template, array $symbols = [])
     {
         // handle possible blade templates
         if ($this->container->has('blade.view') and $this->container->get('blade.view')->hasView($template)) {
