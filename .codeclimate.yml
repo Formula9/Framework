@@ -9,7 +9,11 @@ engines:
     enabled: true
   phpmd:
     enabled: true
+    exclude_fingerprints:
+      - ffae9999aabb999c2242664dbca5f299
     checks:
+      CleanCode/StaticAccess:
+        enabled: false
       Controversial/CamelCaseMethodName:
         enabled: false
 ratings:
