@@ -137,13 +137,13 @@ class Application extends \Silex\Application implements Container
      *
      * @param string|string[] $abstract
      * @param mixed|callable  $concrete
-     * @param bool            $shared
      *
      * @throws CannotAddNonexistentClass
-     * @throws \InvalidArgumentException
      */
     public function add($abstract, $concrete = NULL)
     {
+        $shared = true;
+
         // an array, we expect [<class_name>, <alias>]
         if (is_array($abstract)) {
 

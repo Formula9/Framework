@@ -23,7 +23,8 @@ interface ContainerInterface
      *
      * @param string|string[] $abstract
      * @param mixed           $concrete
-     * @param bool            $shared
+     *
+     * @return
      */
     public function add($abstract, $concrete = NULL);
 
