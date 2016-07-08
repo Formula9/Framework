@@ -16,6 +16,9 @@ use Opulence\QueryBuilders\QueryBuilder;
 use PDO;
 use PDOStatement;
 
+/**
+ * @property QueryBuilder query A pseudonym for build().
+ */
 class NineBase
 {
     /** @var PDO */
@@ -39,6 +42,21 @@ class NineBase
     public function __construct(Connections $connections)
     {
         $this->connections = $connections;
+    }
+
+    /**
+     * @param string $property
+     *
+     * @return QueryBuilder
+     * @throws DBConnectionNotFound
+     */
+    public function __get(string $property)
+    {
+        if ($property === 'query') {
+            return $this->build();
+        }
+
+        throw new \InvalidArgumentException("`$property` is not a recognizable property of " . get_called_class());
     }
 
     /**
@@ -186,7 +204,7 @@ class NineBase
     }
 
     /**
-     * @return string|DBQueryInterface
+     * @return string|Query
      */
     public function getSql()
     {
@@ -229,7 +247,7 @@ class NineBase
     /**
      * Returns the results of the query as a Collection.
      *
-     * @param DBQueryInterface|string $sql
+     * @param Query|string            $sql
      * @param                         $values
      *
      * Example using the query builder:
@@ -246,8 +264,8 @@ class NineBase
     }
 
     /**
-     * @param DBQueryInterface|string $sql
-     * @param                         $values
+     * @param Query|string $sql
+     * @param              $values
      *
      * @return array
      */
