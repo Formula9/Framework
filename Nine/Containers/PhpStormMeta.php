@@ -12,7 +12,7 @@ use F9\Support\Provider\PimpleDumpProvider;
 use Nine\Exceptions\CollectionExportWriteFailure;
 use Nine\Library\Lib;
 
-class PhpStormMeta extends Forge
+trait PhpStormMeta
 {
     /**
      * @return array

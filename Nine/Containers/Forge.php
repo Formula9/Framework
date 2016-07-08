@@ -45,6 +45,8 @@ use F9\Exceptions\DependencyInstanceNotFound;
  */
 class Forge extends Container implements ContainerInterface
 {
+    use PhpStormMeta;
+
     const VERSION = '0.4.2';
 
     /** Signal an `add()` to register a singleton. */
