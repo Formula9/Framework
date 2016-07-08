@@ -10,14 +10,14 @@ use Aura\Sql\ExtendedPdo;
 use Nine\Collections\Collection;
 use Nine\Exceptions\DBConnectionFailed;
 use Nine\Exceptions\DBConnectionNotFound;
+use Nine\Exceptions\DBInvalidQueryProperty;
+use Opulence\QueryBuilders\Query;
 use Opulence\QueryBuilders\QueryBuilder;
 use PDO;
 use PDOStatement;
 
 class NineBase
 {
-    const QUERY_TYPES = ['delete', 'insert', 'select', 'update'];
-
     /** @var PDO */
     protected $connection;
 
@@ -27,7 +27,7 @@ class NineBase
     /** @var QueryBuilder */
     protected $queryBuilder;
 
-    /** @var string|DBQueryInterface */
+    /** @var string|Query */
     protected $sql;
 
     /** @var PDOStatement */
@@ -41,6 +41,10 @@ class NineBase
         $this->connections = $connections;
     }
 
+    /**
+     * @return QueryBuilder
+     * @throws DBConnectionNotFound
+     */
     public function build()
     {
         if (NULL === $this->connection) {
@@ -98,14 +102,17 @@ class NineBase
 
         // build a query factory for the connection driver type
         switch ($this->connections->getConnectionSettings($connectionName)['driver']) {
+
             case 'mysql':
                 // use MySql
                 $this->queryBuilder = new \Opulence\QueryBuilders\MySql\QueryBuilder();
                 break;
+
             case 'pgsql':
                 // use PostgreSql
                 $this->queryBuilder = new \Opulence\QueryBuilders\PostgreSql\QueryBuilder();
                 break;
+
             default :
                 // generic
                 $this->queryBuilder = new GenericQueryBuilder();
@@ -136,7 +143,7 @@ class NineBase
      *
      *      $db->connect('default')->execute('select * from users')->collect();
      *
-     *      $db->connect('default')->execute($db->build('select')->from('users')->cols(['*']))->collect();
+     *      $db->connect('default')->execute($db->build()->select('email')->from('users'))->collect();
      *
      *      $db->connect('default')->execute('select * from users');
      *      $stmt = $db->getStatement();
@@ -255,24 +262,29 @@ class NineBase
     }
 
     /**
-     * @param DBQueryInterface|string $sql
-     * @param array                   $values
+     * @param Query|string $query
+     * @param array        $values
      *
      * @return PDOStatement
+     * @throws DBInvalidQueryProperty
      */
-    protected function query_sql($sql, array $values) : PDOStatement
+    protected function query_sql($query, array $values) : PDOStatement
     {
-        if (is_string($sql)) {
-            $this->statement = $this->connection->prepare($sql);
-            $this->statement->execute($values);
-        }
-        else {
-            $sql->bindValues($values);
-            $this->statement = $this->connection->prepare($sql->getStatement());
-            $this->statement->execute($sql->getBindValues());
+        if ($query instanceof Query) {
+            $this->statement = $this->connection->prepare($query->getSql());
+            $this->statement->execute($query->getParameters());
+
+            return $this->statement;
         }
 
-        return $this->statement;
+        if (is_string($query)) {
+            $this->statement = $this->connection->prepare($query);
+            $this->statement->execute($values);
+
+            return $this->statement;
+        }
+
+        throw new DBInvalidQueryProperty('An invalid value was passed in the `query` property.');
     }
 
 }
