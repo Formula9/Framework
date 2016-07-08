@@ -8,7 +8,7 @@
 is built on Silex 2. Silex is build on and around Symfony components - including the Pimple Container. This set of framework 
 objects express an evolving design opinion, and therefore should not be considered for use in a production environment.
  
-Documentation is currently under development. Drafts can be found (as they arrive) in the [WIKI](https://github.com/Formula9/Framework/wiki).
+Documentation is currently under development. Draft pages can be viewed (as they arrive) in the [WIKI](https://github.com/Formula9/Framework/wiki).
 
 ## Installing 
 
