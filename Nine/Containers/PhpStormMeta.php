@@ -1,4 +1,4 @@
-<?php namespace Illuminate\Containers;
+<?php namespace Nine\Containers;
 
 /**
  * @package Nine
@@ -9,8 +9,6 @@
 use Carbon\Carbon;
 use F9\Exceptions\DependencyInstanceNotFound;
 use F9\Support\Provider\PimpleDumpProvider;
-use Nine\Containers\Container;
-use Nine\Containers\Forge;
 use Nine\Exceptions\CollectionExportWriteFailure;
 use Nine\Library\Lib;
 
@@ -145,6 +143,32 @@ class PhpStormMeta extends Forge
         }
 
         return $value;
+    }
+
+    /**
+     * @param $app
+     * @param $key
+     *
+     * @return null|string
+     */
+    protected static function parseKey($app, $key)
+    {
+        $appValue = $app[$key];
+
+        switch (gettype($appValue)) {
+            case 'object':
+                $appKey = get_class($appValue);
+                break;
+            case 'string':
+                $appKey = class_exists($appValue) ? $appValue : NULL;
+                break;
+            default :
+                $appKey = NULL;
+                break;
+
+        }
+
+        return $appKey;
     }
 
     /**
