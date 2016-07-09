@@ -1,5 +1,6 @@
 <?php namespace Console\Commands;
 
+use F9\Application\AppFactory;
 use F9\Application\Application;
 use Nine\Collections\Attributes;
 use Nine\Collections\Config;
@@ -48,6 +49,39 @@ EOT
          * `AppFactory::make(...)`.
          */
 
+        ////@formatter:off
+        //forge()->make(Application::class);
+        //forge()->make(Attributes::class);
+        //forge()->make(Blade::class);
+        //forge()->make(BladeViewConfigurationInterface::class);
+        //forge()->make(BladeView::class);
+        //forge()->make(Config::class);
+        //forge()->make(Connections::class);
+        //forge()->make(Database::class);
+        //forge()->make(DB::class);
+        //forge()->make(GlobalScope::class);
+        //forge()->make(NineBase::class);
+        //forge()->make(Paths::class);
+        //forge()->make(TwigViewConfigurationInterface::class);
+        //forge()->make(TwigView::class);
+        //
+        //app('db.connection');
+        //app('db');
+        ////@formatter:on
+
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return int|null|void
+     * @throws \RuntimeException
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $app = AppFactory::make(forge('paths')->toArray());
+
         //@formatter:off
         forge()->make(Application::class);
         forge()->make(Attributes::class);
@@ -68,19 +102,7 @@ EOT
         app('db');
         //@formatter:on
 
-    }
-
-    /**
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return int|null|void
-     * @throws \RuntimeException
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
         forge()->makePhpStormMeta();
-        //Forge::makePhpStormMeta();
 
         $headerStyle = new OutputFormatterStyle('white', 'default', ['bold']);
         $output->getFormatter()->setStyle('header', $headerStyle);

@@ -26,7 +26,7 @@ use Pimple\Container;
  */
 class ViewServiceProvider extends ServiceProvider implements BootableProvider
 {
-    public function boot(Application $app)
+    public function boot($app)
     {
         if ($this->config['view.twig.enabled'] && class_exists(TwigViewServiceProvider::class)) {
             $app['twig.view'] = $app->factory(function ($app) { return new TwigView($app['twig.context']); });

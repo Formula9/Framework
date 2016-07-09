@@ -2,11 +2,15 @@
 
 use F9\Providers\MigrationServiceProvider;
 use F9\Providers\SeedServiceProvider;
+use F9\Support\Provider\EloquentServiceProvider;
 use Illuminate\Console\Application;
 use Illuminate\Filesystem\ClassFinder;
 use Nine\Collections\ConfigInterface;
 use Nine\Collections\Paths;
+use Nine\Containers\Forge;
+use Nine\Exceptions\CannotAddNonexistentClass;
 use Nine\Library\Lib;
+use Pimple\Container;
 
 /**
  * @package Nine
@@ -39,13 +43,15 @@ class Console extends Application
         $this->config = $config;
         $this->paths = $paths;
 
+        /** @var Container $app */
+        $app = Forge::find('app');
+
         // the parent is a hijacked copy of the illuminate console application.
         // we hijacked it mainly to override a few properties - such as the title.
         parent::__construct(forge('illuminate.container'), forge('illuminate.events'), $version);
 
-        // this is usually the only time this service provider is needed
-        (new MigrationServiceProvider(forge('app')))->register(forge('app'));
-        (new SeedServiceProvider(forge('app')))->register(forge('app'));
+        //$this->bootSettings();
+        $this->configureEnvironment();
 
         // in all cases, register the framework commands
         $this->registerFrameworkCommands();
@@ -101,7 +107,41 @@ class Console extends Application
     }
 
     /**
-     *  Register the Artisan migration commands.
+     * Apply and register `Application` settings.
+     *
+     * @throws CannotAddNonexistentClass
+     */
+    private function bootSettings()
+    {
+        // contextual use for routes and di
+        $app = $this;
+
+        // load the local environment
+        date_default_timezone_set($this['timezone']);
+        mb_internal_encoding($this['mb_internal_encoding']);
+        setlocale(LC_ALL, $this['locale']);
+
+        //$this['nine.container'] = $this->container; # Forge::getInstance();
+        //$this['nine.events'] = function () { return $this->events; };
+        //
+        //// For DI, associate the Pimple\Container with this instance of F9\Application.
+        //$this->container->add([\Pimple\Container::class, Application::class], function () use ($app) { return $this; });
+        //
+        //// set native dependencies
+        //$this->container->has('config') ?: $this->container->add([get_class($this->config), 'config'], $this->config);
+        //$this->container->add([self::class, 'app'], $this);
+    }
+
+    /**
+     *
+     */
+    private function configureEnvironment()
+    {
+
+    }
+
+    /**
+     *  Register the Artisan seed and migration commands.
      */
     private function registerArtisanCommands()
     {
@@ -113,7 +153,6 @@ class Console extends Application
         $this->add(app('command.migrate.rollback'));
         $this->add(app('command.migrate.status'));
         $this->add(app('command.seed'));
-
     }
 
     /**

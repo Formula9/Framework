@@ -1,16 +1,21 @@
 <?php namespace F9\Console;
 
 use F9\Contracts\FactoryInterface;
+use F9\Providers\MigrationServiceProvider;
+use F9\Providers\SeedServiceProvider;
+use F9\Support\Provider\EloquentServiceProvider;
+use F9\Support\Provider\IlluminateServiceProvider;
+use Illuminate\Events\Dispatcher;
 use Nine\Collections\Config;
 use Nine\Collections\GlobalScope;
 use Nine\Collections\Paths;
 use Nine\Collections\Scope;
+use Nine\Containers\ContainerInterface;
 use Nine\Containers\Forge;
 use Nine\Events\Events;
-use Pimple\Container;
+use Silex\Application;
 use Silex\ExceptionHandler;
 use Symfony\Component\Debug\ErrorHandler;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @package Nine
@@ -24,6 +29,14 @@ final class ConsoleFactory implements FactoryInterface
 
     /** @var ConsoleFactory */
     protected static $instance;
+
+    /** @var array $providers - required services for `nine` console use. */
+    private static $providers = [
+        IlluminateServiceProvider::class,
+        EloquentServiceProvider::class,
+        MigrationServiceProvider::class,
+        SeedServiceProvider::class,
+    ];
 
     private function __construct()
     {
@@ -95,9 +108,40 @@ final class ConsoleFactory implements FactoryInterface
      */
     private function makeConsole(array $paths) : Console
     {
-        // this is the Illuminate Container
         $container = Forge::getInstance();
 
+        list($global_scope, $config, $events) = $this->registerClasses($paths, $container);
+
+        // use the Silex\Application class to register providers
+        $app = new Application($config['app']);
+
+        $this->registerInstances($config, $app, $events, $container, $global_scope);
+        $this->registerAndBootProviders($app);
+
+        // the reason we are here
+        return new Console($config, $container->get('Paths'));
+    }
+
+    /**
+     * @param Application $app
+     */
+    private function registerAndBootProviders($app)
+    {
+        foreach (static::$providers as $provider) {
+            $object = new $provider($app);
+            $app->register($object);
+            ! method_exists($object, 'boot') ?: $object->boot($app);
+        }
+    }
+
+    /**
+     * @param array                    $paths
+     * @param ContainerInterface|Forge $container
+     *
+     * @return array
+     */
+    private function registerClasses(array $paths, $container)
+    {
         // we'll start by loading the configuration into the Forge Container
         $container->add([Scope::class, 'context'], function () { return new Scope; });
         $container->add('environment', function () use ($container) { return $container['GlobalScope']; });
@@ -105,15 +149,31 @@ final class ConsoleFactory implements FactoryInterface
         $container->singleton([Paths::class, 'Paths'], new Paths($paths));
         $container->singleton([Config::class, 'Config'], $config = Config::createFromFolder(\CONFIG));
         $container->singleton([Events::class, 'Events'], $events = Events::getInstance());
-
         $container->add('paths', function () use ($container) { return $container['Paths']; });
         $container->add('config', function () use ($container) { return $container['Config']; });
 
-        // the reason we are here
-        $console = new Console($config, $container->get('Paths'));
-        $app = new Container($container->getAliases());
+        return [$global_scope, $config, $events];
+    }
+
+    /**
+     * @param             $config
+     * @param Application $app
+     * @param             $events
+     * @param Forge       $container
+     * @param             $global_scope
+     *
+     * @return mixed
+     */
+    private function registerInstances($config, $app, $events, $container, $global_scope)
+    {
+        $app['config'] = $config;
+        $app['nine.events'] = $events;
+        $app['illuminate.container'] = $container;
+        $container->instance('illuminate.container', $container);
+        $container->instance('illuminate.events', new Dispatcher());
+        $container->instance('app', $app);
+
         $container->add('app', function () use ($app) { return $app; });
-        $app['dispatcher'] = new EventDispatcher();
 
         // align the Nine Events object with the Core EventDispatcher (Symfony)
         Events::setEventDispatcher($app['dispatcher']);
@@ -126,6 +186,6 @@ final class ConsoleFactory implements FactoryInterface
         $app['paths']           = $container['Paths'];
         //@formatter:on
 
-        return $console;
+        return $app;
     }
 }

@@ -25,9 +25,8 @@ class BladeViewServiceProvider extends ServiceProvider implements BootableProvid
     /**
      * @param Application|Container $app
      *
-     * @throws \F9\Exceptions\CannotAddNonexistentClass
      */
-    public function boot(Application $app)
+    public function boot($app)
     {
         // only if enabled
         if ($app['config']['view.blade.enabled']) {

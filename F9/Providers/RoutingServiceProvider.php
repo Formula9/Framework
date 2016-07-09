@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 class RoutingServiceProvider extends ServiceProvider implements BootableProvider
 {
 
-    public function boot(Application $app)
+    public function boot($app)
     {
         /** @var \Silex\Application $app */
         if (class_exists(ControllerRoutingProvider::class)) {

@@ -24,7 +24,7 @@ use Symfony\Component\VarDumper\VarDumper;
 
 class ReportingServiceProvider extends ServiceProvider implements BootableProvider
 {
-    public function boot(Application $app)
+    public function boot($app)
     {
         if (env('DEBUG') and isset($app['nine.logger'])) {
             // replace the current logger with the F9 framework logger

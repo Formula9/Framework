@@ -34,9 +34,8 @@ class TwigViewServiceProvider extends ServiceProvider implements BootableProvide
     /**
      * @param Application|Container $app
      *
-     * @throws \F9\Exceptions\CannotAddNonexistentClass
      */
-    public function boot(Application $app)
+    public function boot($app)
     {
         /** @var Forge $container */
         list($config, $container) = [$this->config, $this->container];

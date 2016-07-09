@@ -25,18 +25,9 @@ return [
 
             /* REGISTER NEXT */
 
-            // use as required
             F9\Support\Provider\DatabaseServiceProvider::class,
-            //F9\Support\Provider\FormServiceProvider::class,
-            //F9\Support\Provider\ViewServiceProvider::class,
-            //F9\Support\Provider\AuthServiceProvider::class,
-            //F9\Support\Provider\PimpleDumpProvider::class,
 
             /* REGISTER LAST */
-
-            //App\Provider\ApplicationServiceProvider::class,
-            //App\Provider\ComposerServiceProvider::class,
-            //App\Provider\EventServiceProvider::class,
 
         ],
 ];

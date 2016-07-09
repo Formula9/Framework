@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class AuthServiceProvider extends ServiceProvider implements BootableProvider
 {
-    public function boot(Application $app)
+    public function boot($app)
     {
         $this->app->bootProvider(SecurityServiceProvider::class);
     }

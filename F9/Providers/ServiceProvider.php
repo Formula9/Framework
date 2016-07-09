@@ -43,7 +43,12 @@ abstract class ServiceProvider implements PimpleServiceProviderInterface
     /** @var \Nine\Containers\Forge $container */
     protected $container;
 
-    public function __construct(Application $application)
+    /**
+     * ServiceProvider constructor.
+     *
+     * @param \F9\Application\Application|\Silex\Application $application
+     */
+    public function __construct($application)
     {
         $this->container = Forge::getInstance();
         $this->app = $application ?: $this->container['app'];

@@ -77,6 +77,7 @@ class SeedServiceProvider extends ServiceProvider
      */
     protected function registerSeedCommand()
     {
+
         $this->container->singleton('command.seed', function () {
             return new SeedCommand($this->container->get('illuminate.connection.resolver'));
         });

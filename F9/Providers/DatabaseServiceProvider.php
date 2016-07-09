@@ -26,9 +26,8 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
 {
     /**
      * @param Application|Container $app
-     *
      */
-    public function boot(Application $app)
+    public function boot($app)
     {
         $this->registerDatabases($app);
         $this->registerModels();
