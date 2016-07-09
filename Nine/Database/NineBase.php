@@ -174,7 +174,7 @@ class NineBase
      */
     public function execute($sql, array $values = []) : NineBase
     {
-        $this->query_sql($sql, $values);
+        $this->executeQueryObject($sql, $values);
 
         return $this;
     }
@@ -182,7 +182,7 @@ class NineBase
     /**
      * @return PDO|ExtendedPdo|null
      */
-    public function getConnection() : PDO
+    public function getConnection()
     {
         return $this->connection;
     }
@@ -233,7 +233,7 @@ class NineBase
     public function query($sql, array $values = [], bool $all = FALSE)
     {
         $this->sql = $sql;
-        $this->statement = $this->query_sql($sql, $values);
+        $this->statement = $this->executeQueryObject($sql, $values);
 
         $this->statement->rowCount();
 
@@ -286,9 +286,10 @@ class NineBase
      * @return PDOStatement
      * @throws DBInvalidQueryProperty
      */
-    protected function query_sql($query, array $values) : PDOStatement
+    protected function executeQueryObject($query, array $values) : PDOStatement
     {
         if ($query instanceof Query) {
+
             $this->statement = $this->connection->prepare($query->getSql());
             $this->statement->execute($query->getParameters());
 
@@ -296,13 +297,14 @@ class NineBase
         }
 
         if (is_string($query)) {
+
             $this->statement = $this->connection->prepare($query);
             $this->statement->execute($values);
 
             return $this->statement;
         }
 
-        throw new DBInvalidQueryProperty('An invalid value was passed in the `query` property.');
+        throw new DBInvalidQueryProperty("`$query` is not a recognizable query property.");
     }
 
 }

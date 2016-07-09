@@ -54,7 +54,7 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
 
     public function registerListeners()
     {
-        // @TODO
+        //
     }
 
     /**
@@ -141,6 +141,7 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
 
             // register
             $app['nine.db'] = function () use ($config_database) { return new Database($config_database); };
+            $app['ninebase'] = function () use ($config_database) { return new NineBase(new Connections($config_database)); };
             $app['database'] = function ($app) { return $app['nine.db']; };
 
             /** @noinspection PhpUndefinedMethodInspection */

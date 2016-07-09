@@ -1,6 +1,7 @@
 <?php namespace F9\Console;
 
 use F9\Providers\MigrationServiceProvider;
+use F9\Providers\SeedServiceProvider;
 use Illuminate\Console\Application;
 use Illuminate\Filesystem\ClassFinder;
 use Nine\Collections\ConfigInterface;
@@ -44,6 +45,7 @@ class Console extends Application
 
         // this is usually the only time this service provider is needed
         (new MigrationServiceProvider(forge('app')))->register(forge('app'));
+        (new SeedServiceProvider(forge('app')))->register(forge('app'));
 
         // in all cases, register the framework commands
         $this->registerFrameworkCommands();
@@ -110,6 +112,8 @@ class Console extends Application
         $this->add(app('command.migrate.reset'));
         $this->add(app('command.migrate.rollback'));
         $this->add(app('command.migrate.status'));
+        $this->add(app('command.seed'));
+
     }
 
     /**
