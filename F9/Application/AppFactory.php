@@ -19,6 +19,7 @@
  */
 
 use F9\Application\Application as NineApplication;
+use F9\Contracts\FactoryInterface;
 use F9\Exceptions\ConfigurationException;
 use F9\Exceptions\FeatureNotImplemented;
 use Nine\Collections\Config;
@@ -45,7 +46,7 @@ use Symfony\Component\Debug\ErrorHandler;
  *
  * See: `F9\Application`, `Silex\Application`, `Forge`, `Pimple\Container`
  */
-class AppFactory
+class AppFactory implements FactoryInterface
 {
     /** @var bool */
     private static $booted;

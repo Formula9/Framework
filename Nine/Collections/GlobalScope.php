@@ -10,16 +10,16 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use F9\Application\AppFactory;
+use F9\Contracts\FactoryInterface;
 
 class GlobalScope extends Scope
 {
     /**
      * GlobalScope constructor.
      *
-     * @param AppFactory $factory Requires the AppFactory for access to the environment.
+     * @param FactoryInterface $factory Requires the AppFactory for access to the environment.
      */
-    public function __construct(AppFactory $factory)
+    public function __construct(FactoryInterface $factory)
     {
         parent::__construct($factory::getEnvironment());
     }

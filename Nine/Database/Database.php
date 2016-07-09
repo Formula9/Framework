@@ -79,6 +79,7 @@ class Database implements DatabaseInterface
         }
 
         $this->currentDSN = "{$default['driver']}:host={$default['host']};dbname={$default['database']}";
+
         $PDO = new PDO(
             $this->currentDSN,
             $default['username'],
