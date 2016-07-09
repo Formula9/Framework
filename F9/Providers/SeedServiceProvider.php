@@ -8,8 +8,8 @@
 
 use F9\Support\Provider\ServiceProvider;
 use Illuminate\Console\Events\ArtisanStarting;
-use Illuminate\Database\Seeder;
 use Nine\Database\Console\Seeds\SeedCommand;
+use Nine\Database\Console\Seeds\Seeder;
 use Pimple\Container;
 
 class SeedServiceProvider extends ServiceProvider

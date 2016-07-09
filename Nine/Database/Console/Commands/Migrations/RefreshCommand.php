@@ -36,9 +36,7 @@ class RefreshCommand extends Command
         }
 
         $database = $this->input->getOption('database');
-
         $force = $this->input->getOption('force');
-
         $path = $this->input->getOption('path');
 
         $this->call('migrate:reset', [
@@ -95,7 +93,6 @@ class RefreshCommand extends Command
     protected function runSeeder($database)
     {
         $class = $this->option('seeder') ?: 'DatabaseSeeder';
-
         $force = $this->input->getOption('force');
 
         $this->call('db:seed', [
