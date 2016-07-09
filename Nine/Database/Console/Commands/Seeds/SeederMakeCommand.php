@@ -2,18 +2,18 @@
 
 namespace Nine\Database\Console\Seeds;
 
-use Illuminate\Support\Composer;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Composer;
 
 class SeederMakeCommand extends GeneratorCommand
 {
     /**
-     * The console command name.
+     * The Composer instance.
      *
-     * @var string
+     * @var \Illuminate\Support\Composer
      */
-    protected $name = 'make:seeder';
+    protected $composer;
 
     /**
      * The console command description.
@@ -23,6 +23,13 @@ class SeederMakeCommand extends GeneratorCommand
     protected $description = 'Create a new seeder class';
 
     /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'make:seeder';
+
+    /**
      * The type of class being generated.
      *
      * @var string
@@ -30,17 +37,11 @@ class SeederMakeCommand extends GeneratorCommand
     protected $type = 'Seeder';
 
     /**
-     * The Composer instance.
-     *
-     * @var \Illuminate\Support\Composer
-     */
-    protected $composer;
-
-    /**
      * Create a new command instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  \Illuminate\Support\Composer  $composer
+     * @param  \Illuminate\Filesystem\Filesystem $files
+     * @param  \Illuminate\Support\Composer      $composer
+     *
      * @return void
      */
     public function __construct(Filesystem $files, Composer $composer)
@@ -63,30 +64,32 @@ class SeederMakeCommand extends GeneratorCommand
     }
 
     /**
+     * Get the destination class path.
+     *
+     * @param  string $name
+     *
+     * @return string
+     */
+    protected function getPath($name)
+    {
+        return database_path() . 'seeds/' . $name . '.php';
+    }
+
+    /**
      * Get the stub file for the generator.
      *
      * @return string
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/seeder.stub';
-    }
-
-    /**
-     * Get the destination class path.
-     *
-     * @param  string  $name
-     * @return string
-     */
-    protected function getPath($name)
-    {
-        return $this->laravel->databasePath().'/seeds/'.$name.'.php';
+        return __DIR__ . '/stubs/seeder.stub';
     }
 
     /**
      * Parse the name and format according to the root namespace.
      *
-     * @param  string  $name
+     * @param  string $name
+     *
      * @return string
      */
     protected function parseName($name)

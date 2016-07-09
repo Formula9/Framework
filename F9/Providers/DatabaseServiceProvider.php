@@ -145,12 +145,12 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
             $app['database'] = function ($app) { return $app['nine.db']; };
 
             /** @noinspection PhpUndefinedMethodInspection */
-            $pdo = $app['database']->getPDO();
+            //$pdo = $app['database']->getPDO();
 
             $this->app['dispatcher']->dispatch(NineEvents::DATABASE_BOOTED, new DatabaseEvent($app['nine.db']));
 
-            $app['pdo'] = $pdo;
-            Forge::set([get_class($pdo), 'pdo'], $pdo);
+            //$app['pdo'] = $pdo;
+            //Forge::set([get_class($pdo), 'pdo'], $pdo);
             Forge::set([Database::class, 'database'], function () use ($app) {
                 return $app['database'];
             });

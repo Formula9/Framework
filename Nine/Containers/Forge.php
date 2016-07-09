@@ -273,7 +273,6 @@ class Forge extends Container implements ContainerInterface
      * @param null            $concrete
      *
      * @throws CannotAddNonexistentClass
-     * @internal param bool $singleton
      *
      */
     public static function set($abstract, $concrete = NULL)
