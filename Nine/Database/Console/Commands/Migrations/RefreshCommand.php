@@ -11,18 +11,18 @@ class RefreshCommand extends Command
     use ConfirmableTrait;
 
     /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'migrate:refresh';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Reset and re-run all migrations';
+
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'migrate:refresh';
 
     /**
      * Execute the console command.
@@ -31,7 +31,7 @@ class RefreshCommand extends Command
      */
     public function fire()
     {
-        if (! $this->confirmToProceed()) {
+        if ( ! $this->confirmToProceed()) {
             return;
         }
 
@@ -50,13 +50,29 @@ class RefreshCommand extends Command
         // them in succession. We'll also see if we need to re-seed the database.
         $this->call('migrate', [
             '--database' => $database,
-            '--force' => $force,
-            '--path' => $path,
+            '--force'    => $force,
+            '--path'     => $path,
         ]);
 
         if ($this->needsSeeding()) {
             $this->runSeeder($database);
         }
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['database', NULL, InputOption::VALUE_OPTIONAL, 'The database connection to use.'],
+            ['force', NULL, InputOption::VALUE_NONE, 'Force the operation to run when in production.'],
+            ['path', NULL, InputOption::VALUE_OPTIONAL, 'The path of migrations files to be executed.'],
+            ['seed', NULL, InputOption::VALUE_NONE, 'Indicates if the seed task should be re-run.'],
+            ['seeder', NULL, InputOption::VALUE_OPTIONAL, 'The class name of the root seeder.'],
+        ];
     }
 
     /**
@@ -72,7 +88,8 @@ class RefreshCommand extends Command
     /**
      * Run the database seeder command.
      *
-     * @param  string  $database
+     * @param  string $database
+     *
      * @return void
      */
     protected function runSeeder($database)
@@ -84,25 +101,5 @@ class RefreshCommand extends Command
         $this->call('db:seed', [
             '--database' => $database, '--class' => $class, '--force' => $force,
         ]);
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use.'],
-
-            ['force', null, InputOption::VALUE_NONE, 'Force the operation to run when in production.'],
-
-            ['path', null, InputOption::VALUE_OPTIONAL, 'The path of migrations files to be executed.'],
-
-            ['seed', null, InputOption::VALUE_NONE, 'Indicates if the seed task should be re-run.'],
-
-            ['seeder', null, InputOption::VALUE_OPTIONAL, 'The class name of the root seeder.'],
-        ];
     }
 }

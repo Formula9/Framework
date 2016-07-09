@@ -40,7 +40,8 @@ class SeedServiceProvider extends ServiceProvider
     public function register(Container $app)
     {
         $this->container->singleton('seeder', function () {
-            return new Seeder;
+            $seeder = Seeder::class;
+            return new $seeder;
         });
 
         $this->registerSeedCommand();
