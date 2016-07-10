@@ -18,7 +18,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use F9\Application\Application;
 use Nine\Collections\Config;
 use Nine\Containers\Forge;
 use Pimple\Container;

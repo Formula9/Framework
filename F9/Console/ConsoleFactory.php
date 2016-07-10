@@ -13,7 +13,7 @@ use Nine\Collections\Scope;
 use Nine\Containers\ContainerInterface;
 use Nine\Containers\Forge;
 use Nine\Events\Events;
-use Silex\Application;
+use Silex\Application as SilexApplication;
 use Silex\ExceptionHandler;
 use Symfony\Component\Debug\ErrorHandler;
 
@@ -24,6 +24,9 @@ use Symfony\Component\Debug\ErrorHandler;
  */
 final class ConsoleFactory implements FactoryInterface
 {
+    /** @var Forge */
+    protected static $container;
+
     /** @var array */
     protected static $env;
 
@@ -41,6 +44,7 @@ final class ConsoleFactory implements FactoryInterface
     private function __construct()
     {
         static::$instance = $this;
+        static::$container = Forge::getInstance();
 
         $this->installErrorHandling();
         $this->detectEnvironment();
@@ -78,11 +82,12 @@ final class ConsoleFactory implements FactoryInterface
         static::$instance ?: new static($paths);
 
         // make the application
-        $application = static::$instance->makeConsole($paths);
-
-        return $application;
+        return static::$instance->makeConsole($paths);
     }
 
+    /**
+     *
+     */
     private function detectEnvironment()
     {
         static::$env = [
@@ -93,10 +98,14 @@ final class ConsoleFactory implements FactoryInterface
         ];
     }
 
+    /**
+     *
+     */
     private function installErrorHandling()
     {
         // register the Symfony error handler
         ErrorHandler::register();
+
         // activate the internal Silex error handler
         new ExceptionHandler(env('DEBUG', FALSE));
     }
@@ -108,22 +117,23 @@ final class ConsoleFactory implements FactoryInterface
      */
     private function makeConsole(array $paths) : Console
     {
-        $container = Forge::getInstance();
-
-        list($global_scope, $config, $events) = $this->registerClasses($paths, $container);
+        // register and collection common class objects
+        list($global_scope, $config, $events) = $this->registerClasses($paths, static::$container);
 
         // use the Silex\Application class to register providers
-        $app = new Application($config['app']);
+        $app = new SilexApplication($config['app']);
 
-        $this->registerInstances($config, $app, $events, $container, $global_scope);
+        // register instances of the common classes
+        $this->registerInstances($config, $app, $events, static::$container, $global_scope);
+
+        // register and boot the common services required by the console
         $this->registerAndBootProviders($app);
 
-        // the reason we are here
-        return new Console($config, $container->get('Paths'));
+        return new Console($config, static::$container->get('Paths'));
     }
 
     /**
-     * @param Application $app
+     * @param SilexApplication $app
      */
     private function registerAndBootProviders($app)
     {
@@ -143,6 +153,7 @@ final class ConsoleFactory implements FactoryInterface
     private function registerClasses(array $paths, $container)
     {
         // we'll start by loading the configuration into the Forge Container
+        $container->add(ContainerInterface::class, function () { return Forge::getInstance(); });
         $container->add([Scope::class, 'context'], function () { return new Scope; });
         $container->add('environment', function () use ($container) { return $container['GlobalScope']; });
         $container->singleton([GlobalScope::class, 'GlobalScope'], $global_scope = new GlobalScope($this));
@@ -156,11 +167,11 @@ final class ConsoleFactory implements FactoryInterface
     }
 
     /**
-     * @param             $config
-     * @param Application $app
-     * @param             $events
-     * @param Forge       $container
-     * @param             $global_scope
+     * @param                  $config
+     * @param SilexApplication $app
+     * @param                  $events
+     * @param Forge            $container
+     * @param                  $global_scope
      *
      * @return mixed
      */

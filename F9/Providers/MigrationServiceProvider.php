@@ -23,17 +23,14 @@ use Pimple\Container;
 class MigrationServiceProvider extends ServiceProvider
 {
 
+    /**
+     * @param Container $pimple
+     */
     public function register(Container $pimple)
     {
         $this->registerRepository();
-
-        // Once we have registered the migrator instance we will go ahead and register
-        // all of the migration related commands that are used by the "Artisan" CLI
-        // so that they may be easily accessed for registering with the consoles.
         $this->registerMigrator();
-
         $this->registerCreator();
-
         $this->registerCommands();
     }
 

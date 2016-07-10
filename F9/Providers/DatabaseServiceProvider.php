@@ -6,7 +6,6 @@
  * @editor  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use App\Listener\DatabaseListener;
 use F9\Application\Application;
 use F9\Contracts\BootableProvider;
 use F9\Events\DatabaseEvent;
@@ -46,9 +45,9 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
         $this->register_configuration($app);
         $this->registerServices();
 
-        $app['database.listener'] = function ($app) {
-            return new DatabaseListener(new DatabaseEvent($app['database']));
-        };
+        //$app['database.listener'] = function ($app) {
+        //    return new DatabaseListener(new DatabaseEvent($app['database']));
+        //};
     }
 
     public function registerListeners()
@@ -62,7 +61,9 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
      */
     public function subscribe(Container $app, EventDispatcherInterface $dispatcher)
     {
-        $dispatcher->addSubscriber($app['database.listener']);
+        if (isset($app['database.listener'])) {
+            $dispatcher->addSubscriber($app['database.listener']);
+        }
     }
 
     /**
@@ -90,6 +91,44 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
 
         if ($config['database.eloquent_enabled']) {
             $this->app->register(new EloquentServiceProvider($this->app));
+        }
+    }
+
+    /**
+     * @param Container $app
+     *
+     * @return Container
+     * @throws CannotAddNonexistentClass
+     */
+    private function registerDatabases(Container $app)
+    {
+        if ($this->config['database.database_enabled']) {
+
+            $config_database = $app['config']['database'];
+
+            // register
+            $app['nine.db'] = function () use ($config_database) { return new Database($config_database); };
+            $app['ninebase'] = function () use ($config_database) { return new NineBase(new Connections($config_database)); };
+            $app['database'] = function ($app) { return $app['nine.db']; };
+
+            Forge::set([Database::class, 'database'], function () use ($app) { return $app['database']; });
+            $this->app['dispatcher']->dispatch(NineEvents::DATABASE_BOOTED, new DatabaseEvent($app['nine.db']));
+        }
+    }
+
+    /**
+     * Register all of the model classes found in the db/model folder.
+     *
+     * @throws CannotAddNonexistentClass
+     */
+    private function registerModels()
+    {
+        // if using eloquent then register all of the eloquent models.
+        if ($this->config['database.eloquent_enabled']) {
+            // register all of the model classes
+            foreach ((new ClassFinder)->findClasses(path('database') . 'models') as $model) {
+                Forge::set($model, function () use ($model) { return new $model; });
+            }
         }
     }
 
@@ -123,52 +162,6 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
             $app['db.global'] = $config['database.eloquent_global'];
             $app['db.eloquent_enabled'] = $config['database.eloquent_enabled'];
             $app['db.logging'] = $config['database.logging'];
-        }
-    }
-
-    /**
-     * @param Container $app
-     *
-     * @return Container
-     * @throws CannotAddNonexistentClass
-     */
-    private function registerDatabases(Container $app)
-    {
-        if ($this->config['database.database_enabled']) {
-
-            $config_database = $app['config']['database'];
-
-            // register
-            $app['nine.db'] = function () use ($config_database) { return new Database($config_database); };
-            $app['ninebase'] = function () use ($config_database) { return new NineBase(new Connections($config_database)); };
-            $app['database'] = function ($app) { return $app['nine.db']; };
-
-            /** @noinspection PhpUndefinedMethodInspection */
-            //$pdo = $app['database']->getPDO();
-
-            $this->app['dispatcher']->dispatch(NineEvents::DATABASE_BOOTED, new DatabaseEvent($app['nine.db']));
-
-            //$app['pdo'] = $pdo;
-            //Forge::set([get_class($pdo), 'pdo'], $pdo);
-            Forge::set([Database::class, 'database'], function () use ($app) {
-                return $app['database'];
-            });
-        }
-    }
-
-    /**
-     * Register all of the model classes found in the db/model folder.
-     *
-     * @throws CannotAddNonexistentClass
-     */
-    private function registerModels()
-    {
-        // if using eloquent then register all of the eloquent models.
-        if ($this->config['database.eloquent_enabled']) {
-            // register all of the model classes
-            foreach ((new ClassFinder)->findClasses(path('database') . 'models') as $model) {
-                Forge::set($model, function () use ($model) { return new $model; });
-            }
         }
     }
 }

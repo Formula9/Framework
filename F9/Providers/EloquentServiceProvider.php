@@ -22,6 +22,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\QueueEntityResolver;
 use Pimple\Container;
 
+/**
+ * Registers and installs services and configurations required by Eloquent ORM and
+ * associated Models|Entities.
+ */
 class EloquentServiceProvider extends ServiceProvider implements BootableProvider
 {
     /**
@@ -32,6 +36,7 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
     public function boot($app)
     {
         $app['illuminate.connection.resolver'] = $this->buildConnection($this->config->get('database.connections.default'));
+
         $this->container->add('illuminate.connection.resolver', function () use ($app) {
             return $app['illuminate.connection.resolver']; });
 
