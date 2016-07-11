@@ -58,7 +58,7 @@ class Forge extends Container implements ContainerInterface
     /** @var Application */
     protected static $app;
 
-    protected function __construct()
+    public function __construct()
     {
         if ( ! NULL === static::$instance) {
             throw new ContainerConflictError('Cannot continue due to a container instantiation conflict [Forge].');

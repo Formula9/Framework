@@ -19,23 +19,27 @@ trait WithConfigurableInjector
      * structure: ['key' => ['share|define|define.param|add' => [$key=>$value|$value],]
      *
      * @param $array
+     *
+     * @return $this
      */
     public function register($array)
     {
         foreach ((array) $array as $item => $definition) {
-            $this->importDefinition($definition);
+            $this->importItemDefinition($item, $definition);
         }
+
+        return $this;
     }
 
     /**
      * @param $configurationType
      * @param $definition
      */
-    private function importConfiguration($configurationType, $definition)
+    private function importDeclaration($configurationType, $definition)
     {
         switch ($configurationType) {
             case 'add':
-                $this->add($definition[0], $definition[1]);
+                $this->registerAdds($definition);
                 break;
 
             case 'alias':
@@ -54,8 +58,12 @@ trait WithConfigurableInjector
                 $this->registerDelegates($definition);
                 break;
 
+            case 'extend':
+                $this->registerExtensions($definition);
+                break;
+
             case 'share':
-                $this->registerShares($definition);
+                $this->registerShare($definition);
                 break;
 
             default :
@@ -64,47 +72,66 @@ trait WithConfigurableInjector
     }
 
     /**
-     * @param $definition
+     * @param string $item
+     * @param array  $definition
      */
-    private function importDefinition(array $definition)
+    private function importItemDefinition(string $item, array $definition)
     {
         foreach ($definition as $type => $define) {
-            $this->importConfiguration($type, $define);
+            $this->importDeclaration($item, $define);
+        }
+    }
+
+    /**
+     * @param $definitions
+     */
+    private function registerAdds($definitions)
+    {
+        foreach ((array) $definitions as $class => $define) {
+            $this->add($class, $define);
         }
     }
 
     private function registerAliases(array $aliases)
     {
-        foreach ((array) $aliases as $entry) {
-            $this->alias($entry[0], $entry[1]);
+        foreach ((array) $aliases as $original => $alias) {
+            $this->alias($original, $alias);
         }
     }
 
     private function registerDefinedParameters(array $parameters)
     {
-        foreach ((array) $parameters as $entry) {
-            $this->defineParam($entry[0], $entry[1]);
+        foreach ((array) $parameters as $paramName => $value) {
+            $this->defineParam($paramName, $value);
         }
     }
 
     private function registerDefines(array $defines)
     {
-        foreach ((array) $defines as $entry) {
-            $this->define($entry[0], $entry[1]);
+        foreach ((array) $defines as $name => $args) {
+            $this->define($name, $args);
         }
     }
 
     private function registerDelegates($delegates)
     {
-        foreach ((array) $delegates as $entry) {
-            $this->delegate($entry[0], $entry[1]);
+        foreach ((array) $delegates as $name => $callableOrMethodStr) {
+            $this->delegate($name, $callableOrMethodStr);
         }
     }
 
-    private function registerShares(array $shares)
+    /**
+     * @param $definitions
+     */
+    private function registerExtensions($definitions)
     {
-        foreach ((array) $shares as $entry) {
-            $this->share($entry);
+        foreach ((array) $definitions as $name => $callableOrMethodStr) {
+            $this->extend($name, $callableOrMethodStr);
         }
+    }
+
+    private function registerShare($class)
+    {
+        $this->share($class);
     }
 }
