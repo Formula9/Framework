@@ -9,20 +9,11 @@
 use Auryn\InjectionException;
 use Auryn\Injector;
 use F9\Container\Contracts\ContainerContract;
-use F9\Container\Exceptions\PotionContainerInvalidContextException;
 use F9\Exceptions\CannotAddNonexistentClass;
 
 class Potion implements ContainerContract, \ArrayAccess
 {
-    /**
-     * @var array
-     */
-    private $definitions;
-
-    /**
-     * @var Injector
-     */
-    private $injector;
+    use WithInjectorArrayAccess, WithConfigurableInjector;
 
     /**
      * Potion constructor.
@@ -176,14 +167,6 @@ class Potion implements ContainerContract, \ArrayAccess
     }
 
     /**
-     * @return Injector
-     */
-    public function getInjector()
-    {
-        return $this->injector;
-    }
-
-    /**
      * **Report whether an exists in the $this or the Application container.**
      *
      * @param string $abstract
@@ -192,7 +175,17 @@ class Potion implements ContainerContract, \ArrayAccess
      */
     public function has($abstract) : bool
     {
-        return isset($this->injector[$abstract]);
+        // peek into the various injector registries
+        $inspect = $this->injector->inspect($abstract, Injector::I_ALL);
+
+        // if any of the results are not empty then the $abstract has been found
+        foreach ($inspect as $inspection) {
+            if ( ! empty($inspection)) {
+                return TRUE;
+            }
+        }
+
+        return FALSE;
     }
 
     /**
@@ -223,63 +216,6 @@ class Potion implements ContainerContract, \ArrayAccess
         return $this->injector->make($abstract, $parameters);
     }
 
-    /**
-     * @param string $offset
-     *
-     * @return bool
-     */
-    public function offsetExists($offset)
-    {
-        return $this->has($offset);
-    }
-
-    /**
-     * @param string $offset
-     *
-     * @return Injector
-     */
-    public function offsetGet($offset)
-    {
-        return $this->injector->make($offset);
-    }
-
-    /**
-     * @param string $offset
-     * @param mixed  $value
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->injector->define($offset, (array) $value);
-    }
-
-    /**
-     * @param string $offset
-     *
-     * @throws PotionContainerInvalidContextException
-     */
-    public function offsetUnset($offset)
-    {
-        try {
-            unset($this->injector[$offset]);
-        } catch (\Exception $e) {
-            throw new PotionContainerInvalidContextException($e->getMessage() . "\nThe container does not allow for forgetting definitions.");
-        }
-    }
-
-    /**
-     * Parse a configuration array into Potion entries.
-     *
-     * structure: ['key' => ['share|define|define.param|add' => [$key=>$value|$value],]
-     *
-     * @param $array
-     */
-    public function register($array)
-    {
-        foreach ((array) $array as $item => $definition) {
-            $this->importDefinition($definition);
-        }
-    }
-
     public function share($concrete)
     {
         $this->injector->share($concrete);
@@ -293,88 +229,7 @@ class Potion implements ContainerContract, \ArrayAccess
      */
     public function singleton($abstract, $concrete = NULL)
     {
+        $this->injector->share($abstract);
         $this->injector->define($abstract, (array) $concrete);
-        $this->injector->share($concrete);
-    }
-
-    /**
-     * @param $configurationType
-     * @param $definition
-     */
-    private function importConfiguration($configurationType, $definition)
-    {
-        switch ($configurationType) {
-            case 'add':
-                $this->add($definition[0], $definition[1]);
-                break;
-
-            case 'alias':
-                $this->registerAliases($definition);
-                break;
-
-            case 'define':
-                $this->registerDefines($definition);
-                break;
-
-            case 'define.param':
-                $this->registerDefinedParameters($definition);
-                break;
-
-            case 'delegate':
-                $this->registerDelegates($definition);
-                break;
-
-            case 'share':
-                $this->registerShares($definition);
-                break;
-
-            default :
-                break;
-        }
-    }
-
-    /**
-     * @param $definition
-     */
-    private function importDefinition(array $definition)
-    {
-        foreach ($definition as $type => $define) {
-            $this->importConfiguration($type, $define);
-        }
-    }
-
-    private function registerAliases(array $aliases)
-    {
-        foreach ((array) $aliases as $entry) {
-            $this->alias($entry[0], $entry[1]);
-        }
-    }
-
-    private function registerDefinedParameters(array $parameters)
-    {
-        foreach ((array) $parameters as $entry) {
-            $this->defineParam($entry[0], $entry[1]);
-        }
-    }
-
-    private function registerDefines(array $defines)
-    {
-        foreach ((array) $defines as $entry) {
-            $this->define($entry[0], $entry[1]);
-        }
-    }
-
-    private function registerDelegates($delegates)
-    {
-        foreach ((array) $delegates as $entry) {
-            $this->delegate($entry[0], $entry[1]);
-        }
-    }
-
-    private function registerShares(array $shares)
-    {
-        foreach ((array) $shares as $entry) {
-            $this->share($entry);
-        }
     }
 }

@@ -87,11 +87,6 @@ interface ContainerContract
     public function delegate(string $name, $callableOrMethodStr);
 
     /**
-     * @return Injector
-     */
-    public function getInjector();
-
-    /**
      * **Report whether an exists in the $this or the Application container.**
      *
      * @param string $abstract

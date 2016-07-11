@@ -1,24 +1,12 @@
 <?php
 
-use F9\Application\AppFactory;
-use F9\Application\Application;
-use F9\Providers\MigrationServiceProvider;
-use Illuminate\Contracts\Container\Container;
-use Nine\Collections\Attributes;
-use Nine\Collections\Config;
-use Nine\Collections\GlobalScope;
-use Nine\Collections\Paths;
-use Nine\Database\Connections;
-use Nine\Database\Database;
-use Nine\Database\DB;
-use Nine\Database\NineBase;
-use Nine\Views\Blade;
-use Nine\Views\BladeView;
-use Nine\Views\BladeViewConfigurationInterface;
-use Nine\Views\TwigView;
-use Nine\Views\TwigViewConfigurationInterface;
+use Auryn\CachingReflector;
+use Auryn\Injector;
+use F9\Container\Potion;
 
 include __DIR__ . '/tests/boot/boot.php';
+
+$potion = new Potion(new Injector(new CachingReflector()));
 
 //AppFactory::make($paths);
 //
