@@ -2,6 +2,10 @@
 [![Test Coverage](https://codeclimate.com/github/Formula9/Framework/badges/coverage.svg)](https://codeclimate.com/github/Formula9/Framework/coverage)
 # Formula 9 Framework Core Classes
 
+## Notice
+
+Status: Currently working to replace custom Dependency Injection with Auryn. The current DI mess must go. 
+
 ## Introduction
 
 **Formula Nine** is a web framework for PHP. This is a personal project and not intended for general use. Formula Nine Framework 

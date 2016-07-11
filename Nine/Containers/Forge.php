@@ -83,10 +83,6 @@ class Forge extends Container implements ContainerInterface
      *      - Incorrect: `add(['thing', Thing::class], ...)`<br>
      *    <br>
      *
-     * @see      `make()` - make (or get) an abstracted class or alias.
-     * @see      `get()`  - static pseudonym for `make()`.
-     * @see      `put()`  - static pseudonym for `add()`.
-     *
      * @param string|string[] $abstract
      * @param mixed           $concrete
      *

@@ -18,10 +18,12 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use F9\Application\Application;
 use Nine\Collections\Config;
 use Nine\Containers\Forge;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface as PimpleServiceProviderInterface;
+use Silex\Application as SilexApplication;
 
 /**
  * The ServiceProvider provides access to the Config, F9\Application (Pimple) and
@@ -45,7 +47,7 @@ abstract class ServiceProvider implements PimpleServiceProviderInterface
     /**
      * ServiceProvider constructor.
      *
-     * @param \F9\Application\Application|\Silex\Application $application
+     * @param Application|SilexApplication|Container $application
      */
     public function __construct($application)
     {

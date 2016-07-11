@@ -20,7 +20,7 @@ class Connections
     /** @var array */
     protected $config;
 
-    public function __construct(array $config = [])
+    public function __construct(array $config)
     {
         // connections configuration
         $this->config = $config;
