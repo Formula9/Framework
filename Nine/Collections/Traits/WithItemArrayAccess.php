@@ -59,7 +59,7 @@ trait WithItemArrayAccess
     public function append($key, $value = NULL)
     {
         if ( ! $this->has($key)) {
-            $this->set($key, $value);
+            $this->put($key, $value);
 
             return $value;
         }
@@ -83,12 +83,12 @@ trait WithItemArrayAccess
     /**
      * **Get a value from the collection by its dot-notated index.**
      *
-     * @param null $query
-     * @param null $default
+     * @param string $query
+     * @param null   $default
      *
      * @return mixed
      */
-    public function get($query, $default = NULL)
+    public function get(string $query, $default = NULL)
     {
         return Lib::array_query($this->items, $query, value($default));
     }
@@ -131,7 +131,7 @@ trait WithItemArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        $this->set($offset, $value);
+        $this->put($offset, $value);
     }
 
     /**
@@ -163,7 +163,7 @@ trait WithItemArrayAccess
      *
      * @return void
      */
-    public function set($key, $value)
+    public function put(string $key, $value)
     {
         # attempt writing the value to the key
         if (is_string($key)) {

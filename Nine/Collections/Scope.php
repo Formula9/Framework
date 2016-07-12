@@ -8,6 +8,7 @@
 
 use BadMethodCallException;
 use Closure;
+use Nine\Collections\Interfaces\StorableInterface;
 use Nine\Traits\WithItemArrayAccess;
 use Nine\Traits\WithItemImport;
 use Nine\Traits\WithItemTransforms;
@@ -163,4 +164,16 @@ class Scope implements \ArrayAccess, \Countable, \JsonSerializable, ScopeInterfa
         return json_encode($this->toArray(), $options);
     }
 
+    /**
+     * Put an item in storage by key.
+     *
+     * @param  mixed $key
+     * @param  mixed $value
+     *
+     * @return $this
+     */
+    public function put(string $key, $value)
+    {
+        $this->items[$key] = $value;
+    }
 }

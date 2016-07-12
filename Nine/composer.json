@@ -1,0 +1,16 @@
+{
+    "name": "oddgreg/nine",
+    "description": "A collection of sub-packages for PHP.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Greg Truesdell",
+            "email": "odd.greg@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "symfony/yaml": "^3.1"
+    }
+}

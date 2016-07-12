@@ -7,22 +7,14 @@
  */
 namespace Nine\Collections;
 
+use Nine\Collections\Interfaces\RetrievableInterface;
+use Nine\Collections\Interfaces\StorableInterface;
+
 /**
  * **Paths provides a simple interface for handling paths in the F9 framework.**
  */
-interface PathsInterface
+interface PathsInterface extends StorableInterface, RetrievableInterface
 {
-    /**
-     * Adds a new path to the collection.
-     *
-     * @param string $key
-     * @param string $path
-     *
-     * @return static
-     * @throws \LogicException
-     */
-    public function add($key, $path);
-
     /**
      * @param array $import
      *
@@ -34,12 +26,12 @@ interface PathsInterface
     /**
      * **Get a value from the collection by its dot-notated index.**
      *
-     * @param null $query
-     * @param null $default
+     * @param string $query
+     * @param mixed $default
      *
      * @return mixed
      */
-    public function get($query, $default = NULL);
+    public function get(string $query, $default = NULL);
 
     /**
      * **TRUE if an indexed value exists.**

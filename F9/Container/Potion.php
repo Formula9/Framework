@@ -29,12 +29,14 @@ class Potion implements ContainerContract, \ArrayAccess
      *
      *  [
      *      'main' => [
-     *          'alias'  => [Config::class, TestSettings::class],
+     *          'alias'  => [
+     *              [Config::class => TestSettings::class]
+     *          ],
      *          'define' => [
-     *              [Config::class, [':items' => Config::createFromFolder(\CONFIG)]],
-     *              [Connections::class, [':config' => Config::createFromFolder(\CONFIG)['database']]],
-     *              [PDO::class, [':dsn' => 'mysql:dbname=test;host=127.0.0.1', ':username' => 'username', ':passwd' => 'password']],
-     *              [Server::class, [':server' => $_SERVER]],
+     *              [Config::class => [':items' => Config::createFromFolder(\CONFIG)]],
+     *              [Connections::class => [':config' => Config::createFromFolder(\CONFIG)['database']]],
+     *              [PDO::class => [':dsn' => 'mysql:dbname=test;host=127.0.0.1', ':username' => 'username', ':passwd' => 'password']],
+     *              [Server::class => [':server' => $_SERVER]],
      *          ],
      *          'share'  => ['PDO', Connections::class, Config::class],
      *      ],

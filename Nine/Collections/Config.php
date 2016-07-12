@@ -52,7 +52,7 @@ class Config extends Collection implements ConfigInterface
     public function importArray(Array $import)
     {
         array_map(
-            function ($key, $value) { $this->set($key, $value); },
+            function ($key, $value) { $this->put($key, $value); },
             array_keys($import), array_values($import)
         );
     }
@@ -220,7 +220,7 @@ class Config extends Collection implements ConfigInterface
 
             # only import if the config file returns an array
             if (is_array($import)) {
-                $this->set($key, $import);
+                $this->put($key, $import);
             }
         }
     }

@@ -7,10 +7,12 @@
  * @version 0.4.2
  */
 
+use Nine\Collections\Interfaces\RetrievableInterface;
+use Nine\Collections\Interfaces\StorableInterface;
 use Nine\Library\Lib;
 use Nine\Traits\WithItemTransforms;
 
-class Collection implements \ArrayAccess, \Countable, \IteratorAggregate, \JsonSerializable
+class Collection implements \ArrayAccess, \Countable, \IteratorAggregate, \JsonSerializable, StorableInterface, RetrievableInterface
 {
     use WithItemTransforms;
 
@@ -140,12 +142,12 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate, \JsonS
     /**
      * Get an item from the collection by key.
      *
-     * @param  mixed $key
+     * @param  string $key
      * @param  mixed $default
      *
      * @return mixed
      */
-    public function get($key, $default = NULL)
+    public function get(string $key, $default = NULL)
     {
         if ($this->offsetExists($key)) {
             return $this->items[$key];
@@ -512,7 +514,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate, \JsonS
      *
      * @return $this
      */
-    public function put($key, $value)
+    public function put(string $key, $value)
     {
         $this->offsetSet($key, $value);
 

@@ -25,11 +25,9 @@ trait WithConfigurableInjector
     public function load($array)
     {
         foreach ((array) $array as $item => $definition) {
-            //ddump(compact('item','definition'));
             foreach ($definition as $declaration) {
                 $this->importDeclaration($item, $declaration);
             }
-
         }
 
         return $this;
@@ -121,10 +119,8 @@ trait WithConfigurableInjector
         }
     }
 
-    private function registerShares($classes)
+    private function registerShares($class)
     {
-        foreach ($classes as $class) {
-            $this->share($class);
-        }
+        $this->share($class);
     }
 }

@@ -7,10 +7,13 @@
  */
 namespace Nine\Collections;
 
+use Nine\Collections\Interfaces\RetrievableInterface;
+use Nine\Collections\Interfaces\StorableInterface;
+
 /**
  * **Scope is a context container.**
  */
-interface ScopeInterface
+interface ScopeInterface extends StorableInterface, RetrievableInterface
 {
     /**
      * **Merge the scope with the provided arrayable items.**
@@ -33,32 +36,4 @@ interface ScopeInterface
      */
     public function plugin($name, callable $plugin);
 
-    /**
-     * **Get a value from the collection by its dot-notated index.**
-     *
-     * @param null $query
-     * @param null $default
-     *
-     * @return mixed
-     */
-    public function get($query, $default = NULL);
-
-    /**
-     * **TRUE if an indexed value exists.**
-     *
-     * @param mixed $key
-     *
-     * @return bool
-     */
-    public function has($key);
-
-    /**
-     * **Directly set a key:value pair.**
-     *
-     * @param $key
-     * @param $value
-     *
-     * @return void
-     */
-    public function set($key, $value);
 }

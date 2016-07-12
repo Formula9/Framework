@@ -45,9 +45,9 @@ class Paths extends Collection implements PathsInterface
      *
      * @return Paths|static
      */
-    public function add($key, $path) : Paths
+    public function put(string $key, $path) : Paths
     {
-        $this->offsetSet($key, $path = $this->normalize_path($path));
+        $this->items[$key] = $path = $this->normalize_path($path);
 
         return $this;
     }

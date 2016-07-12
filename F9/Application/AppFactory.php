@@ -18,11 +18,13 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Dotenv\Dotenv;
 use F9\Application\Application as NineApplication;
 use F9\Contracts\FactoryInterface;
 use F9\Exceptions\ConfigurationException;
 use F9\Exceptions\FeatureNotImplemented;
 use Nine\Collections\Config;
+use Nine\Collections\Environment;
 use Nine\Collections\GlobalScope;
 use Nine\Collections\Paths;
 use Nine\Collections\Scope;
@@ -180,7 +182,8 @@ class AppFactory implements FactoryInterface
         // we'll start by loading the configuration into the Forge Container
         $container->add([Scope::class, 'context'], function () { return new Scope; });
         $container->add('environment', function () use ($container) { return $container['GlobalScope']; });
-        $container->singleton([GlobalScope::class, 'GlobalScope'], $global_scope = new GlobalScope($this));
+        $container->singleton([GlobalScope::class, 'GlobalScope'],
+            $global_scope = new GlobalScope(new Environment(new Dotenv(ROOT), 'APP_ENV')));
         $container->singleton([Paths::class, 'Paths'], new Paths($paths));
         $container->singleton([Config::class, 'Config'], $config = Config::createFromFolder(\CONFIG));
         $container->singleton([Events::class, 'Events'], $events = Events::getInstance());

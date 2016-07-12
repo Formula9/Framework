@@ -126,7 +126,7 @@ class DatabaseServiceProvider extends ServiceProvider implements BootableProvide
         // if using eloquent then register all of the eloquent models.
         if ($this->config['database.eloquent_enabled']) {
             // register all of the model classes
-            foreach ((new ClassFinder)->findClasses(path('database') . 'models') as $model) {
+            foreach ((new ClassFinder)->findClasses(\DATABASE . 'models') as $model) {
                 Forge::set($model, function () use ($model) { return new $model; });
             }
         }
