@@ -22,10 +22,14 @@ trait WithConfigurableInjector
      *
      * @return $this
      */
-    public function register($array)
+    public function load($array)
     {
         foreach ((array) $array as $item => $definition) {
-            $this->importItemDefinition($item, $definition);
+            //ddump(compact('item','definition'));
+            foreach ($definition as $declaration) {
+                $this->importDeclaration($item, $declaration);
+            }
+
         }
 
         return $this;
@@ -63,22 +67,11 @@ trait WithConfigurableInjector
                 break;
 
             case 'share':
-                $this->registerShare($definition);
+                $this->registerShares($definition);
                 break;
 
             default :
                 break;
-        }
-    }
-
-    /**
-     * @param string $item
-     * @param array  $definition
-     */
-    private function importItemDefinition(string $item, array $definition)
-    {
-        foreach ($definition as $type => $define) {
-            $this->importDeclaration($item, $define);
         }
     }
 
@@ -92,7 +85,7 @@ trait WithConfigurableInjector
         }
     }
 
-    private function registerAliases(array $aliases)
+    private function registerAliases($aliases)
     {
         foreach ((array) $aliases as $original => $alias) {
             $this->alias($original, $alias);
@@ -108,9 +101,7 @@ trait WithConfigurableInjector
 
     private function registerDefines(array $defines)
     {
-        foreach ((array) $defines as $name => $args) {
-            $this->define($name, $args);
-        }
+        $this->define(key($defines), current($defines));
     }
 
     private function registerDelegates($delegates)
@@ -130,8 +121,10 @@ trait WithConfigurableInjector
         }
     }
 
-    private function registerShare($class)
+    private function registerShares($classes)
     {
-        $this->share($class);
+        foreach ($classes as $class) {
+            $this->share($class);
+        }
     }
 }
