@@ -65,7 +65,7 @@ class AppLoader
      */
     private function loadGroup($loadGroup)
     {
-        $this->container->register($loadGroup);
+        $this->container->load($loadGroup);
     }
 
 }
