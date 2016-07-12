@@ -13,7 +13,9 @@ use F9\Exceptions\CannotAddNonexistentClass;
 
 class Potion implements ContainerContract, \ArrayAccess
 {
-    use WithInjectorArrayAccess, WithConfigurableInjector;
+    use WithInjectorArrayAccess,
+        WithConfigurableInjector,
+        WithSymbolStorage;
 
     /**
      * Potion constructor.
@@ -45,7 +47,7 @@ class Potion implements ContainerContract, \ArrayAccess
     {
         $this->injector = $injector;
         $this->definitions = $definitions;
-        empty($definitions) ?: $this->register($definitions);
+        empty($definitions) ?: $this->load($definitions);
     }
 
     /**
@@ -90,11 +92,10 @@ class Potion implements ContainerContract, \ArrayAccess
      *
      * @param  callable|string $callback
      * @param  array           $parameters
-     * @param  string|null     $defaultMethod
      *
      * @return mixed
      */
-    public function call($callback, array $parameters = [], $defaultMethod = NULL)
+    public function call($callback, array $parameters = [])
     {
         return $this->injector->execute($callback, $parameters);
     }
@@ -102,14 +103,14 @@ class Potion implements ContainerContract, \ArrayAccess
     /**
      * Define instantiation directives for the specified class
      *
-     * @param string $name The class (or alias) whose constructor arguments we wish to define
-     * @param array  $args An array mapping parameter names to values/instructions
+     * @param string $className    The class (or alias) whose constructor arguments we wish to define
+     * @param array  $parameterMap An array mapping parameter names to values/instructions
      *
      * @return self
      */
-    public function define($name, array $args)
+    public function define($className, array $parameterMap)
     {
-        $this->injector->define($name, $args);
+        $this->injector->define($className, $parameterMap);
 
         return $this;
     }
@@ -133,43 +134,54 @@ class Potion implements ContainerContract, \ArrayAccess
     }
 
     /**
-     * @param string $name
-     * @param        $callableOrMethodStr
+     * Delegate the creation of a class to the provided callable or method.
+     *
+     * @param string          $className           The name of the class to delegate.
+     * @param callable|string $callableOrMethodStr The callable or method to handle the delegation.
      *
      * @return $this
      * @throws \Auryn\ConfigException
      */
-    public function delegate(string $name, $callableOrMethodStr)
+    public function delegate(string $className, $callableOrMethodStr)
     {
-        $this->injector->delegate($name, $callableOrMethodStr);
+        $this->injector->delegate($className, $callableOrMethodStr);
 
         return $this;
     }
 
     /**
-     * Register a prepare callable to modify/prepare objects of type $name after instantiation
+     * Register a callable to modify/prepare objects of type $name after instantiation
      *
      * Any callable or provisionable invokable may be specified. Preparers are passed two
      * arguments: the instantiated object to be mutated and the current Injector instance.
      *
-     * @param string $name
+     * @param string $className           The name of the class to extend.
      * @param mixed  $callableOrMethodStr Any callable or provisionable invokable method
      *
      * @throws InjectionException if $callableOrMethodStr is not a callable.
      *                            See https://github.com/rdlowrey/auryn#injecting-for-execution
      * @return self
      */
-    public function extend($name, $callableOrMethodStr)
+    public function extend($className, $callableOrMethodStr)
     {
-        $this->injector->prepare($name, $callableOrMethodStr);
+        $this->injector->prepare($className, $callableOrMethodStr);
 
         return $this;
     }
 
     /**
-     * **Report whether an exists in the $this or the Application container.**
+     * Report whether an exists in the $this or the Application container.
      *
-     * @param string $abstract
+     * Auryn Injector doesn't provide a composite `has` method. Here we
+     * query the container using the `inspect` method which may be directed
+     * to return registries of various internal type.
+     *
+     * `I_ALL` returns an array of arrays, each representing where in the
+     * container the `$abstract` exists. If a non-empty type array is
+     * encountered, then the $abstract is assumed to be registered in one
+     * form or another.
+     *
+     * @param string $abstract The abstracted class or reference to find.
      *
      * @return bool
      */
@@ -189,21 +201,6 @@ class Potion implements ContainerContract, \ArrayAccess
     }
 
     /**
-     * Register an existing instance as shared in the container.
-     *
-     * @param  string|array $abstract
-     * @param  mixed        $instance
-     *
-     * @return $this
-     */
-    public function instance($abstract, $instance)
-    {
-        $this->injector->define($abstract, (array) $instance);
-
-        return $this;
-    }
-
-    /**
      * **Finds an entry of the container by its identifier and returns it.**
      *
      * @param string $abstract Identifier of the entry to look for.
@@ -216,20 +213,17 @@ class Potion implements ContainerContract, \ArrayAccess
         return $this->injector->make($abstract, $parameters);
     }
 
-    public function share($concrete)
+    /**
+     * Share the specified class/instance across the Injector context
+     *
+     * @param mixed $nameOrInstance The class or object to share
+     *
+     * @return self
+     */
+    public function share($nameOrInstance)
     {
-        $this->injector->share($concrete);
+        $this->injector->share($nameOrInstance);
 
         return $this;
-    }
-
-    /**
-     * @param array|string $abstract
-     * @param null         $concrete
-     */
-    public function singleton($abstract, $concrete = NULL)
-    {
-        $this->injector->share($abstract);
-        $this->injector->define($abstract, (array) $concrete);
     }
 }
