@@ -25,7 +25,7 @@ class Attributes implements \ArrayAccess, AttributesInterface
     /**
      * @param array|null $attributes Accept arrays, classes with toArray or toJson as sources.
      */
-    public function __construct($attributes = NULL)
+    public function __construct($attributes = [])
     {
         if ($attributes) {
             $this->items = $this->getArrayableItems($attributes);

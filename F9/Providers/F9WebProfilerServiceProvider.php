@@ -60,7 +60,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class F9WebProfilerServiceProvider implements ServiceProviderInterface, ControllerProviderInterface, BootableProvider, EventListenerProviderInterface
 {
-    public function boot(NineApplication $app)
+    public function boot($app)
     {
         $app->mount($app['profiler.mount_prefix'], $this->connect($app));
     }

@@ -23,6 +23,7 @@ use Nine\Collections\Config;
 use Nine\Containers\Forge;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface as PimpleServiceProviderInterface;
+use Silex\Application as SilexApplication;
 
 /**
  * The ServiceProvider provides access to the Config, F9\Application (Pimple) and
@@ -43,7 +44,12 @@ abstract class ServiceProvider implements PimpleServiceProviderInterface
     /** @var \Nine\Containers\Forge $container */
     protected $container;
 
-    public function __construct(Application $application)
+    /**
+     * ServiceProvider constructor.
+     *
+     * @param Application|SilexApplication|Container $application
+     */
+    public function __construct($application)
     {
         $this->container = Forge::getInstance();
         $this->app = $application ?: $this->container['app'];

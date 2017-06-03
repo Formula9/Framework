@@ -18,7 +18,9 @@ interface BootableProvider
      * a service must be requested).
      *
      * @param Application $app
+     *
+     * @return
      */
-    public function boot(Application $app);
+    public function boot($app);
 
 }

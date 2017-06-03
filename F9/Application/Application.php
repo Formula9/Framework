@@ -384,7 +384,7 @@ class Application extends \Silex\Application implements Container
         $this->bootSettings();
         $this->bootApplicationEvents();
         $this->registerConfiguredProviders();
-        $this->registerAliases();
+        //$this->registerAliases();
     }
 
     /**

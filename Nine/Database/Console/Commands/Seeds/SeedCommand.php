@@ -3,21 +3,14 @@
 namespace Nine\Database\Console\Seeds;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Console\ConfirmableTrait;
-use Symfony\Component\Console\Input\InputOption;
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
+use Illuminate\Database\Eloquent\Model;
+use Symfony\Component\Console\Input\InputOption;
 
 class SeedCommand extends Command
 {
     use ConfirmableTrait;
-
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'db:seed';
 
     /**
      * The console command description.
@@ -25,6 +18,13 @@ class SeedCommand extends Command
      * @var string
      */
     protected $description = 'Seed the database with records';
+
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'db:seed';
 
     /**
      * The connection resolver instance.
@@ -36,8 +36,7 @@ class SeedCommand extends Command
     /**
      * Create a new database seed command instance.
      *
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
-     * @return void
+     * @param  \Illuminate\Database\ConnectionResolverInterface $resolver
      */
     public function __construct(Resolver $resolver)
     {
@@ -53,7 +52,7 @@ class SeedCommand extends Command
      */
     public function fire()
     {
-        if (! $this->confirmToProceed()) {
+        if ( ! $this->confirmToProceed()) {
             return;
         }
 
@@ -62,18 +61,6 @@ class SeedCommand extends Command
         Model::unguarded(function () {
             $this->getSeeder()->run();
         });
-    }
-
-    /**
-     * Get a seeder instance from the container.
-     *
-     * @return \Illuminate\Database\Seeder
-     */
-    protected function getSeeder()
-    {
-        $class = $this->laravel->make($this->input->getOption('class'));
-
-        return $class->setContainer($this->laravel)->setCommand($this);
     }
 
     /**
@@ -96,11 +83,21 @@ class SeedCommand extends Command
     protected function getOptions()
     {
         return [
-            ['class', null, InputOption::VALUE_OPTIONAL, 'The class name of the root seeder', 'DatabaseSeeder'],
-
-            ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to seed'],
-
-            ['force', null, InputOption::VALUE_NONE, 'Force the operation to run when in production.'],
+            ['class', NULL, InputOption::VALUE_OPTIONAL, 'The class name of the root seeder', 'DatabaseSeeder'],
+            ['database', NULL, InputOption::VALUE_OPTIONAL, 'The database connection to seed'],
+            ['force', NULL, InputOption::VALUE_NONE, 'Force the operation to run when in production.'],
         ];
+    }
+
+    /**
+     * Get a seeder instance from the container.
+     *
+     * @return \Illuminate\Database\Seeder
+     */
+    protected function getSeeder()
+    {
+        $class = $this->laravel->make($this->input->getOption('class'));
+
+        return $class->setContainer($this->laravel)->setCommand($this);
     }
 }

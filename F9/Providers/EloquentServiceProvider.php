@@ -22,6 +22,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\QueueEntityResolver;
 use Pimple\Container;
 
+/**
+ * Registers and installs services and configurations required by Eloquent ORM and
+ * associated Models|Entities.
+ */
 class EloquentServiceProvider extends ServiceProvider implements BootableProvider
 {
     /**
@@ -29,9 +33,13 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
      *
      * @param Application|Container $app
      */
-    public function boot(Application $app)
+    public function boot($app)
     {
         $app['illuminate.connection.resolver'] = $this->buildConnection($this->config->get('database.connections.default'));
+
+        $this->container->add('illuminate.connection.resolver', function () use ($app) {
+            return $app['illuminate.connection.resolver']; });
+
         $this->bootModels($this->buildConnection($this->config->get('database.connections.default')));
 
         // Eloquent boot event
@@ -101,33 +109,25 @@ class EloquentServiceProvider extends ServiceProvider implements BootableProvide
         // we need to use the forge di
         $app = $this->container;
 
-        // The connection factory is used to create the actual connection instances on
-        // the database. We will inject the factory into the manager so that it may
-        // make the connections while they are actually needed and not of before.
-        $this->container->singleton('db.factory', function () use ($app) {
-            return new ConnectionFactory($app);
-        });
+        //@formatter:off
 
-        // The database manager is used to resolve various connections, since multiple
-        // connections might be managed. It also implements the connection resolver
-        // interface which may be used by other components requiring connections.
+        $this->container->singleton('db.factory', function () use ($app) {
+            return new ConnectionFactory($app); });
+
         $this->container->singleton('db.manager', function () use ($app) {
             /** @noinspection PhpParamsInspection */
-            return new DatabaseManager($this->container, $app['db.factory']);
-        });
+            return new DatabaseManager($this->container, $app['db.factory']); });
 
         $this->container->bind('db.connection', function () use ($app) {
-            return $app['db.manager']->{'connection'}();
-        });
+            return $app['db.manager']->{'connection'}(); });
 
         $this->container->singleton('Illuminate\Contracts\Queue\EntityResolver', function () {
-            return new QueueEntityResolver;
-        });
+            return new QueueEntityResolver; });
 
         $this->container->singleton('db', function ($c) use ($app) {
-            return new DatabaseManager($c, $app->get('db.factory'));
-        });
+            return new DatabaseManager($c, $app->get('db.factory')); });
 
+        //@formatter:on
     }
 
     /**

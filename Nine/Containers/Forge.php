@@ -58,7 +58,7 @@ class Forge extends Container implements ContainerInterface
     /** @var Application */
     protected static $app;
 
-    protected function __construct()
+    public function __construct()
     {
         if ( ! NULL === static::$instance) {
             throw new ContainerConflictError('Cannot continue due to a container instantiation conflict [Forge].');
@@ -82,10 +82,6 @@ class Forge extends Container implements ContainerInterface
      *      - Correct: `add([Thing::class, 'thing'], ...)`<br>
      *      - Incorrect: `add(['thing', Thing::class], ...)`<br>
      *    <br>
-     *
-     * @see      `make()` - make (or get) an abstracted class or alias.
-     * @see      `get()`  - static pseudonym for `make()`.
-     * @see      `put()`  - static pseudonym for `add()`.
      *
      * @param string|string[] $abstract
      * @param mixed           $concrete
@@ -273,7 +269,6 @@ class Forge extends Container implements ContainerInterface
      * @param null            $concrete
      *
      * @throws CannotAddNonexistentClass
-     * @internal param bool $singleton
      *
      */
     public static function set($abstract, $concrete = NULL)
