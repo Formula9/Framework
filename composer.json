@@ -31,7 +31,6 @@
     "require"          : {
         "php"                  : "^7.0.4",
         "formula9/core"        : "~1.0.1",
-<<<<<<< HEAD
         "aura/sql"             : "^2.5",
         "aura/sqlquery"        : "^2.6",
         "illuminate/database"  : ">5.2 <5.4",
@@ -39,17 +38,6 @@
         "illuminate/events"    : ">5.2 <5.4",
         "illuminate/filesystem": ">5.2 <5.4",
         "illuminate/view"      : ">5.2 <5.4",
-=======
-        "aura/sql"             : ">=2.5 <3.0.0",
-        "aura/sqlquery"        : ">=2.6 <3.0.0",
-        "rdlowrey/auryn"       : ">=1.4 <2.0.0",
-
-        "illuminate/database"  : "~5.2",
-        "illuminate/support"   : "~5.2",
-        "illuminate/events"    : "~5.2",
-        "illuminate/filesystem": "~5.2",
-        "illuminate/view"      : "~5.2",
->>>>>>> 925e4f678538086058b18055fcf81ee164aa95a5
         "monolog/monolog"      : "^1.20",
 
         "symfony/console"      : "~3.0.8",
@@ -64,13 +52,13 @@
         "symfony/yaml"         : ">3.0 <3.3"
     },
     "require-dev"      : {
-        "vlucas/phpdotenv"             : "^2.1@dev",
-        "symfony/config"               : ">3.0 <3.3",
-        "symfony/form"                 : ">3.0 <3.3",
-        "phpunit/phpunit"              : "^5.1@dev",
-        "tracy/tracy"                  : "^2.4@dev",
-        "psy/psysh"                    : "@stable",
-        "mockery/mockery"              : "^0.9.4",
-        "fzaninotto/faker"             : "^1.5"
+        "vlucas/phpdotenv": "^2.1@dev",
+        "symfony/config"  : ">3.0 <3.3",
+        "symfony/form"    : ">3.0 <3.3",
+        "phpunit/phpunit" : "^5.1@dev",
+        "tracy/tracy"     : "^2.4@dev",
+        "psy/psysh"       : "@stable",
+        "mockery/mockery" : "^0.9.4",
+        "fzaninotto/faker": "^1.5"
     }
 }
